@@ -1,0 +1,225 @@
+# ForestHub SDK
+
+C++14 LLM SDK with unified multi-provider interface. Designed for PC and embedded platforms (MCUs).
+
+## Features
+
+- **Multi-provider routing** -- automatic request routing to the right LLM provider based on model ID
+- **Agent framework** -- tool calling, multi-turn conversations, and agent handoffs
+- **Platform-agnostic** -- runs on PC (Linux/macOS) and embedded platforms via Hardware Abstraction Layer (Arduino as first implementation)
+- **No exceptions** -- embedded-safe design using string error returns and result structs
+- **No RTTI** -- all polymorphic dispatch via virtual methods and type enums (no dynamic_cast)
+- **Google Style `struct`/`class` convention** -- `struct` for passive data (DTOs, configs), `class` for types with behavior (interfaces, implementations with virtual methods or private state)
+- **Fluent builder API** -- method chaining for requests, agents, and configuration
+- **C++14 compatible** -- targets any C++14-capable toolchain (GCC 7+, Clang 5+, MSVC 2017+, embedded compilers)
+
+## Quick Start
+
+### Prerequisites
+
+- **PC**: CMake 3.14+, C++14 compiler (GCC 7+, Clang 5+, MSVC 2017+)
+- **Embedded**: PlatformIO CLI (`pip install platformio`)
+- Internet connection (dependencies fetched automatically)
+
+### Build
+
+```bash
+cmake -S . -B build
+cmake --build build -j4
+```
+
+### Run
+
+```bash
+export FORESTHUB_API_KEY=your_key
+./build/foresthub_chat
+```
+
+## Usage
+
+### Simple Chat
+
+```cpp
+#include "foresthub/client.hpp"
+#include "foresthub/config/config.hpp"
+#include "foresthub/core/input.hpp"
+#include "foresthub/core/types.hpp"
+#include "platform_setup.hpp"
+
+int main() {
+    std::shared_ptr<foresthub::platform::PlatformContext> platform = app::SetupPlatform();
+
+    foresthub::platform::HttpClientConfig http_cfg;
+    http_cfg.host = "fh-backend-368736749905.europe-west1.run.app";
+    std::shared_ptr<foresthub::core::HttpClient> http_client =
+        platform->CreateHttpClient(http_cfg);
+
+    foresthub::config::ClientConfig cfg;
+    foresthub::config::RemoteConfig remote_cfg;
+    remote_cfg.base_url = "https://fh-backend-368736749905.europe-west1.run.app";
+    remote_cfg.api_key = std::getenv("FORESTHUB_API_KEY");
+    remote_cfg.supported_models = {"gpt-4.1", "gpt-4.1-mini"};
+    cfg.remote = remote_cfg;
+
+    std::shared_ptr<foresthub::Client> client = foresthub::Client::Create(cfg, http_client);
+
+    foresthub::core::ChatRequest req;
+    req.model = "gpt-4.1-mini";
+    req.input = std::make_shared<foresthub::core::InputString>("Hello!");
+    req.WithSystemPrompt("You are a helpful assistant.");
+
+    std::shared_ptr<foresthub::core::ChatResponse> response = client->Chat(req);
+    if (response) {
+        printf("%s\n", response->text.c_str());
+    }
+}
+```
+
+### Agent with Tools
+
+```cpp
+#include "foresthub/agent/agent.hpp"
+#include "foresthub/agent/runner.hpp"
+#include "foresthub/core/tools.hpp"
+
+// Define tool arguments + handler
+struct WeatherArgs { std::string city; };
+void from_json(const json& j, WeatherArgs& a) { a.city = j.value("city", ""); }
+json get_weather(const WeatherArgs& a) { return {{"temp", "22C"}, {"city", a.city}}; }
+
+// Create agent with tool
+foresthub::agent::Agent agent("weather-bot");
+agent.WithInstructions("You help with weather queries.")
+     .AddTool(foresthub::core::NewFunctionTool<WeatherArgs, json>(
+         "get_weather", "Get current weather", schema, get_weather));
+
+// Run agent
+foresthub::agent::Runner runner(client, "gpt-4.1-mini");
+foresthub::agent::RunResultOrError result = runner.Run(
+    std::make_shared<foresthub::agent::Agent>(agent),
+    std::make_shared<foresthub::core::InputString>("What's the weather in Berlin?"));
+if (!result.HasError()) {
+    printf("%s\n", result.result->final_output.dump().c_str());
+}
+```
+
+See `examples/pc/chat.cpp` and `examples/pc/agent.cpp` for complete examples.
+
+## Architecture
+
+```
+Application Layer        -- examples/pc/, examples/embedded/
+        |
+        v
+HAL (foresthub::platform) -- Network, Console, Time, Crypto
+        |
+        v
+Core (foresthub::core)    -- LLM client, Agent framework, Tools
+```
+
+The **Core** layer defines abstract interfaces (e.g., `HttpClient`). The **HAL** layer provides platform-specific implementations (CPR on PC, ArduinoHttpClient on ESP32). Applications create a `PlatformConfig` (with WiFi credentials on embedded) and call `CreatePlatform(config)` to initialize the platform, then inject dependencies into Core.
+
+### Optional Subsystems
+
+HAL subsystems are opt-in via compile-time macros. Add to your `platformio.ini`:
+
+```ini
+build_flags =
+    -DFORESTHUB_ENABLE_NETWORK    ; WiFi + HTTP client
+    -DFORESTHUB_ENABLE_CRYPTO     ; TLS/HTTPS support
+    -DFORESTHUB_ENABLE_GPIO       ; Digital/analog/PWM pin I/O
+```
+
+Console and Time are always available. Omitting macros saves significant Flash:
+
+| Configuration | ESP32 Flash | Portenta Flash |
+|---|---|---|
+| Full (all subsystems) | 908 KB | 473 KB |
+| Minimal (Console+Time) | 389 KB | 270 KB |
+| **Savings** | **519 KB (57%)** | **203 KB (43%)** |
+
+## Building
+
+### PC (CMake)
+
+| Target | Command |
+|--------|---------|
+| Standard | `cmake -S . -B build && cmake --build build` |
+| With tests | `cmake -S . -B build -DBUILD_TESTING=ON && cmake --build build` |
+
+### Embedded (PlatformIO)
+
+| Target | Command |
+|--------|---------|
+| Full build (all subsystems) | `pio run -d pio/build_test -e esp32dev` |
+| Minimal build (Console+Time) | `pio run -d pio/build_test -e esp32_none` |
+| Chat example | `pio run -d examples/embedded/chat -e esp32dev` |
+| Agent example | `pio run -d examples/embedded/agent -e esp32dev` |
+| HTTP/HTTPS test | `pio run -d examples/embedded/http_test -e esp32dev` |
+| HTTP-only test (no Crypto) | `pio run -d examples/embedded/http_test -e esp32_http_only` |
+| Ticker example | `pio run -d examples/embedded/ticker -e esp32dev` |
+| Portenta H7 | `pio run -d pio/build_test -e portenta_h7_m7` |
+
+Both PC applications require the `FORESTHUB_API_KEY` environment variable.
+
+## Testing
+
+```bash
+cmake -S . -B build -DBUILD_TESTING=ON
+cmake --build build -j4
+cd build && ctest --output-on-failure
+```
+
+257 tests across 7 executables:
+
+| Executable | Tests | Scope |
+|------------|-------|-------|
+| `run_core_tests` | 101 | Input, model, options, tools, types, json, client |
+| `run_agent_tests` | 33 | Agent construction, Runner execution loop |
+| `run_provider_tests` | 22 | ForestHub HTTP, retry, error handling |
+| `run_platform_tests` | 38 | PC platform factory, subsystems, GPIO, ENABLE macros, timezone |
+| `run_integration_tests` | 7 | Runner-Provider chain, Client routing |
+| `run_contract_tests` | 13 | ForestHub API JSON schema verification |
+| `run_util_tests` | 43 | Optional polyfill, Ticker (Periodic, OneShot, Daily, Weekly, Hourly) |
+
+Hand-rolled mocks in `tests/mocks/` (no GMock -- incompatible with `-fno-rtti`).
+
+## Project Structure
+
+```
+include/foresthub/        Public API headers
+  agent/                  Agent framework (agent, runner, handoff)
+  config/                 Configuration structs
+  core/                   Core abstractions (provider, tools, types, input)
+  platform/               HAL interfaces (network, console, time, crypto)
+  provider/remote/        Provider implementations (ForestHub)
+  util/                   Utilities (Optional<T> polyfill, JSON wrapper, Ticker)
+src/                      Implementation
+  platform/pc/            PC implementations (CPR, stdin/stdout, std::chrono)
+  platform/arduino/       Arduino implementations (WiFi, Serial, NTP)
+  platform/common/        Shared platform code (TLS certs)
+examples/
+  pc/                     PC examples (chat.cpp, agent.cpp)
+  embedded/               Arduino examples (chat/, agent/, http_test/, ticker/ -- PlatformIO projects)
+tests/                    GoogleTest suites (257 tests)
+  core/                   Core tests (input, model, options, tools, types, json, client)
+  agent/                  Agent framework tests (agent, runner)
+  provider/               Provider tests (ForestHub HTTP, retry, errors)
+  platform/               Platform tests (PC factory, subsystems)
+  integration/            Integration tests (Runner-Provider, Client routing)
+  contract/               Contract tests (ForestHub API JSON schema)
+  util/                   Utility tests (Optional polyfill, Ticker)
+  mocks/                  Hand-rolled mocks (HttpClient, Provider, LLMClient)
+third_party/              Vendored dependencies (nlohmann/json)
+library.json              PlatformIO library manifest
+pio/build_test/           PlatformIO build verification (ESP32, Portenta H7)
+```
+
+## Dependencies
+
+| Dependency | Version | Purpose | Source |
+|------------|---------|---------|--------|
+| nlohmann/json | 3.11.2 | JSON parsing and serialization | Vendored (`third_party/`) |
+| CPR | 1.9.9 | HTTP client for PC builds | CMake FetchContent |
+| GoogleTest | 1.17.0 | Unit testing framework | CMake FetchContent |
+| ArduinoHttpClient | >=0.6.1 | HTTP client for Arduino builds (auto-resolved, framework-gated) | PlatformIO (`library.json`) |

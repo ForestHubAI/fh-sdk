@@ -1,0 +1,55 @@
+#ifndef FORESTHUB_PLATFORM_ARDUINO_CONSOLE_HPP
+#define FORESTHUB_PLATFORM_ARDUINO_CONSOLE_HPP
+
+#include "board_core.hpp"
+#include "foresthub/platform/console.hpp"
+
+namespace foresthub {
+namespace platform {
+namespace arduino {
+
+/// ConsoleInterface implementation for Arduino with line editing, output chunking, and configurable Stream.
+class ArduinoConsole : public ConsoleInterface {
+public:
+    /// Construct using the default Serial port.
+    /// @param baud_rate Communication speed for Begin().
+    explicit ArduinoConsole(unsigned long baud_rate = 115200);
+
+    /// Construct with configurable Stream.
+    /// @param io Stream to use for I/O.
+    /// @param baud_rate Communication speed for Begin().
+    ArduinoConsole(Stream& io, unsigned long baud_rate = 115200);
+
+    /// Calls Serial.begin() with stored baud rate and waits up to 2.5s for USB connection.
+    void Begin() override;
+
+    /// Returns true if Serial has data in its receive buffer.
+    bool Available() const noexcept override;
+    /// Reads one byte from Serial (blocks if no data available).
+    char Read() override;
+
+    /// Adds backspace editing and CR/LF/CRLF normalization.
+    std::string ReadLine(size_t max_length = 256, unsigned long timeout_ms = 0, bool echo = true) override;
+
+    /// Writes data to Serial byte-by-byte.
+    void Write(const std::string& data) override;
+
+    /// Chunks large output (up to 4KB) to prevent serial buffer overflow.
+    void Printf(const char* format, ...) override;
+
+    /// Waits until all outgoing Serial data has been transmitted.
+    void Flush() noexcept override;
+
+private:
+    unsigned long baud_rate_;  ///< Communication speed for Begin().
+    Stream* io_;               ///< Pointer to the underlying Stream (Serial, Serial1, etc.)
+
+    /// Check if a character is printable ASCII (space through tilde).
+    static constexpr bool IsPrintableChar(char c) noexcept { return c >= 32 && c != 127; }
+};
+
+}  // namespace arduino
+}  // namespace platform
+}  // namespace foresthub
+
+#endif  // FORESTHUB_PLATFORM_ARDUINO_CONSOLE_HPP

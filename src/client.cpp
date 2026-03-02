@@ -1,0 +1,70 @@
+#include "foresthub/client.hpp"
+
+#include "foresthub/provider/remote/forest_hub.hpp"
+
+namespace foresthub {
+using std::shared_ptr;
+
+std::unique_ptr<Client> Client::Create(const config::ClientConfig& cfg,
+                                       const std::shared_ptr<core::HttpClient>& http_client) {
+    auto client = std::make_unique<Client>();
+
+    if (cfg.remote.HasValue()) {
+        auto provider = std::make_shared<provider::remote::ForestHubProvider>(*cfg.remote, http_client);
+        client->RegisterProvider(provider);
+    }
+
+    return client;
+}
+
+Client::Client() {}
+
+void Client::RegisterProvider(const shared_ptr<core::Provider>& provider) {
+    if (provider) {
+        providers[provider->ProviderId()] = provider;
+    }
+}
+
+std::string Client::Health() const {
+    if (providers.empty()) {
+        return "No providers configured";
+    }
+
+    std::string errors;
+    for (const auto& entry : providers) {
+        std::string err = entry.second->Health();
+        if (!err.empty()) {
+            if (!errors.empty()) {
+                errors += "; ";
+            }
+            errors += entry.first;
+            errors += ": ";
+            errors += err;
+        }
+    }
+
+    return errors;
+}
+
+bool Client::SupportsModel(const core::ModelID& model) const {
+    return InferProvider(model) != nullptr;
+}
+
+std::shared_ptr<core::ChatResponse> Client::Chat(const core::ChatRequest& req) {
+    std::shared_ptr<core::Provider> provider = InferProvider(req.model);
+    if (!provider) {
+        return nullptr;
+    }
+    return provider->Chat(req);
+}
+
+std::shared_ptr<core::Provider> Client::InferProvider(const core::ModelID& model) const {
+    for (const auto& entry : providers) {
+        if (entry.second->SupportsModel(model)) {
+            return entry.second;
+        }
+    }
+    return nullptr;
+}
+
+}  // namespace foresthub

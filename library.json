@@ -1,0 +1,56 @@
+{
+    "name": "foresthub-sdk",
+    "version": "0.1.0",
+    "description": "C++14 LLM proxy library with unified interface for multiple providers. Platform-agnostic via Hardware Abstraction Layer.",
+    "keywords": "llm, ai, foresthub, arduino, embedded, esp32, agent",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/foresthub/fh-backend-cpp.git"
+    },
+    "license": "MIT",
+    "frameworks": "arduino",
+    "platforms": "*",
+    "build": {
+        "srcDir": "src",
+        "includeDir": "include",
+        "flags": [
+            "-DFORESTHUB_PLATFORM_ARDUINO",
+            "-DJSON_HAS_CPP_14",
+            "-Os",
+            "-ffunction-sections",
+            "-fdata-sections",
+            "-Ithird_party",
+            "-Isrc"
+        ],
+        "srcFilter": [
+            "+<*>",
+            "-<platform/pc/>",
+            "-<platform/pc/*>"
+        ]
+    },
+    "dependencies": [
+        {
+            "name": "ArduinoHttpClient",
+            "owner": "arduino-libraries",
+            "version": ">=0.6.1",
+            "frameworks": "arduino"
+        }
+    ],
+    "export": {
+        "exclude": [
+            "build",
+            ".pio",
+            ".planning",
+            ".claude",
+            "tests",
+            "app",
+            "examples",
+            ".git",
+            ".vscode",
+            ".gitignore",
+            "CMakeLists.txt",
+            "platformio.ini",
+            "run_coverage.sh"
+        ]
+    }
+}
