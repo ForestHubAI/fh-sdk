@@ -170,8 +170,7 @@ std::shared_ptr<FunctionTool> NewFunctionTool(std::string name, std::string desc
             return json(std::string("Error: Tool arguments for " + tool_name + " were not valid JSON."));
         }
 
-        T args;
-        from_json(j_args, args);
+        T args = j_args.get<T>();
 
         R result = handler(args);
         return result;
