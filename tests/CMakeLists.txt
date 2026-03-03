@@ -61,7 +61,8 @@ gtest_discover_tests(run_util_tests)
 # --- Provider Tests -----------------------------------------------------------
 
 add_executable(run_provider_tests
-    provider/forest_hub_test.cpp
+    provider/foresthub_test.cpp
+    provider/openai_test.cpp
 )
 
 target_link_libraries(run_provider_tests
@@ -109,7 +110,7 @@ gtest_discover_tests(run_integration_tests)
 # --- Contract Tests -----------------------------------------------------------
 
 add_executable(run_contract_tests
-    contract/forest_hub_api_test.cpp
+    contract/foresthub_api_test.cpp
 )
 
 target_link_libraries(run_contract_tests

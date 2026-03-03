@@ -9,7 +9,9 @@ set(FORESTHUB_SOURCES
     agent/agent.cpp
     agent/runner.cpp
     core/serialization.cpp
-    provider/remote/forest_hub.cpp
+    provider/remote/foresthub/provider.cpp
+    provider/remote/openai/provider.cpp
+    provider/remote/openai/mapping.cpp
 )
 
 # 2. Add PC Platform Sources

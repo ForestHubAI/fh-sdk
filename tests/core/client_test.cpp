@@ -156,11 +156,11 @@ TEST(ClientTest, Health_MultipleProviders) {
 
 TEST(ClientTest, CreateFactory_WithRemoteConfig) {
     config::ClientConfig cfg;
-    config::RemoteConfig remote;
-    remote.base_url = "https://example.com";
-    remote.api_key = "test-key";
-    remote.supported_models = {"gpt-4o"};
-    cfg.remote = remote;
+    config::ProviderConfig fh;
+    fh.base_url = "https://example.com";
+    fh.api_key = "test-key";
+    fh.supported_models = {"gpt-4o"};
+    cfg.remote.foresthub = fh;
 
     auto http = std::make_shared<tests::MockHttpClient>();
     std::unique_ptr<Client> client = Client::Create(cfg, http);

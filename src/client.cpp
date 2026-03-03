@@ -1,6 +1,7 @@
 #include "foresthub/client.hpp"
 
-#include "foresthub/provider/remote/forest_hub.hpp"
+#include "foresthub/provider/remote/foresthub.hpp"
+#include "foresthub/provider/remote/openai.hpp"
 
 namespace foresthub {
 using std::shared_ptr;
@@ -9,8 +10,13 @@ std::unique_ptr<Client> Client::Create(const config::ClientConfig& cfg,
                                        const std::shared_ptr<core::HttpClient>& http_client) {
     auto client = std::make_unique<Client>();
 
-    if (cfg.remote.HasValue()) {
-        auto provider = std::make_shared<provider::remote::ForestHubProvider>(*cfg.remote, http_client);
+    if (cfg.remote.foresthub.HasValue()) {
+        auto provider = std::make_shared<provider::remote::ForestHubProvider>(*cfg.remote.foresthub, http_client);
+        client->RegisterProvider(provider);
+    }
+
+    if (cfg.remote.openai.HasValue()) {
+        auto provider = std::make_shared<provider::remote::OpenAIProvider>(*cfg.remote.openai, http_client);
         client->RegisterProvider(provider);
     }
 
