@@ -62,6 +62,9 @@ public:
     std::string name;       ///< Name of the tool to invoke.
     std::string arguments;  ///< Raw JSON string.
 
+    /// Identifies this item as a tool call request.
+    InputItemType GetItemType() const override { return InputItemType::kToolCall; }
+
     /// Human-readable summary of this tool call.
     std::string ToString() const override { return "Function tool call: " + name + " with arguments " + arguments; }
 
@@ -83,6 +86,9 @@ public:
     std::string call_id;  ///< Matching call identifier from the request.
     std::string name;     ///< Name of the tool that produced this result.
     json output;          ///< Tool return value (string or structured JSON).
+
+    /// Identifies this item as a tool execution result.
+    InputItemType GetItemType() const override { return InputItemType::kToolResult; }
 
     /// Human-readable summary of the tool output.
     std::string ToString() const override {

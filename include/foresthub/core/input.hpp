@@ -33,10 +33,20 @@ public:
     virtual void ToJson(json& j) const = 0;
 };
 
+/// Type discriminator for InputItem subclasses.
+enum class InputItemType : uint8_t {
+    kString,     ///< Plain text (InputString).
+    kToolCall,   ///< Tool call request from the model (ToolCallRequest).
+    kToolResult  ///< Tool execution result (ToolResult).
+};
+
 /// Abstract base for items inside an InputItems list.
 class InputItem {
 public:
     virtual ~InputItem() = default;
+
+    /// Returns the type discriminator for safe downcasting via static_pointer_cast.
+    virtual InputItemType GetItemType() const = 0;
 
     /// Human-readable text representation of this item.
     virtual std::string ToString() const = 0;
@@ -56,6 +66,8 @@ public:
 
     /// Returns the stored text directly.
     std::string ToString() const override { return text; }
+    /// Identifies this item as a plain text string.
+    InputItemType GetItemType() const override { return InputItemType::kString; }
     /// Identifies this input as a string.
     InputType GetInputType() const override { return InputType::kString; }
     /// Serialize as JSON object with "value" key.

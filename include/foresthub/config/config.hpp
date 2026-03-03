@@ -9,11 +9,21 @@
 namespace foresthub {
 namespace config {
 
-/// Configuration for a remote LLM provider (e.g., ForestHub backend).
-struct RemoteConfig {
-    std::string base_url;                       ///< Backend API base URL.
+/// Shared configuration for any remote LLM provider.
+///
+/// Each provider interprets the fields according to its own API:
+/// - `base_url`: Empty means the provider uses its built-in default.
+/// - `supported_models`: Empty means the provider accepts all models.
+struct ProviderConfig {
     std::string api_key;                        ///< Authentication token.
+    std::string base_url;                       ///< API base URL (empty = provider default).
     std::vector<std::string> supported_models;  ///< Models available through this provider.
+};
+
+/// Container for all remote provider configurations.
+struct RemoteProviders {
+    foresthub::Optional<ProviderConfig> foresthub;  ///< ForestHub backend provider.
+    foresthub::Optional<ProviderConfig> openai;     ///< Direct OpenAI Responses API provider.
 };
 
 /// Configuration for a local LLM execution engine.
@@ -27,8 +37,8 @@ struct LocalConfig {
 
 /// Top-level client configuration controlling which providers are created.
 struct ClientConfig {
-    foresthub::Optional<RemoteConfig> remote;  ///< Optional remote provider configuration.
-    std::vector<LocalConfig> local;            ///< Zero or more local model configurations.
+    RemoteProviders remote;          ///< Remote provider configurations.
+    std::vector<LocalConfig> local;  ///< Zero or more local model configurations.
 };
 
 }  // namespace config
