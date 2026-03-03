@@ -1,6 +1,6 @@
 # ForestHub SDK
 
-C++14 LLM SDK with unified multi-provider interface. Designed for PC and embedded platforms (MCUs).
+C++14 LLM SDK with unified multi-provider interface. Supports ForestHub backend and direct OpenAI (Responses API). Designed for PC and embedded platforms (MCUs).
 
 ## Features
 
@@ -55,11 +55,11 @@ int main() {
         platform->CreateHttpClient(http_cfg);
 
     foresthub::config::ClientConfig cfg;
-    foresthub::config::RemoteConfig remote_cfg;
-    remote_cfg.base_url = "https://fh-backend-368736749905.europe-west1.run.app";
-    remote_cfg.api_key = std::getenv("FORESTHUB_API_KEY");
-    remote_cfg.supported_models = {"gpt-4.1", "gpt-4.1-mini"};
-    cfg.remote = remote_cfg;
+    foresthub::config::ProviderConfig fh_cfg;
+    fh_cfg.base_url = "https://fh-backend-368736749905.europe-west1.run.app";
+    fh_cfg.api_key = std::getenv("FORESTHUB_API_KEY");
+    fh_cfg.supported_models = {"gpt-4.1", "gpt-4.1-mini"};
+    cfg.remote.foresthub = fh_cfg;
 
     std::shared_ptr<foresthub::Client> client = foresthub::Client::Create(cfg, http_client);
 
@@ -103,7 +103,7 @@ if (!result.HasError()) {
 }
 ```
 
-See `examples/pc/chat.cpp` and `examples/pc/agent.cpp` for complete examples.
+See `examples/pc/foresthub/chat.cpp` and `examples/pc/foresthub/agent.cpp` for complete examples. For direct OpenAI usage, see `examples/pc/openai/`.
 
 ## Architecture
 
@@ -153,14 +153,16 @@ Console and Time are always available. Omitting macros saves significant Flash:
 |--------|---------|
 | Full build (all subsystems) | `pio run -d pio/build_test -e esp32dev` |
 | Minimal build (Console+Time) | `pio run -d pio/build_test -e esp32_none` |
-| Chat example | `pio run -d examples/embedded/chat -e esp32dev` |
-| Agent example | `pio run -d examples/embedded/agent -e esp32dev` |
+| ForestHub chat | `pio run -d examples/embedded/foresthub/chat -e esp32dev` |
+| ForestHub agent | `pio run -d examples/embedded/foresthub/agent -e esp32dev` |
+| OpenAI chat | `pio run -d examples/embedded/openai/chat -e esp32dev` |
+| OpenAI agent | `pio run -d examples/embedded/openai/agent -e esp32dev` |
 | HTTP/HTTPS test | `pio run -d examples/embedded/http_test -e esp32dev` |
 | HTTP-only test (no Crypto) | `pio run -d examples/embedded/http_test -e esp32_http_only` |
 | Ticker example | `pio run -d examples/embedded/ticker -e esp32dev` |
 | Portenta H7 | `pio run -d pio/build_test -e portenta_h7_m7` |
 
-Both PC applications require the `FORESTHUB_API_KEY` environment variable.
+ForestHub examples require `FORESTHUB_API_KEY`, OpenAI examples require `OPENAI_API_KEY`.
 
 ## Testing
 
@@ -170,13 +172,13 @@ cmake --build build -j4
 cd build && ctest --output-on-failure
 ```
 
-257 tests across 7 executables:
+281 tests across 7 executables:
 
 | Executable | Tests | Scope |
 |------------|-------|-------|
 | `run_core_tests` | 101 | Input, model, options, tools, types, json, client |
 | `run_agent_tests` | 33 | Agent construction, Runner execution loop |
-| `run_provider_tests` | 22 | ForestHub HTTP, retry, error handling |
+| `run_provider_tests` | 46 | ForestHub + OpenAI HTTP, retry, error handling |
 | `run_platform_tests` | 38 | PC platform factory, subsystems, GPIO, ENABLE macros, timezone |
 | `run_integration_tests` | 7 | Runner-Provider chain, Client routing |
 | `run_contract_tests` | 13 | ForestHub API JSON schema verification |
@@ -192,19 +194,21 @@ include/foresthub/        Public API headers
   config/                 Configuration structs
   core/                   Core abstractions (provider, tools, types, input)
   platform/               HAL interfaces (network, console, time, crypto)
-  provider/remote/        Provider implementations (ForestHub)
+  provider/remote/        Provider implementations (ForestHub, OpenAI)
   util/                   Utilities (Optional<T> polyfill, JSON wrapper, Ticker)
 src/                      Implementation
+  provider/remote/        Provider implementations (foresthub/, openai/)
   platform/pc/            PC implementations (CPR, stdin/stdout, std::chrono)
   platform/arduino/       Arduino implementations (WiFi, Serial, NTP)
   platform/common/        Shared platform code (TLS certs)
 examples/
-  pc/                     PC examples (chat.cpp, agent.cpp)
-  embedded/               Arduino examples (chat/, agent/, http_test/, ticker/ -- PlatformIO projects)
-tests/                    GoogleTest suites (257 tests)
+  pc/                     PC examples (foresthub/, openai/ -- chat + agent per provider)
+  embedded/               Arduino examples (foresthub/, openai/ -- PlatformIO projects per provider)
+                          Standalone: blink/, http_test/, ticker/
+tests/                    GoogleTest suites (281 tests)
   core/                   Core tests (input, model, options, tools, types, json, client)
   agent/                  Agent framework tests (agent, runner)
-  provider/               Provider tests (ForestHub HTTP, retry, errors)
+  provider/               Provider tests (ForestHub + OpenAI HTTP, retry, errors)
   platform/               Platform tests (PC factory, subsystems)
   integration/            Integration tests (Runner-Provider, Client routing)
   contract/               Contract tests (ForestHub API JSON schema)
