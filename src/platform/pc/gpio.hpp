@@ -15,9 +15,9 @@ public:
     /// Stores the pin mode.
     void SetPinMode(PinId pin, PinMode mode) override;
     /// Stores the value for later read-back.
-    void DigitalWrite(PinId pin, PinValue value) override;
-    /// Returns the last written value, or kLow if never written.
-    PinValue DigitalRead(PinId pin) const override;
+    void DigitalWrite(PinId pin, int value) override;
+    /// Returns the last written value, or 0 if never written.
+    int DigitalRead(PinId pin) const override;
     /// Returns the last written value as int, or 0 if never written.
     int AnalogRead(PinId pin) const override;
     /// Stores the config. Always succeeds.

@@ -27,20 +27,12 @@ void ArduinoGpio::SetPinMode(PinId pin, PinMode mode) {
     }
 }
 
-void ArduinoGpio::DigitalWrite(PinId pin, PinValue value) {
-    uint8_t hw_pin = static_cast<uint8_t>(pin);
-    switch (value) {
-        case PinValue::kLow:
-            ::digitalWrite(hw_pin, LOW);
-            return;
-        case PinValue::kHigh:
-            ::digitalWrite(hw_pin, HIGH);
-            return;
-    }
+void ArduinoGpio::DigitalWrite(PinId pin, int value) {
+    ::digitalWrite(static_cast<uint8_t>(pin), value ? HIGH : LOW);
 }
 
-PinValue ArduinoGpio::DigitalRead(PinId pin) const {
-    return (::digitalRead(static_cast<uint8_t>(pin)) == HIGH) ? PinValue::kHigh : PinValue::kLow;
+int ArduinoGpio::DigitalRead(PinId pin) const {
+    return (::digitalRead(static_cast<uint8_t>(pin)) == HIGH) ? 1 : 0;
 }
 
 int ArduinoGpio::AnalogRead(PinId pin) const {

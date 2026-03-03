@@ -10,16 +10,16 @@ void PcGpio::SetPinMode(PinId pin, PinMode mode) {
     pin_modes_[pin] = mode;
 }
 
-void PcGpio::DigitalWrite(PinId pin, PinValue value) {
-    pin_values_[pin] = static_cast<int>(value);
+void PcGpio::DigitalWrite(PinId pin, int value) {
+    pin_values_[pin] = value;
 }
 
-PinValue PcGpio::DigitalRead(PinId pin) const {
+int PcGpio::DigitalRead(PinId pin) const {
     auto it = pin_values_.find(pin);
     if (it != pin_values_.end()) {
-        return static_cast<PinValue>(it->second);
+        return it->second;
     }
-    return PinValue::kLow;
+    return 0;
 }
 
 int PcGpio::AnalogRead(PinId pin) const {

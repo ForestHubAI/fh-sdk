@@ -25,13 +25,11 @@ static constexpr bool kLedActiveLow = false;
 
 static constexpr unsigned long kBlinkIntervalMs = 2000;  // Blink every 2 second
 
-using foresthub::platform::PinValue;
-
-static PinValue LedOn() {
-    return kLedActiveLow ? PinValue::kLow : PinValue::kHigh;
+static int LedOn() {
+    return kLedActiveLow ? 0 : 1;
 }
-static PinValue LedOff() {
-    return kLedActiveLow ? PinValue::kHigh : PinValue::kLow;
+static int LedOff() {
+    return kLedActiveLow ? 1 : 0;
 }
 
 // -- Platform context (file-scope so loop() can access it) --------------------

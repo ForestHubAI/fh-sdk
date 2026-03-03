@@ -31,16 +31,16 @@ TEST(GpioTest, DigitalWriteReadRoundTrip) {
     std::shared_ptr<PlatformContext> ctx = CreatePlatform();
     ctx->gpio->SetPinMode(13, PinMode::kOutput);
 
-    ctx->gpio->DigitalWrite(13, PinValue::kHigh);
-    EXPECT_EQ(ctx->gpio->DigitalRead(13), PinValue::kHigh);
+    ctx->gpio->DigitalWrite(13, 1);
+    EXPECT_EQ(ctx->gpio->DigitalRead(13), 1);
 
-    ctx->gpio->DigitalWrite(13, PinValue::kLow);
-    EXPECT_EQ(ctx->gpio->DigitalRead(13), PinValue::kLow);
+    ctx->gpio->DigitalWrite(13, 0);
+    EXPECT_EQ(ctx->gpio->DigitalRead(13), 0);
 }
 
 TEST(GpioTest, DigitalReadDefaultIsLow) {
     std::shared_ptr<PlatformContext> ctx = CreatePlatform();
-    EXPECT_EQ(ctx->gpio->DigitalRead(99), PinValue::kLow);
+    EXPECT_EQ(ctx->gpio->DigitalRead(99), 0);
 }
 
 // --- Analog read ---
@@ -79,11 +79,11 @@ TEST(GpioTest, PwmWriteDoesNotCrash) {
 
 TEST(GpioTest, MultiplePinsIndependent) {
     std::shared_ptr<PlatformContext> ctx = CreatePlatform();
-    ctx->gpio->DigitalWrite(1, PinValue::kHigh);
-    ctx->gpio->DigitalWrite(2, PinValue::kLow);
+    ctx->gpio->DigitalWrite(1, 1);
+    ctx->gpio->DigitalWrite(2, 0);
 
-    EXPECT_EQ(ctx->gpio->DigitalRead(1), PinValue::kHigh);
-    EXPECT_EQ(ctx->gpio->DigitalRead(2), PinValue::kLow);
+    EXPECT_EQ(ctx->gpio->DigitalRead(1), 1);
+    EXPECT_EQ(ctx->gpio->DigitalRead(2), 0);
 }
 
 TEST(GpioTest, LargePinIdWorks) {
@@ -91,8 +91,8 @@ TEST(GpioTest, LargePinIdWorks) {
     PinId large_pin = 0xFFFF0001;
 
     ctx->gpio->SetPinMode(large_pin, PinMode::kOutput);
-    ctx->gpio->DigitalWrite(large_pin, PinValue::kHigh);
-    EXPECT_EQ(ctx->gpio->DigitalRead(large_pin), PinValue::kHigh);
+    ctx->gpio->DigitalWrite(large_pin, 1);
+    EXPECT_EQ(ctx->gpio->DigitalRead(large_pin), 1);
 }
 
 }  // namespace

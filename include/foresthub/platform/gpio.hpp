@@ -13,12 +13,6 @@ namespace platform {
 /// various microcontroller families while remaining trivially copyable.
 using PinId = uint32_t;
 
-/// Logic level of a digital pin.
-enum class PinValue : uint8_t {
-    kLow = 0,   ///< Logic low (typically 0 V).
-    kHigh = 1,  ///< Logic high (typically VCC).
-};
-
 /// Direction and pull configuration of a pin.
 ///
 /// Values are platform-independent; implementations map them to
@@ -51,13 +45,13 @@ public:
 
     /// Set a digital output pin to the given logic level.
     /// @param pin Target pin identifier (must be configured as output).
-    /// @param value Logic level to drive.
-    virtual void DigitalWrite(PinId pin, PinValue value) = 0;
+    /// @param value Logic level to drive (0 = low, 1 = high).
+    virtual void DigitalWrite(PinId pin, int value) = 0;
 
     /// Read the current logic level of a digital input pin.
     /// @param pin Target pin identifier.
-    /// @return The logic level present on the pin.
-    virtual PinValue DigitalRead(PinId pin) const = 0;
+    /// @return 0 for low, 1 for high.
+    virtual int DigitalRead(PinId pin) const = 0;
 
     /// Read the raw ADC value from an analog input pin.
     /// @param pin Target pin identifier (must support analog input).

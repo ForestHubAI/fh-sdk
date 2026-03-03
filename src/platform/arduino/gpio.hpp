@@ -17,9 +17,9 @@ public:
     /// Maps PinMode enum to Arduino constant and applies it.
     void SetPinMode(PinId pin, PinMode mode) override;
     /// Drives pin to the given logic level.
-    void DigitalWrite(PinId pin, PinValue value) override;
-    /// Reads logic level from pin.
-    PinValue DigitalRead(PinId pin) const override;
+    void DigitalWrite(PinId pin, int value) override;
+    /// Reads logic level from pin (0 = low, 1 = high).
+    int DigitalRead(PinId pin) const override;
     /// Reads raw ADC value from analog pin.
     int AnalogRead(PinId pin) const override;
     /// Configures PWM peripheral (LEDC on ESP32, analogWrite on Portenta H7).

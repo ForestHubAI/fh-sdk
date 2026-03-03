@@ -32,7 +32,7 @@ void setup() {
 
 #ifdef FORESTHUB_ENABLE_GPIO
     platform->gpio->SetPinMode(2, foresthub::platform::PinMode::kOutput);
-    platform->gpio->DigitalWrite(2, foresthub::platform::PinValue::kHigh);
+    platform->gpio->DigitalWrite(2, 1);
     platform->console->Printf("GPIO: pin 2 HIGH\n");
 #endif
 
