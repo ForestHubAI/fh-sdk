@@ -7,86 +7,76 @@
 #include "foresthub/client.hpp"
 #include "foresthub/config/config.hpp"
 #include "foresthub/core/input.hpp"
+#include "foresthub/core/tools.hpp"
 #include "foresthub/util/json.hpp"
 
 using json = nlohmann::json;
 
+namespace fh = foresthub;
+
 enum State {
     kIdle,
     kAgent1,
-    kLedOff,
-    kLedOn,
 };
 
 struct Context {
-    json agent_1_result;
+    json agent1_result;
 };
 
-static std::shared_ptr<foresthub::core::Input> llm_input;
-static std::unique_ptr<foresthub::Client> fh_client;
-static std::shared_ptr<foresthub::agent::Agent> agent_agent_1;
-static std::shared_ptr<foresthub::agent::Runner> runner_agent_1;
+static std::shared_ptr<fh::platform::PlatformContext> platform;
 
-static std::shared_ptr<foresthub::platform::PlatformContext> platform;
+static std::shared_ptr<fh::core::Input> llm_input;
+static std::shared_ptr<fh::Client> fh_client;
+static std::shared_ptr<fh::agent::Agent> agent_agent1;
+static std::shared_ptr<fh::agent::Runner> runner_agent1;
+
+json ToolFn_readPin1(const json&) {
+    return json{{"value", platform->gpio->AnalogRead(2)}};
+}
+
 static State state = kIdle;
 static Context ctx;
 
-void WorkflowInit(std::shared_ptr<foresthub::platform::PlatformContext> p) {
+void WorkflowInit(std::shared_ptr<fh::platform::PlatformContext> p) {
     platform = p;
 
-    foresthub::platform::HttpClientConfig http_cfg;
+    fh::platform::HttpClientConfig http_cfg;
     http_cfg.host = "test.foresthub.io";
     auto http_client = platform->CreateHttpClient(http_cfg);
 
-    foresthub::config::RemoteConfig remote_cfg;
+    fh::config::RemoteConfig remote_cfg;
     remote_cfg.base_url = "https://test.foresthub.io";
     remote_cfg.api_key = kForesthubApiKey;
     remote_cfg.supported_models = {"gpt-4"};
 
-    foresthub::config::ClientConfig client_cfg;
+    fh::config::ClientConfig client_cfg;
     client_cfg.remote = remote_cfg;
-    fh_client = foresthub::Client::Create(client_cfg, http_client);
-    agent_agent_1 = std::make_shared<foresthub::agent::Agent>("agent_1");
-    agent_agent_1->WithInstructions("Decide: turn_on or turn_off.");
-    foresthub::core::ResponseFormat rf_agent_1;
-    rf_agent_1.name = "agent_1_output";
-    rf_agent_1.schema = json::parse(
-        R"({"properties":{"choice":{"enum":["turn_on","turn_off"],"type":"string"}},"required":["choice"],"type":"object"})");
-    agent_agent_1->WithResponseFormat(rf_agent_1);
-    runner_agent_1 = std::make_shared<foresthub::agent::Runner>(fh_client, "gpt-4");
-    platform->gpio->SetPinMode(13, foresthub::platform::PinMode::kOutput);
+    fh_client = fh::Client::Create(client_cfg, http_client);
+    agent_agent1 = std::make_shared<fh::agent::Agent>("agent1");
+    agent_agent1->WithInstructions("You are a helpful assistant.");
+    auto tool_readPin1 = fh::core::NewFunctionTool<json, json>(
+        "readPin1", "Read temperature sensor", json::parse(R"({"type":"object","properties":{}})"), ToolFn_readPin1);
+    agent_agent1->AddTool(tool_readPin1);
+    runner_agent1 = std::make_shared<fh::agent::Runner>(fh_client, "gpt-4");
+    platform->gpio->SetPinMode(2, fh::platform::PinMode::kInput);
 }
 
 void WorkflowTick() {
     switch (state) {
         case kIdle:
-            llm_input = std::make_shared<foresthub::core::InputString>("Should LED be on or off?");
+            llm_input = std::make_shared<fh::core::InputString>("Check temperature");
             state = kAgent1;
             break;
         case kAgent1: {
-            auto result = runner_agent_1->Run(agent_agent_1, llm_input);
+            auto result = runner_agent1->Run(agent_agent1, llm_input);
             if (result.HasError()) {
                 platform->console->Printf("Agent error: %s\n", result.error.c_str());
                 state = kIdle;
             } else {
-                ctx.agent_1_result = result.result->final_output;
-                if (ctx.agent_1_result.value("choice", "") == "turn_on") {
-                    llm_input.reset();
-                    state = kLedOn;
-                } else if (ctx.agent_1_result.value("choice", "") == "turn_off") {
-                    llm_input.reset();
-                    state = kLedOff;
-                }
+                ctx.agent1_result = result.result->final_output;
+                state = kIdle;
             }
             break;
         }
-        case kLedOff:
-            platform->gpio->DigitalWrite(13, 0);
-            state = kIdle;
-            break;
-        case kLedOn:
-            platform->gpio->DigitalWrite(13, 1);
-            state = kIdle;
-            break;
     }
 }

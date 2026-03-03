@@ -5,13 +5,15 @@
 #include "env.hpp"
 #include "foresthub/platform/platform.hpp"
 
-static std::shared_ptr<foresthub::platform::PlatformContext> platform;
+namespace fh = foresthub;
+
+static std::shared_ptr<fh::platform::PlatformContext> platform;
 
 void setup() {
-    foresthub::platform::PlatformConfig config;
+    fh::platform::PlatformConfig config;
     config.network.ssid = kWifiSsid;
     config.network.password = kWifiPassword;
-    platform = foresthub::platform::CreatePlatform(config);
+    platform = fh::platform::CreatePlatform(config);
 
     platform->console->Begin();
 
