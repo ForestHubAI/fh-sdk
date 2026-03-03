@@ -1,8 +1,8 @@
 // =============================================================================
-// ForestHub PC Chat Example
+// OpenAI PC Chat Example
 // =============================================================================
 // Simple chat request on PC. Sends a single prompt to the LLM and prints the
-// response. Requires FORESTHUB_API_KEY environment variable.
+// response. Requires OPENAI_API_KEY environment variable.
 // =============================================================================
 
 #include <cstdlib>
@@ -15,22 +15,22 @@
 #include "foresthub/core/types.hpp"
 
 // Application Shared Helper
-#include "platform_setup.hpp"
+#include "../platform_setup.hpp"
 
 int main() {  // NOLINT(bugprone-exception-escape)
     // 1. Initialize Platform via HAL Factory
     auto platform = app::SetupPlatform();
 
     // Print banner
-    platform->console->Printf("=== ForestHub Chat (PC Platform) ===\n\n");
+    platform->console->Printf("=== OpenAI Chat (PC Platform) ===\n\n");
     platform->console->Flush();
 
     // 2. Load API Key from Environment
     // Security Best Practice: Never hardcode API keys in source code.
-    const char* api_key_env = std::getenv("FORESTHUB_API_KEY");
+    const char* api_key_env = std::getenv("OPENAI_API_KEY");
     if (!api_key_env) {
-        platform->console->Printf("[ERROR] Environment variable 'FORESTHUB_API_KEY' is missing.\n");
-        platform->console->Printf("        Please export it before running: export FORESTHUB_API_KEY=...\n");
+        platform->console->Printf("[ERROR] Environment variable 'OPENAI_API_KEY' is missing.\n");
+        platform->console->Printf("        Please export it before running: export OPENAI_API_KEY=...\n");
         platform->console->Flush();
         return 1;
     }
@@ -38,22 +38,21 @@ int main() {  // NOLINT(bugprone-exception-escape)
 
     // 3. Create HTTP Client via HAL
     foresthub::platform::HttpClientConfig http_cfg;
-    http_cfg.host = "fh-backend-368736749905.europe-west1.run.app";
+    http_cfg.host = "api.openai.com";
     auto http_client = platform->CreateHttpClient(http_cfg);
 
     // 4. Configure the Client
     foresthub::config::ClientConfig cfg;
 
-    // Configure the Remote Provider (ForestHub)
-    foresthub::config::RemoteConfig remote_cfg;
-    remote_cfg.base_url = "https://fh-backend-368736749905.europe-west1.run.app";
-    remote_cfg.api_key = api_key;
+    // Configure the Remote Provider (OpenAI)
+    foresthub::config::ProviderConfig oai_cfg;
+    oai_cfg.api_key = api_key;
 
     // Define which models should be routed to this provider.
     // The client uses this list to decide where to send the request.
-    remote_cfg.supported_models = {"gpt-4.1", "gpt-4.1-mini", "gpt-4o", "gpt-4o-mini"};
+    oai_cfg.supported_models = {"gpt-4.1", "gpt-4.1-mini", "gpt-4o", "gpt-4o-mini"};
 
-    cfg.remote = remote_cfg;
+    cfg.remote.openai = oai_cfg;
 
     // 5. Create the Client Instance
     // This factory method wires everything together (Providers + HttpClient).

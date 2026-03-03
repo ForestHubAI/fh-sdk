@@ -107,11 +107,11 @@ void setup() {
 
     // 6. Configure ForestHub provider
     foresthub::config::ClientConfig cfg;
-    foresthub::config::RemoteConfig remote_cfg;
-    remote_cfg.base_url = "https://fh-backend-368736749905.europe-west1.run.app";
-    remote_cfg.api_key = kForesthubApiKey;
-    remote_cfg.supported_models = {"gpt-4.1", "gpt-4.1-mini", "gpt-4o", "gpt-4o-mini"};
-    cfg.remote = remote_cfg;
+    foresthub::config::ProviderConfig fh_cfg;
+    fh_cfg.base_url = "https://fh-backend-368736749905.europe-west1.run.app";
+    fh_cfg.api_key = kForesthubApiKey;
+    fh_cfg.supported_models = {"gpt-4.1", "gpt-4.1-mini", "gpt-4o", "gpt-4o-mini"};
+    cfg.remote.foresthub = fh_cfg;
 
     std::shared_ptr<foresthub::Client> client = foresthub::Client::Create(cfg, http_client);
 

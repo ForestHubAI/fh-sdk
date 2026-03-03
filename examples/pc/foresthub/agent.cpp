@@ -19,7 +19,7 @@
 #include "foresthub/core/tools.hpp"
 
 // Application Shared Helper
-#include "platform_setup.hpp"
+#include "../platform_setup.hpp"
 
 using json = nlohmann::json;
 
@@ -78,13 +78,13 @@ int main() {  // NOLINT(bugprone-exception-escape)
     auto http_client = platform->CreateHttpClient(http_cfg);
 
     foresthub::config::ClientConfig cfg;
-    foresthub::config::RemoteConfig remote_cfg;
-    remote_cfg.base_url = "https://fh-backend-368736749905.europe-west1.run.app";
+    foresthub::config::ProviderConfig fh_cfg;
+    fh_cfg.base_url = "https://fh-backend-368736749905.europe-west1.run.app";
     std::string api_key = api_key_env;
-    remote_cfg.api_key = api_key;
+    fh_cfg.api_key = api_key;
     // Ensure selected models support tool calling
-    remote_cfg.supported_models = {"gpt-4.1", "gpt-4.1-mini", "gpt-4o", "gpt-4o-mini"};
-    cfg.remote = remote_cfg;
+    fh_cfg.supported_models = {"gpt-4.1", "gpt-4.1-mini", "gpt-4o", "gpt-4o-mini"};
+    cfg.remote.foresthub = fh_cfg;
 
     std::shared_ptr<foresthub::Client> client = foresthub::Client::Create(cfg, http_client);
 

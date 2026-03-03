@@ -1,19 +1,16 @@
 # ==============================================================================
-# PC Examples (Simple Chat + Agent with Tools)
+# PC Examples (ForestHub + OpenAI — Chat + Agent with Tools)
 # ==============================================================================
 
-add_executable(foresthub_chat chat.cpp)
-add_executable(foresthub_agent agent.cpp)
-add_executable(foresthub_output_debug
-    output_debug.cpp
-    ../embedded/output/src/workflow_logic.cpp
-)
+# --- ForestHub Provider ---
+add_executable(foresthub_chat foresthub/chat.cpp)
+add_executable(foresthub_agent foresthub/agent.cpp)
+
+# --- OpenAI Provider ---
+add_executable(foresthub_chat_openai openai/chat.cpp)
+add_executable(foresthub_agent_openai openai/agent.cpp)
 
 target_link_libraries(foresthub_chat PRIVATE foresthub_core)
 target_link_libraries(foresthub_agent PRIVATE foresthub_core)
-target_link_libraries(foresthub_output_debug PRIVATE foresthub_core)
-
-# workflow_logic.cpp includes headers from the embedded output example
-target_include_directories(foresthub_output_debug PRIVATE
-    ${CMAKE_SOURCE_DIR}/examples/embedded/output/include
-)
+target_link_libraries(foresthub_chat_openai PRIVATE foresthub_core)
+target_link_libraries(foresthub_agent_openai PRIVATE foresthub_core)

@@ -1,5 +1,5 @@
 // =============================================================================
-// ForestHub Embedded Chat Example
+// OpenAI Embedded Chat Example
 // =============================================================================
 // Simple chat request on Arduino (ESP32, Portenta H7).
 // Sends a single prompt to the LLM and prints the response via the console HAL.
@@ -31,7 +31,7 @@ void setup() {
 
     // 2. Initialize console
     platform->console->Begin();
-    platform->console->Printf("=== ForestHub Embedded Chat ===\n\n");
+    platform->console->Printf("=== OpenAI Embedded Chat ===\n\n");
     platform->console->Flush();
 
     // 3. Connect network (retry up to 3 times — Portenta H7 WiFi is slow to initialize)
@@ -68,16 +68,15 @@ void setup() {
 
     // 5. Create HTTP client via HAL
     foresthub::platform::HttpClientConfig http_cfg;
-    http_cfg.host = "fh-backend-368736749905.europe-west1.run.app";
+    http_cfg.host = "api.openai.com";
     auto http_client = platform->CreateHttpClient(http_cfg);
 
-    // 6. Configure ForestHub provider
+    // 6. Configure OpenAI provider
     foresthub::config::ClientConfig cfg;
-    foresthub::config::RemoteConfig remote_cfg;
-    remote_cfg.base_url = "https://fh-backend-368736749905.europe-west1.run.app";
-    remote_cfg.api_key = kForesthubApiKey;
-    remote_cfg.supported_models = {"gpt-4.1", "gpt-4.1-mini", "gpt-4o", "gpt-4o-mini"};
-    cfg.remote = remote_cfg;
+    foresthub::config::ProviderConfig oai_cfg;
+    oai_cfg.api_key = kOpenaiApiKey;
+    oai_cfg.supported_models = {"gpt-4.1", "gpt-4.1-mini", "gpt-4o", "gpt-4o-mini"};
+    cfg.remote.openai = oai_cfg;
 
     std::unique_ptr<foresthub::Client> client = foresthub::Client::Create(cfg, http_client);
 
