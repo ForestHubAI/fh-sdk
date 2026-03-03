@@ -16,15 +16,10 @@ namespace remote {
 /// Provider implementation that communicates with the ForestHub backend via HTTP.
 class ForestHubProvider : public foresthub::core::Provider {
 public:
-    std::shared_ptr<foresthub::core::HttpClient> http;  ///< Injected HTTP client.
-    std::string base_url;                               ///< Backend API base URL.
-    std::string api_key;                                ///< Authentication token.
-    std::vector<std::string> supported_models;          ///< Models this provider can serve.
-
     /// Construct a ForestHub provider from configuration.
-    /// @param cfg Remote provider configuration.
+    /// @param cfg Provider configuration (api_key, base_url, supported_models).
     /// @param http_client HTTP implementation for API calls.
-    ForestHubProvider(const config::RemoteConfig& cfg, std::shared_ptr<foresthub::core::HttpClient> http_client);
+    ForestHubProvider(const config::ProviderConfig& cfg, std::shared_ptr<foresthub::core::HttpClient> http_client);
 
     /// Returns "forest-hub" as the provider identifier.
     core::ProviderID ProviderId() const override;
@@ -43,6 +38,10 @@ public:
     bool SupportsModel(const core::ModelID& model) const override;
 
 private:
+    std::shared_ptr<foresthub::core::HttpClient> http_;
+    std::string api_key_;
+    std::string base_url_;
+    std::vector<std::string> supported_models_;
     /// Pre-built HTTP headers (Content-Type, Authorization) set once in constructor.
     core::HttpClient::Headers cached_headers_;
 };

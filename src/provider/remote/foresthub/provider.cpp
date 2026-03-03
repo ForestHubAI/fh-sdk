@@ -1,9 +1,8 @@
-#include "foresthub/provider/remote/forest_hub.hpp"
-
 #include <algorithm>
 #include <utility>
 
 #include "foresthub/core/serialization.hpp"
+#include "foresthub/provider/remote/foresthub.hpp"
 
 namespace foresthub {
 namespace provider {
@@ -11,16 +10,16 @@ namespace remote {
 
 using json = foresthub::core::json;
 
-ForestHubProvider::ForestHubProvider(const config::RemoteConfig& cfg, std::shared_ptr<core::HttpClient> http_client)
-    : http(std::move(http_client)),
-      base_url(cfg.base_url),
-      api_key(cfg.api_key),
-      supported_models(cfg.supported_models) {
+ForestHubProvider::ForestHubProvider(const config::ProviderConfig& cfg, std::shared_ptr<core::HttpClient> http_client)
+    : http_(std::move(http_client)),
+      api_key_(cfg.api_key),
+      base_url_(cfg.base_url),
+      supported_models_(cfg.supported_models) {
     // Strip trailing slash to avoid double slashes when appending paths.
-    if (!base_url.empty() && base_url.back() == '/') {
-        base_url.pop_back();
+    if (!base_url_.empty() && base_url_.back() == '/') {
+        base_url_.pop_back();
     }
-    cached_headers_ = {{"Content-Type", "application/json"}, {"Device-Key", api_key}, {"Accept", "application/json"}};
+    cached_headers_ = {{"Content-Type", "application/json"}, {"Device-Key", api_key_}, {"Accept", "application/json"}};
 }
 
 core::ProviderID ForestHubProvider::ProviderId() const {
@@ -28,8 +27,8 @@ core::ProviderID ForestHubProvider::ProviderId() const {
 }
 
 std::string ForestHubProvider::Health() const {
-    std::string url = base_url + "/llm/health";
-    core::HttpResponse resp = http->Get(url, cached_headers_);
+    std::string url = base_url_ + "/llm/health";
+    core::HttpResponse resp = http_->Get(url, cached_headers_);
     if (resp.status_code >= 200 && resp.status_code < 300) {
         return "";
     }
@@ -37,15 +36,15 @@ std::string ForestHubProvider::Health() const {
 }
 
 bool ForestHubProvider::SupportsModel(const core::ModelID& model) const {
-    if (supported_models.empty()) {
+    if (supported_models_.empty()) {
         return false;
     }
 
-    return std::find(supported_models.begin(), supported_models.end(), model) != supported_models.end();
+    return std::find(supported_models_.begin(), supported_models_.end(), model) != supported_models_.end();
 }
 
 std::shared_ptr<core::ChatResponse> ForestHubProvider::Chat(const core::ChatRequest& req) {
-    std::string url = base_url + "/llm/generate";
+    std::string url = base_url_ + "/llm/generate";
 
     json j_req = req;
     std::string body = j_req.dump();
@@ -57,10 +56,10 @@ std::shared_ptr<core::ChatResponse> ForestHubProvider::Chat(const core::ChatRequ
 
     while (attempts < max_attempts) {
         if (attempts > 0) {
-            http->Delay(500 * attempts);
+            http_->Delay(500 * attempts);
         }
 
-        resp = http->Post(url, cached_headers_, body);
+        resp = http_->Post(url, cached_headers_, body);
 
         if (resp.status_code >= 200 && resp.status_code < 300) {
             break;

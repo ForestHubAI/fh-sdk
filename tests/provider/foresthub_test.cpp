@@ -1,4 +1,4 @@
-#include "foresthub/provider/remote/forest_hub.hpp"
+#include "foresthub/provider/remote/foresthub.hpp"
 
 #include <gtest/gtest.h>
 
@@ -19,7 +19,7 @@ using json = nlohmann::json;
 // Helper: create a ForestHubProvider with the given MockHttpClient and config.
 struct TestFixture {
     std::shared_ptr<tests::MockHttpClient> mock_http = std::make_shared<tests::MockHttpClient>();
-    config::RemoteConfig cfg;
+    config::ProviderConfig cfg;
 
     TestFixture() {
         cfg.base_url = "https://api.example.com";
@@ -53,16 +53,17 @@ TEST(ForestHubProviderTest, Construction) {
     ForestHubProvider provider = fixture.MakeProvider();
 
     EXPECT_EQ(provider.ProviderId(), "forest-hub");
-    EXPECT_EQ(provider.base_url, "https://api.example.com");
-    EXPECT_EQ(provider.api_key, "test-key-123");
 }
 
 TEST(ForestHubProviderTest, BaseUrlTrailingSlashStripped) {
     TestFixture fixture;
     fixture.cfg.base_url = "https://api.example.com/";
+    fixture.mock_http->get_responses.push_back({200, "OK", {}});
     ForestHubProvider provider = fixture.MakeProvider();
 
-    EXPECT_EQ(provider.base_url, "https://api.example.com");
+    // Verify via Health URL (no double slash)
+    provider.Health();
+    EXPECT_EQ(fixture.mock_http->last_url, "https://api.example.com/llm/health");
 }
 
 // --- SupportsModel ---
@@ -316,7 +317,7 @@ TEST(ForestHubProviderTest, Chat_DelayCalledOnRetry) {
     mock->post_responses.push_back({500, "error", {}});
     mock->post_responses.push_back({200, TestFixture::ValidResponseBody(), {}});
 
-    config::RemoteConfig cfg;
+    config::ProviderConfig cfg;
     cfg.base_url = "https://api.example.com";
     cfg.api_key = "key";
     cfg.supported_models = {"gpt-4"};
