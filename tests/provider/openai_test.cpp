@@ -50,10 +50,15 @@ struct TestFixture {
         return j.dump();
     }
 
-    // A response body with a web_search_call output item.
+    // A response body with a web_search_call output item including queries.
     static std::string WebSearchResponseBody() {
         json j = {{"id", "resp_ws1"},
-                  {"output", {{{"type", "web_search_call"}, {"id", "ws_123"}, {"status", "completed"}}}},
+                  {"output",
+                   {{{"type", "web_search_call"},
+                     {"id", "ws_123"},
+                     {"status", "completed"},
+                     {"action", "search"},
+                     {"queries", json::array({"ESP32 deep sleep power consumption"})}}}},
                   {"usage", {{"total_tokens", 20}}}};
         return j.dump();
     }
@@ -228,13 +233,14 @@ TEST(OpenAIProvider, ChatWithOptions) {
 
     auto input = std::make_shared<core::InputString>("Hello");
     core::ChatRequest req("gpt-4o", input);
-    req.WithTemperature(0.7f).WithMaxTokens(1000);
+    req.WithTemperature(0.7f).WithMaxTokens(1000).WithTopP(0.9f);
     provider.Chat(req);
 
     json body = json::parse(f.mock_http->last_body, nullptr, false);
     ASSERT_FALSE(body.is_discarded());
     EXPECT_EQ(body.value("max_output_tokens", 0), 1000);
     EXPECT_FLOAT_EQ(body.value("temperature", 0.0f), 0.7f);
+    EXPECT_FLOAT_EQ(body.value("top_p", 0.0f), 0.9f);
 }
 
 TEST(OpenAIProvider, ChatWithTools) {
@@ -367,6 +373,8 @@ TEST(OpenAIProvider, ChatWebSearchResponse) {
     ASSERT_NE(resp, nullptr);
     ASSERT_EQ(resp->tools_called.size(), 1u);
     EXPECT_EQ(resp->tools_called[0]->ToolName(), "web_search");
+    auto ws = std::static_pointer_cast<core::WebSearchToolCall>(resp->tools_called[0]);
+    EXPECT_EQ(ws->query, "ESP32 deep sleep power consumption");
 }
 
 // --- Chat: Error Paths ---

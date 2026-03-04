@@ -396,6 +396,32 @@ TEST(JsonTest, DeserializeChatResponse_ArgumentsAsObject) {
     EXPECT_EQ(resp.tool_call_requests[0].arguments, R"({"x":1})");
 }
 
+TEST(JsonTest, DeserializeChatResponse_InternalToolCalls) {
+    json j = {{"text", "Based on my research..."},
+              {"responseID", "resp_1"},
+              {"tokensUsed", 200},
+              {"internalToolCalls",
+               json::array({{{"type", "web_search"}, {"query", "ESP32 power consumption deep sleep"}}})}};
+
+    ChatResponse resp = j.get<ChatResponse>();
+
+    EXPECT_EQ(resp.text, "Based on my research...");
+    ASSERT_EQ(resp.tools_called.size(), 1);
+    EXPECT_EQ(resp.tools_called[0]->ToolName(), "web_search");
+    auto ws = std::static_pointer_cast<WebSearchToolCall>(resp.tools_called[0]);
+    EXPECT_EQ(ws->query, "ESP32 power consumption deep sleep");
+}
+
+TEST(JsonTest, DeserializeChatResponse_InternalToolCalls_UnknownTypeIgnored) {
+    json j = {{"text", "Hello"},
+              {"internalToolCalls", json::array({{{"type", "code_interpreter"}, {"code", "print(1)"}}})}};
+
+    ChatResponse resp = j.get<ChatResponse>();
+
+    EXPECT_EQ(resp.text, "Hello");
+    EXPECT_TRUE(resp.tools_called.empty());
+}
+
 TEST(JsonTest, SerializeFileUploadRequest) {
     FileUploadRequest req;
     req.file_name = "data.csv";

@@ -71,6 +71,9 @@ static void IncludeOptions(json& j, const core::Options& opts) {
     if (opts.temperature) {
         j["temperature"] = *opts.temperature;
     }
+    if (opts.top_p) {
+        j["top_p"] = *opts.top_p;
+    }
 }
 
 // Extracts tool calls from the Responses API output array.
@@ -87,6 +90,10 @@ static void ExtractToolCalls(const json& output, std::vector<std::shared_ptr<cor
             tool_call_requests.push_back(std::move(tcr));
         } else if (type == "web_search_call") {
             auto ws = std::make_shared<core::WebSearchToolCall>();
+            // OpenAI returns queries as an array; join into a single string.
+            if (item.contains("queries") && item["queries"].is_array() && !item["queries"].empty()) {
+                ws->query = item["queries"][0].get<std::string>();
+            }
             tools_called.push_back(std::move(ws));
         }
     }

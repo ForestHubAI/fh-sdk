@@ -194,6 +194,17 @@ void from_json(const json& j, ChatResponse& resp) {
             resp.tool_call_requests.push_back(tool_call);
         }
     }
+
+    if (j.contains("internalToolCalls") && j["internalToolCalls"].is_array()) {
+        for (const json& item : j["internalToolCalls"]) {
+            std::string type = item.value("type", "");
+            if (type == "web_search") {
+                auto ws = std::make_shared<WebSearchToolCall>();
+                ws->query = item.value("query", "");
+                resp.tools_called.push_back(std::move(ws));
+            }
+        }
+    }
 }
 
 // 4. File Operations
