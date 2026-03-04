@@ -62,6 +62,7 @@ gtest_discover_tests(run_util_tests)
 
 add_executable(run_provider_tests
     provider/foresthub_test.cpp
+    provider/gemini_test.cpp
     provider/openai_test.cpp
 )
 

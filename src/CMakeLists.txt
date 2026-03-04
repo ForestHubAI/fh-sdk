@@ -10,6 +10,8 @@ set(FORESTHUB_SOURCES
     agent/runner.cpp
     core/serialization.cpp
     provider/remote/foresthub/provider.cpp
+    provider/remote/gemini/provider.cpp
+    provider/remote/gemini/mapping.cpp
     provider/remote/openai/provider.cpp
     provider/remote/openai/mapping.cpp
 )

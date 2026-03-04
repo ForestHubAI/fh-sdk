@@ -23,7 +23,9 @@ struct ProviderConfig {
 /// Container for all remote provider configurations.
 struct RemoteProviders {
     foresthub::Optional<ProviderConfig> foresthub;  ///< ForestHub backend provider.
-    foresthub::Optional<ProviderConfig> openai;     ///< Direct OpenAI Responses API provider.
+    foresthub::Optional<ProviderConfig>
+        gemini;  ///< Direct Google Gemini provider (native generateContent API, v1beta).
+    foresthub::Optional<ProviderConfig> openai;  ///< Direct OpenAI Responses API provider.
 };
 
 /// Configuration for a local LLM execution engine.
