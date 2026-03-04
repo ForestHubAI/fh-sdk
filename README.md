@@ -1,11 +1,12 @@
 # ForestHub SDK
 
-C++14 LLM SDK with unified multi-provider interface. Supports ForestHub backend and direct OpenAI (Responses API). Designed for PC and embedded platforms (MCUs).
+C++14 LLM SDK with unified multi-provider interface. Supports ForestHub backend, direct OpenAI (Responses API), and direct Google Gemini (generateContent API). Designed for PC and embedded platforms (MCUs).
 
 ## Features
 
 - **Multi-provider routing** -- automatic request routing to the right LLM provider based on model ID
-- **Agent framework** -- tool calling, multi-turn conversations, and agent handoffs
+- **Agent framework** -- tool calling, multi-turn conversations, agent handoffs, and built-in web search
+- **Internal tools** -- provider-managed tools like web search with query logging via `InternalToolCall`
 - **Platform-agnostic** -- runs on PC (Linux/macOS) and embedded platforms via Hardware Abstraction Layer (Arduino as first implementation)
 - **No exceptions** -- embedded-safe design using string error returns and result structs
 - **No RTTI** -- all polymorphic dispatch via virtual methods and type enums (no dynamic_cast)
@@ -103,7 +104,7 @@ if (!result.HasError()) {
 }
 ```
 
-See `examples/pc/foresthub/chat.cpp` and `examples/pc/foresthub/agent.cpp` for complete examples. For direct OpenAI usage, see `examples/pc/openai/`.
+See `examples/pc/foresthub/chat.cpp` and `examples/pc/foresthub/agent.cpp` for complete examples. For web search, see `examples/pc/foresthub/websearch.cpp`. For structured output (JSON schema), see `examples/pc/foresthub/structured_output.cpp`. For direct OpenAI usage, see `examples/pc/openai/`. For direct Gemini usage, see `examples/pc/gemini/`.
 
 ## Architecture
 
@@ -157,12 +158,14 @@ Console and Time are always available. Omitting macros saves significant Flash:
 | ForestHub agent | `pio run -d examples/embedded/foresthub/agent -e esp32dev` |
 | OpenAI chat | `pio run -d examples/embedded/openai/chat -e esp32dev` |
 | OpenAI agent | `pio run -d examples/embedded/openai/agent -e esp32dev` |
+| Gemini chat | `pio run -d examples/embedded/gemini/chat -e esp32dev` |
+| Gemini agent | `pio run -d examples/embedded/gemini/agent -e esp32dev` |
 | HTTP/HTTPS test | `pio run -d examples/embedded/http_test -e esp32dev` |
 | HTTP-only test (no Crypto) | `pio run -d examples/embedded/http_test -e esp32_http_only` |
 | Ticker example | `pio run -d examples/embedded/ticker -e esp32dev` |
 | Portenta H7 | `pio run -d pio/build_test -e portenta_h7_m7` |
 
-ForestHub examples require `FORESTHUB_API_KEY`, OpenAI examples require `OPENAI_API_KEY`.
+ForestHub examples require `FORESTHUB_API_KEY`, OpenAI examples require `OPENAI_API_KEY`, Gemini examples require `GEMINI_API_KEY`.
 
 ## Testing
 
@@ -172,13 +175,13 @@ cmake --build build -j4
 cd build && ctest --output-on-failure
 ```
 
-281 tests across 7 executables:
+313 tests across 7 executables:
 
 | Executable | Tests | Scope |
 |------------|-------|-------|
-| `run_core_tests` | 101 | Input, model, options, tools, types, json, client |
+| `run_core_tests` | 103 | Input, model, options, tools, types, json, client |
 | `run_agent_tests` | 33 | Agent construction, Runner execution loop |
-| `run_provider_tests` | 46 | ForestHub + OpenAI HTTP, retry, error handling |
+| `run_provider_tests` | 76 | ForestHub + OpenAI + Gemini HTTP, retry, error handling |
 | `run_platform_tests` | 38 | PC platform factory, subsystems, GPIO, ENABLE macros, timezone |
 | `run_integration_tests` | 7 | Runner-Provider chain, Client routing |
 | `run_contract_tests` | 13 | ForestHub API JSON schema verification |
@@ -194,21 +197,21 @@ include/foresthub/        Public API headers
   config/                 Configuration structs
   core/                   Core abstractions (provider, tools, types, input)
   platform/               HAL interfaces (network, console, time, crypto)
-  provider/remote/        Provider implementations (ForestHub, OpenAI)
+  provider/remote/        Provider implementations (ForestHub, Gemini, OpenAI)
   util/                   Utilities (Optional<T> polyfill, JSON wrapper, Ticker)
 src/                      Implementation
-  provider/remote/        Provider implementations (foresthub/, openai/)
+  provider/remote/        Provider implementations (foresthub/, gemini/, openai/)
   platform/pc/            PC implementations (CPR, stdin/stdout, std::chrono)
   platform/arduino/       Arduino implementations (WiFi, Serial, NTP)
   platform/common/        Shared platform code (TLS certs)
 examples/
-  pc/                     PC examples (foresthub/, openai/ -- chat + agent per provider)
-  embedded/               Arduino examples (foresthub/, openai/ -- PlatformIO projects per provider)
+  pc/                     PC examples (foresthub/, gemini/, openai/ -- chat + agent + websearch + structured_output)
+  embedded/               Arduino examples (foresthub/, gemini/, openai/ -- PlatformIO projects per provider)
                           Standalone: blink/, http_test/, ticker/
-tests/                    GoogleTest suites (281 tests)
+tests/                    GoogleTest suites (313 tests)
   core/                   Core tests (input, model, options, tools, types, json, client)
   agent/                  Agent framework tests (agent, runner)
-  provider/               Provider tests (ForestHub + OpenAI HTTP, retry, errors)
+  provider/               Provider tests (ForestHub + OpenAI + Gemini HTTP, retry, errors)
   platform/               Platform tests (PC factory, subsystems)
   integration/            Integration tests (Runner-Provider, Client routing)
   contract/               Contract tests (ForestHub API JSON schema)
