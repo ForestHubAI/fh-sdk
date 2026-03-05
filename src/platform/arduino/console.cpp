@@ -186,7 +186,7 @@ void ArduinoConsole::Printf(const char* format, ...) {
     //   1. Stack path  (len <= 512): zero heap overhead, covers most printf calls
     //   2. Heap path   (len > 512):  malloc for large outputs
     //   3. Fallback    (malloc fail): truncated stack buffer under memory pressure
-    if (len <= kFallbackBufferSize) {
+    if (len < kFallbackBufferSize) {
         // Stack path: no heap allocation for small outputs (common case)
         char stack_buf[kFallbackBufferSize];
 

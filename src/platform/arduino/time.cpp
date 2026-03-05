@@ -271,10 +271,7 @@ long ArduinoTime::gmt_offset_sec() const {
 
 void ArduinoTime::GetLocalTime(struct tm& result) const {
     time_t local = static_cast<time_t>(GetEpochTime()) + gmt_offset_sec_ + daylight_offset_sec_;
-    struct tm* tm_ptr = gmtime(&local);
-    if (tm_ptr != nullptr) {
-        memcpy(&result, tm_ptr, sizeof(struct tm));
-    }
+    gmtime_r(&local, &result);
 }
 
 }  // namespace arduino

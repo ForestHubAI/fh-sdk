@@ -31,7 +31,7 @@ std::string PcConsole::ReadLine(size_t max_length, unsigned long /*timeout_ms*/,
     if (!std::getline(std::cin, line)) {
         return "";
     }
-    if (line.length() > max_length) {
+    if (max_length > 0 && line.length() > max_length) {
         line.resize(max_length);
     }
     return line;

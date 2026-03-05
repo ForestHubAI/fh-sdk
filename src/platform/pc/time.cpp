@@ -3,7 +3,6 @@
 #include "time.hpp"
 
 #include <chrono>
-#include <cstring>
 #include <ctime>
 #include <thread>
 
@@ -51,12 +50,13 @@ long PcTime::gmt_offset_sec() const {
 }
 
 void PcTime::GetLocalTime(struct tm& result) const {
-    // Apply stored offset to UTC epoch, then use gmtime() for calendar conversion.
+    // Apply stored offset to UTC epoch, then convert to calendar (thread-safe).
     time_t local = static_cast<time_t>(GetEpochTime()) + gmt_offset_sec_ + daylight_offset_sec_;
-    struct tm* tm_ptr = gmtime(&local);
-    if (tm_ptr != nullptr) {
-        std::memcpy(&result, tm_ptr, sizeof(struct tm));
-    }
+#ifdef _MSC_VER
+    gmtime_s(&result, &local);
+#else
+    gmtime_r(&local, &result);
+#endif
 }
 
 }  // namespace pc

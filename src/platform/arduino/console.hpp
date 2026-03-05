@@ -11,13 +11,10 @@ namespace arduino {
 /// ConsoleInterface implementation for Arduino with line editing, output chunking, and configurable Stream.
 class ArduinoConsole : public ConsoleInterface {
 public:
-    /// Construct using the default Serial port.
-    /// @param baud_rate Communication speed for Begin().
+    /// Construct using the default Serial port with the given baud rate.
     explicit ArduinoConsole(unsigned long baud_rate = 115200);
 
-    /// Construct with configurable Stream.
-    /// @param io Stream to use for I/O.
-    /// @param baud_rate Communication speed for Begin().
+    /// Construct with a configurable Stream and baud rate.
     ArduinoConsole(Stream& io, unsigned long baud_rate = 115200);
 
     /// Calls Serial.begin() with stored baud rate and waits up to 2.5s for USB connection.
