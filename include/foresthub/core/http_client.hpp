@@ -9,7 +9,7 @@ namespace core {
 
 /// Simple HTTP response container.
 struct HttpResponse {
-    int status_code;                             ///< HTTP status code (e.g., 200, 404, 500).
+    int status_code = 0;                         ///< HTTP status code (e.g., 200, 404, 500).
     std::string body;                            ///< Response body (usually JSON).
     std::map<std::string, std::string> headers;  ///< Response headers.
 };
