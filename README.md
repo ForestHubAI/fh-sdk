@@ -11,6 +11,7 @@ C++14 LLM SDK with unified multi-provider interface. Supports ForestHub backend,
 - **No exceptions** -- embedded-safe design using string error returns and result structs
 - **No RTTI** -- all polymorphic dispatch via virtual methods and type enums (no dynamic_cast)
 - **Google Style `struct`/`class` convention** -- `struct` for passive data (DTOs, configs), `class` for types with behavior (interfaces, implementations with virtual methods or private state)
+- **Automatic schema handling** -- minimal JSON Schema input auto-normalized and strictified per provider requirements
 - **Fluent builder API** -- method chaining for requests, agents, and configuration
 - **C++14 compatible** -- targets any C++14-capable toolchain (GCC 7+, Clang 5+, MSVC 2017+, embedded compilers)
 
@@ -179,17 +180,17 @@ cmake --build build -j4
 cd build && ctest --output-on-failure
 ```
 
-349 tests across 7 executables:
+~383 tests across 7 executables:
 
 | Executable | Tests | Scope |
 |------------|-------|-------|
 | `run_core_tests` | 103 | Input, model, options, tools, types, json, client |
 | `run_agent_tests` | 33 | Agent construction, Runner execution loop |
-| `run_provider_tests` | 112 | ForestHub + OpenAI + Gemini + Anthropic HTTP, retry, error handling |
-| `run_platform_tests` | 38 | PC platform factory, subsystems, GPIO, ENABLE macros, timezone |
+| `run_provider_tests` | ~134 | ForestHub + OpenAI + Gemini + Anthropic HTTP, retry, errors, schema strictification |
+| `run_platform_tests` | 43 | PC platform factory, subsystems, GPIO, ENABLE macros, timezone, console |
 | `run_integration_tests` | 7 | Runner-Provider chain, Client routing |
 | `run_contract_tests` | 13 | ForestHub API JSON schema verification |
-| `run_util_tests` | 43 | Optional polyfill, Ticker (Periodic, OneShot, Daily, Weekly, Hourly) |
+| `run_util_tests` | 50 | Optional polyfill, Ticker, Schema normalization |
 
 Hand-rolled mocks in `tests/mocks/` (no GMock -- incompatible with `-fno-rtti`).
 
@@ -202,7 +203,7 @@ include/foresthub/        Public API headers
   core/                   Core abstractions (provider, tools, types, input)
   platform/               HAL interfaces (network, console, time, crypto)
   provider/remote/        Provider implementations (Anthropic, ForestHub, Gemini, OpenAI)
-  util/                   Utilities (Optional<T> polyfill, JSON wrapper, Ticker)
+  util/                   Utilities (Optional<T> polyfill, JSON wrapper, Ticker, Schema normalization)
 src/                      Implementation
   provider/remote/        Provider implementations (anthropic/, foresthub/, gemini/, openai/)
   platform/pc/            PC implementations (CPR, stdin/stdout, std::chrono)
@@ -212,7 +213,7 @@ examples/
   pc/                     PC examples (anthropic/, foresthub/, gemini/, openai/ -- chat + agent + websearch + structured_output)
   embedded/               Arduino examples (anthropic/, foresthub/, gemini/, openai/ -- PlatformIO projects per provider)
                           Standalone: blink/, http_test/, ticker/
-tests/                    GoogleTest suites (349 tests)
+tests/                    GoogleTest suites (~383 tests)
   core/                   Core tests (input, model, options, tools, types, json, client)
   agent/                  Agent framework tests (agent, runner)
   provider/               Provider tests (Anthropic + ForestHub + OpenAI + Gemini HTTP, retry, errors)
