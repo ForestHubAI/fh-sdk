@@ -253,8 +253,6 @@ TEST(PlatformTest, GetLocalTimeUtcMatchesGmtime) {
     EXPECT_EQ(local.tm_min, utc->tm_min);
 }
 
-// --- ENABLE macros ---
-
 TEST(PlatformTest, PlatformConfigNoEnableGpioField) {
     PlatformConfig config;
     config.network.ssid = "test";

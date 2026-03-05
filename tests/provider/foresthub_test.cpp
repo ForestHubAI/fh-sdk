@@ -48,14 +48,14 @@ struct TestFixture {
 
 // --- Construction & Identity ---
 
-TEST(ForestHubProviderTest, Construction) {
+TEST(ForestHubProvider, Construction) {
     TestFixture fixture;
     ForestHubProvider provider = fixture.MakeProvider();
 
     EXPECT_EQ(provider.ProviderId(), "forest-hub");
 }
 
-TEST(ForestHubProviderTest, BaseUrlTrailingSlashStripped) {
+TEST(ForestHubProvider, BaseUrlTrailingSlashStripped) {
     TestFixture fixture;
     fixture.cfg.base_url = "https://api.example.com/";
     fixture.mock_http->get_responses.push_back({200, "OK", {}});
@@ -68,7 +68,7 @@ TEST(ForestHubProviderTest, BaseUrlTrailingSlashStripped) {
 
 // --- SupportsModel ---
 
-TEST(ForestHubProviderTest, SupportsModel_Found) {
+TEST(ForestHubProvider, SupportsModelFound) {
     TestFixture fixture;
     ForestHubProvider provider = fixture.MakeProvider();
 
@@ -76,14 +76,14 @@ TEST(ForestHubProviderTest, SupportsModel_Found) {
     EXPECT_TRUE(provider.SupportsModel("gpt-4o"));
 }
 
-TEST(ForestHubProviderTest, SupportsModel_NotFound) {
+TEST(ForestHubProvider, SupportsModelNotFound) {
     TestFixture fixture;
     ForestHubProvider provider = fixture.MakeProvider();
 
     EXPECT_FALSE(provider.SupportsModel("unknown-model"));
 }
 
-TEST(ForestHubProviderTest, SupportsModel_EmptyList) {
+TEST(ForestHubProvider, SupportsModelEmptyList) {
     TestFixture fixture;
     fixture.cfg.supported_models.clear();
     ForestHubProvider provider = fixture.MakeProvider();
@@ -93,7 +93,7 @@ TEST(ForestHubProviderTest, SupportsModel_EmptyList) {
 
 // --- Health ---
 
-TEST(ForestHubProviderTest, Health_Success) {
+TEST(ForestHubProvider, HealthSuccess) {
     TestFixture fixture;
     fixture.mock_http->get_responses.push_back({200, "OK", {}});
     ForestHubProvider provider = fixture.MakeProvider();
@@ -102,7 +102,7 @@ TEST(ForestHubProviderTest, Health_Success) {
     EXPECT_TRUE(err.empty());
 }
 
-TEST(ForestHubProviderTest, Health_Failure) {
+TEST(ForestHubProvider, HealthFailure) {
     TestFixture fixture;
     fixture.mock_http->get_responses.push_back({500, "Internal Server Error", {}});
     ForestHubProvider provider = fixture.MakeProvider();
@@ -112,7 +112,7 @@ TEST(ForestHubProviderTest, Health_Failure) {
     EXPECT_NE(err.find("500"), std::string::npos);
 }
 
-TEST(ForestHubProviderTest, Health_UrlCorrect) {
+TEST(ForestHubProvider, HealthUrlCorrect) {
     TestFixture fixture;
     fixture.mock_http->get_responses.push_back({200, "OK", {}});
     ForestHubProvider provider = fixture.MakeProvider();
@@ -124,7 +124,7 @@ TEST(ForestHubProviderTest, Health_UrlCorrect) {
 
 // --- Chat: Happy Path ---
 
-TEST(ForestHubProviderTest, Chat_Success) {
+TEST(ForestHubProvider, ChatSuccess) {
     TestFixture fixture;
     fixture.mock_http->post_responses.push_back({200, TestFixture::ValidResponseBody(), {}});
     ForestHubProvider provider = fixture.MakeProvider();
@@ -139,7 +139,7 @@ TEST(ForestHubProviderTest, Chat_Success) {
     EXPECT_EQ(resp->tokens_used, 42);
 }
 
-TEST(ForestHubProviderTest, Chat_UrlCorrect) {
+TEST(ForestHubProvider, ChatUrlCorrect) {
     TestFixture fixture;
     fixture.mock_http->post_responses.push_back({200, TestFixture::ValidResponseBody(), {}});
     ForestHubProvider provider = fixture.MakeProvider();
@@ -151,7 +151,7 @@ TEST(ForestHubProviderTest, Chat_UrlCorrect) {
     EXPECT_EQ(fixture.mock_http->last_url, "https://api.example.com/llm/generate");
 }
 
-TEST(ForestHubProviderTest, Chat_HeadersCorrect) {
+TEST(ForestHubProvider, ChatHeadersCorrect) {
     TestFixture fixture;
     fixture.mock_http->post_responses.push_back({200, TestFixture::ValidResponseBody(), {}});
     ForestHubProvider provider = fixture.MakeProvider();
@@ -165,7 +165,7 @@ TEST(ForestHubProviderTest, Chat_HeadersCorrect) {
     EXPECT_EQ(fixture.mock_http->last_headers["Accept"], "application/json");
 }
 
-TEST(ForestHubProviderTest, Chat_RequestBodyIsJson) {
+TEST(ForestHubProvider, ChatRequestBodyIsJson) {
     TestFixture fixture;
     fixture.mock_http->post_responses.push_back({200, TestFixture::ValidResponseBody(), {}});
     ForestHubProvider provider = fixture.MakeProvider();
@@ -181,7 +181,7 @@ TEST(ForestHubProviderTest, Chat_RequestBodyIsJson) {
 
 // --- Chat: Tool Call Response ---
 
-TEST(ForestHubProviderTest, Chat_WithToolCalls) {
+TEST(ForestHubProvider, ChatWithToolCalls) {
     TestFixture fixture;
     fixture.mock_http->post_responses.push_back({200, TestFixture::ToolCallResponseBody(), {}});
     ForestHubProvider provider = fixture.MakeProvider();
@@ -198,7 +198,7 @@ TEST(ForestHubProviderTest, Chat_WithToolCalls) {
 
 // --- Chat: Error Paths ---
 
-TEST(ForestHubProviderTest, Chat_ServerError5xx) {
+TEST(ForestHubProvider, ChatServerError5xx) {
     TestFixture fixture;
     // Both attempts return 500.
     fixture.mock_http->post_responses.push_back({500, "error", {}});
@@ -212,7 +212,7 @@ TEST(ForestHubProviderTest, Chat_ServerError5xx) {
     EXPECT_EQ(resp, nullptr);
 }
 
-TEST(ForestHubProviderTest, Chat_ClientError4xx) {
+TEST(ForestHubProvider, ChatClientError4xx) {
     TestFixture fixture;
     // 400 — no retry.
     fixture.mock_http->post_responses.push_back({400, "bad request", {}});
@@ -225,7 +225,7 @@ TEST(ForestHubProviderTest, Chat_ClientError4xx) {
     EXPECT_EQ(resp, nullptr);
 }
 
-TEST(ForestHubProviderTest, Chat_RateLimited429) {
+TEST(ForestHubProvider, ChatRateLimited429) {
     TestFixture fixture;
     // First: 429 (retryable), second: 200.
     fixture.mock_http->post_responses.push_back({429, "rate limited", {}});
@@ -240,7 +240,7 @@ TEST(ForestHubProviderTest, Chat_RateLimited429) {
     EXPECT_EQ(resp->text, "Hello world");
 }
 
-TEST(ForestHubProviderTest, Chat_Timeout408) {
+TEST(ForestHubProvider, ChatTimeout408) {
     TestFixture fixture;
     // First: 408 (retryable), second: 200.
     fixture.mock_http->post_responses.push_back({408, "timeout", {}});
@@ -255,7 +255,7 @@ TEST(ForestHubProviderTest, Chat_Timeout408) {
     EXPECT_EQ(resp->text, "Hello world");
 }
 
-TEST(ForestHubProviderTest, Chat_MalformedJson) {
+TEST(ForestHubProvider, ChatMalformedJson) {
     TestFixture fixture;
     fixture.mock_http->post_responses.push_back({200, "not valid json {{{", {}});
     ForestHubProvider provider = fixture.MakeProvider();
@@ -267,7 +267,7 @@ TEST(ForestHubProviderTest, Chat_MalformedJson) {
     EXPECT_EQ(resp, nullptr);
 }
 
-TEST(ForestHubProviderTest, Chat_EmptyBody) {
+TEST(ForestHubProvider, ChatEmptyBody) {
     TestFixture fixture;
     fixture.mock_http->post_responses.push_back({200, "", {}});
     ForestHubProvider provider = fixture.MakeProvider();
@@ -281,7 +281,7 @@ TEST(ForestHubProviderTest, Chat_EmptyBody) {
 
 // --- Retry Logic ---
 
-TEST(ForestHubProviderTest, Chat_MaxRetries) {
+TEST(ForestHubProvider, ChatMaxRetries) {
     TestFixture fixture;
     // Both attempts return 500.
     fixture.mock_http->post_responses.push_back({500, "error", {}});
@@ -295,7 +295,7 @@ TEST(ForestHubProviderTest, Chat_MaxRetries) {
     EXPECT_EQ(fixture.mock_http->post_call_count, 2);
 }
 
-TEST(ForestHubProviderTest, Chat_NoRetryOn4xx) {
+TEST(ForestHubProvider, ChatNoRetryOn4xx) {
     TestFixture fixture;
     fixture.mock_http->post_responses.push_back({403, "forbidden", {}});
     ForestHubProvider provider = fixture.MakeProvider();
@@ -307,7 +307,7 @@ TEST(ForestHubProviderTest, Chat_NoRetryOn4xx) {
     EXPECT_EQ(fixture.mock_http->post_call_count, 1);
 }
 
-TEST(ForestHubProviderTest, Chat_DelayCalledOnRetry) {
+TEST(ForestHubProvider, ChatDelayCalledOnRetry) {
     struct DelayTrackingHttpClient : public tests::MockHttpClient {
         int delay_call_count = 0;
         void Delay(unsigned long /*ms*/) override { ++delay_call_count; }

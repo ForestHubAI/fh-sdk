@@ -23,7 +23,7 @@ static constexpr foresthub::platform::PinId kLedPin = 2;
 static constexpr bool kLedActiveLow = false;
 #endif
 
-static constexpr unsigned long kBlinkIntervalMs = 2000;  // Blink every 2 second
+static constexpr unsigned long kBlinkIntervalMs = 2000;  // Blink every 2 seconds
 
 static int LedOn() {
     return kLedActiveLow ? 0 : 1;
