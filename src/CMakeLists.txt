@@ -12,6 +12,8 @@ set(FORESTHUB_SOURCES
     provider/remote/foresthub/provider.cpp
     provider/remote/gemini/provider.cpp
     provider/remote/gemini/mapping.cpp
+    provider/remote/anthropic/provider.cpp
+    provider/remote/anthropic/mapping.cpp
     provider/remote/openai/provider.cpp
     provider/remote/openai/mapping.cpp
 )

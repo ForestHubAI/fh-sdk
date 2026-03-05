@@ -1,5 +1,6 @@
 #include "foresthub/client.hpp"
 
+#include "foresthub/provider/remote/anthropic.hpp"
 #include "foresthub/provider/remote/foresthub.hpp"
 #include "foresthub/provider/remote/gemini.hpp"
 #include "foresthub/provider/remote/openai.hpp"
@@ -10,6 +11,11 @@ using std::shared_ptr;
 std::unique_ptr<Client> Client::Create(const config::ClientConfig& cfg,
                                        const std::shared_ptr<core::HttpClient>& http_client) {
     auto client = std::make_unique<Client>();
+
+    if (cfg.remote.anthropic.HasValue()) {
+        auto provider = std::make_shared<provider::remote::AnthropicProvider>(*cfg.remote.anthropic, http_client);
+        client->RegisterProvider(provider);
+    }
 
     if (cfg.remote.foresthub.HasValue()) {
         auto provider = std::make_shared<provider::remote::ForestHubProvider>(*cfg.remote.foresthub, http_client);

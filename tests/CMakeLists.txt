@@ -61,6 +61,7 @@ gtest_discover_tests(run_util_tests)
 # --- Provider Tests -----------------------------------------------------------
 
 add_executable(run_provider_tests
+    provider/anthropic_test.cpp
     provider/foresthub_test.cpp
     provider/gemini_test.cpp
     provider/openai_test.cpp
