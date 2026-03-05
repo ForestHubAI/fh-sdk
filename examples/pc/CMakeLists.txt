@@ -42,3 +42,7 @@ target_link_libraries(foresthub_chat_openai PRIVATE foresthub_core)
 target_link_libraries(foresthub_agent_openai PRIVATE foresthub_core)
 target_link_libraries(foresthub_websearch_openai PRIVATE foresthub_core)
 target_link_libraries(foresthub_structured_output_openai PRIVATE foresthub_core)
+
+# --- Console Demo ---
+add_executable(foresthub_console_test console_test.cpp)
+target_link_libraries(foresthub_console_test PRIVATE foresthub_core)

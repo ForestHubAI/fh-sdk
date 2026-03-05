@@ -4,6 +4,8 @@
 #include <cstdarg>
 #include <string>
 
+#include "foresthub/util/optional.hpp"
+
 namespace foresthub {
 namespace platform {
 
@@ -34,6 +36,16 @@ public:
     /// @param echo If true, echo characters back to output.
     /// @return The line read (without line ending), or empty string on timeout.
     virtual std::string ReadLine(size_t max_length = 256, unsigned long timeout_ms = 0, bool echo = true) = 0;
+
+    /// Try to read a line without blocking.
+    /// Characters are accumulated in an internal buffer across calls.
+    /// Returns the complete line when Enter is pressed, or empty Optional if no complete line yet.
+    /// @param max_length Maximum characters to accept (0 = implementation-defined limit).
+    /// @param echo If true, echo characters back to output.
+    virtual Optional<std::string> TryReadLine(size_t max_length = 256, bool echo = true) = 0;
+
+    /// Clear the internal line buffer, discarding any partially typed input.
+    virtual void ClearLineBuffer() = 0;
 
     /// Write a string to the console.
     virtual void Write(const std::string& data) = 0;

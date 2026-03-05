@@ -2,6 +2,9 @@
 
 #include "console.hpp"
 
+#include <poll.h>
+#include <unistd.h>
+
 #include <cstdarg>
 #include <cstdio>
 #include <iostream>
@@ -16,12 +19,41 @@ void PcConsole::Begin() {
 }
 
 bool PcConsole::Available() const noexcept {
-    // PC platform uses blocking ReadLine() for input.
-    return false;  // NOLINT -- intentional: PC uses blocking I/O
+    struct pollfd pfd = {0, POLLIN, 0};  // fd 0 = stdin
+    return poll(&pfd, 1, 0) > 0;
 }
 
 char PcConsole::Read() {
-    return static_cast<char>(std::getchar());
+    char c = 0;
+    ::read(0, &c, 1);  // POSIX unbuffered read on stdin
+    return c;
+}
+
+Optional<std::string> PcConsole::TryReadLine(size_t max_length, bool /*echo*/) {
+    // Echo parameter ignored — terminal handles echo in canonical mode.
+    while (Available()) {
+        char c = 0;
+        ssize_t n = ::read(0, &c, 1);
+        if (n <= 0) {
+            return Optional<std::string>();
+        }
+        if (c == '\n') {
+            std::string result = line_buffer_;
+            line_buffer_.clear();
+            if (max_length > 0 && result.length() > max_length) {
+                result.resize(max_length);
+            }
+            return Optional<std::string>(std::move(result));
+        }
+        if (max_length == 0 || line_buffer_.length() < max_length) {
+            line_buffer_ += c;
+        }
+    }
+    return Optional<std::string>();
+}
+
+void PcConsole::ClearLineBuffer() {
+    line_buffer_.clear();
 }
 
 std::string PcConsole::ReadLine(size_t max_length, unsigned long /*timeout_ms*/, bool /*echo*/) {

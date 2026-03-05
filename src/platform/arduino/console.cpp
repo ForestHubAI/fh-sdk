@@ -147,6 +147,56 @@ std::string ArduinoConsole::ReadLine(size_t max_length, unsigned long timeout_ms
     }
 }
 
+Optional<std::string> ArduinoConsole::TryReadLine(size_t max_length, bool echo) {
+    while (io_->available()) {
+        const char c = static_cast<char>(io_->read());
+
+        // Line ending detection (CR, LF, CRLF, LFCR)
+        if (c == '\r' || c == '\n') {
+            if (io_->available()) {
+                const int peeked = io_->peek();
+                if ((c == '\r' && peeked == '\n') || (c == '\n' && peeked == '\r')) {
+                    io_->read();  // Discard paired character
+                }
+            }
+            if (echo) {
+                io_->println();
+            }
+            std::string result = line_buffer_;
+            line_buffer_.clear();
+            return Optional<std::string>(std::move(result));
+        }
+
+        // Backspace/Delete handling
+        constexpr char kBackspace = 8;
+        constexpr char kDeleteChar = 127;
+        if (c == kBackspace || c == kDeleteChar) {
+            if (!line_buffer_.empty()) {
+                line_buffer_.pop_back();
+                if (echo) {
+                    io_->print("\b \b");
+                }
+            }
+            continue;
+        }
+
+        // Printable character
+        if (IsPrintableChar(c)) {
+            if (max_length == 0 || line_buffer_.length() < max_length) {
+                line_buffer_ += c;
+                if (echo) {
+                    io_->print(c);
+                }
+            }
+        }
+    }
+    return Optional<std::string>();
+}
+
+void ArduinoConsole::ClearLineBuffer() {
+    line_buffer_.clear();
+}
+
 // =============================================================================
 // Output Methods
 // =============================================================================

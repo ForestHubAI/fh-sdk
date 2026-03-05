@@ -28,6 +28,11 @@ public:
     /// Adds backspace editing and CR/LF/CRLF normalization.
     std::string ReadLine(size_t max_length = 256, unsigned long timeout_ms = 0, bool echo = true) override;
 
+    /// Accumulates available Serial characters; returns complete line on Enter.
+    Optional<std::string> TryReadLine(size_t max_length = 256, bool echo = true) override;
+    /// Discards partially typed input.
+    void ClearLineBuffer() override;
+
     /// Writes data to Serial byte-by-byte.
     void Write(const std::string& data) override;
 
@@ -40,6 +45,7 @@ public:
 private:
     unsigned long baud_rate_;  ///< Communication speed for Begin().
     Stream* io_;               ///< Pointer to the underlying Stream (Serial, Serial1, etc.)
+    std::string line_buffer_;  ///< Internal buffer for TryReadLine() character accumulation.
 
     /// Check if a character is printable ASCII (space through tilde).
     static constexpr bool IsPrintableChar(char c) noexcept { return c >= 32 && c != 127; }
