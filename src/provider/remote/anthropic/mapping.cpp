@@ -31,7 +31,7 @@ static json ToAnthropicMessages(const core::ChatRequest& req) {
     auto items = std::static_pointer_cast<core::InputItems>(req.input);
 
     // Appends a content block to the messages array, merging with the previous message if same role.
-    auto appendBlock = [&messages](const std::string& role, json block) {
+    auto append_block = [&messages](const std::string& role, json block) {
         if (!messages.empty() && messages.back().value("role", "") == role && messages.back()["content"].is_array()) {
             messages.back()["content"].push_back(std::move(block));
         } else {
@@ -55,7 +55,7 @@ static json ToAnthropicMessages(const core::ChatRequest& req) {
                 block["id"] = tcr->call_id;
                 block["name"] = tcr->name;
                 block["input"] = std::move(input_obj);
-                appendBlock("assistant", std::move(block));
+                append_block("assistant", std::move(block));
                 break;
             }
             case core::InputItemType::kToolResult: {
@@ -66,14 +66,14 @@ static json ToAnthropicMessages(const core::ChatRequest& req) {
                 block["type"] = "tool_result";
                 block["tool_use_id"] = tr->call_id;
                 block["content"] = std::move(output_str);
-                appendBlock("user", std::move(block));
+                append_block("user", std::move(block));
                 break;
             }
             default: {
                 // kString — user text. InputItemType only defines kString, kToolCall, kToolResult,
                 // so all default items are user messages.
                 std::string text = item->ToString();
-                appendBlock("user", json{{"type", "text"}, {"text", std::move(text)}});
+                append_block("user", json{{"type", "text"}, {"text", std::move(text)}});
                 break;
             }
         }
