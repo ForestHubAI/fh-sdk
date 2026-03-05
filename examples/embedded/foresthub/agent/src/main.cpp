@@ -68,7 +68,7 @@ void setup() {
     platform->console->Printf("=== ForestHub Embedded Agent ===\n\n");
     platform->console->Flush();
 
-    // 3. Connect network (retry up to 3 times — Portenta H7 WiFi is slow to initialize)
+    // 3. Connect network (retry up to 3 times)
     std::string net_err;
     for (int attempt = 1; attempt <= 3; ++attempt) {
         net_err = platform->network->Connect();
