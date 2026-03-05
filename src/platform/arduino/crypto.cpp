@@ -4,8 +4,8 @@
 
 #include <cstring>
 
-#include "../common/tls_certificates.hpp"
 #include "board_wifi.hpp"
+#include "platform/common/tls_certificates.hpp"
 
 namespace foresthub {
 namespace platform {
