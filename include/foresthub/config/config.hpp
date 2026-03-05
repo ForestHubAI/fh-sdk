@@ -1,5 +1,5 @@
-#ifndef FORESTHUB_CONFIG_HPP
-#define FORESTHUB_CONFIG_HPP
+#ifndef FORESTHUB_CONFIG_CONFIG_HPP
+#define FORESTHUB_CONFIG_CONFIG_HPP
 
 #include <string>
 #include <vector>
@@ -46,4 +46,4 @@ struct ClientConfig {
 }  // namespace config
 }  // namespace foresthub
 
-#endif  // FORESTHUB_CONFIG_HPP
+#endif  // FORESTHUB_CONFIG_CONFIG_HPP

@@ -1,5 +1,5 @@
-#ifndef FORESTHUB_PROVIDER_REMOTE_FOREST_HUB_HPP
-#define FORESTHUB_PROVIDER_REMOTE_FOREST_HUB_HPP
+#ifndef FORESTHUB_PROVIDER_REMOTE_FORESTHUB_HPP
+#define FORESTHUB_PROVIDER_REMOTE_FORESTHUB_HPP
 
 #include <memory>
 #include <string>
@@ -41,7 +41,7 @@ private:
     std::shared_ptr<foresthub::core::HttpClient> http_;
     std::string api_key_;
     std::string base_url_;
-    std::vector<std::string> supported_models_;
+    std::vector<core::ModelID> supported_models_;
     /// Pre-built HTTP headers (Content-Type, Authorization) set once in constructor.
     core::HttpClient::Headers cached_headers_;
 };
@@ -50,4 +50,4 @@ private:
 }  // namespace provider
 }  // namespace foresthub
 
-#endif  // FORESTHUB_PROVIDER_REMOTE_FOREST_HUB_HPP
+#endif  // FORESTHUB_PROVIDER_REMOTE_FORESTHUB_HPP
