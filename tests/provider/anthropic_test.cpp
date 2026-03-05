@@ -316,6 +316,59 @@ TEST(AnthropicProvider, ChatWithResponseFormat) {
     EXPECT_FALSE(body.contains("output_format"));
 }
 
+TEST(AnthropicProvider, ChatToolSchemaStrictified) {
+    TestFixture f;
+    f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
+    AnthropicProvider provider = f.MakeProvider();
+
+    auto input = std::make_shared<core::InputString>("Get weather");
+    core::ChatRequest req("claude-sonnet-4-6", input);
+
+    // Minimal schema (no type, no required, no additionalProperties)
+    auto fn_tool = std::make_shared<core::FunctionTool>();
+    fn_tool->name = "get_weather";
+    fn_tool->description = "Get the weather";
+    fn_tool->parameters = json{{"city", {{"type", "string"}}}, {"units", {{"type", "string"}}}};
+    req.AddTool(fn_tool);
+
+    provider.Chat(req);
+
+    json body = json::parse(f.mock_http->last_body, nullptr, false);
+    ASSERT_FALSE(body.is_discarded());
+    const json& schema = body["tools"][0]["input_schema"];
+
+    // NormalizeSchema: wrapped into full format
+    EXPECT_EQ(schema.value("type", ""), "object");
+    EXPECT_TRUE(schema.contains("properties"));
+    // EnsureAllRequired: all keys in required
+    ASSERT_TRUE(schema.contains("required"));
+    EXPECT_EQ(schema["required"].size(), 2u);
+    // SetNoAdditionalProperties: additionalProperties:false
+    EXPECT_EQ(schema["additionalProperties"], false);
+}
+
+TEST(AnthropicProvider, ChatResponseFormatSchemaStrictified) {
+    TestFixture f;
+    f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
+    AnthropicProvider provider = f.MakeProvider();
+
+    auto input = std::make_shared<core::InputString>("Give me JSON");
+    core::ChatRequest req("claude-sonnet-4-6", input);
+    core::ResponseFormat fmt;
+    fmt.name = "test";
+    fmt.schema = json{{"type", "object"}, {"properties", {{"answer", {{"type", "string"}}}}}};
+    req.WithResponseFormat(fmt);
+    provider.Chat(req);
+
+    json body = json::parse(f.mock_http->last_body, nullptr, false);
+    ASSERT_FALSE(body.is_discarded());
+    const json& schema = body["output_config"]["format"]["schema"];
+
+    ASSERT_TRUE(schema.contains("required"));
+    EXPECT_EQ(schema["required"].size(), 1u);
+    EXPECT_EQ(schema["additionalProperties"], false);
+}
+
 TEST(AnthropicProvider, ChatToolResultInput) {
     TestFixture f;
     f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});

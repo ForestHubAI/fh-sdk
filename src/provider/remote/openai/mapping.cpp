@@ -2,12 +2,17 @@
 
 #include "foresthub/core/input.hpp"
 #include "foresthub/core/tools.hpp"
+#include "foresthub/util/schema.hpp"
+#include "provider/remote/schema_utils.hpp"
 
 namespace foresthub {
 namespace provider {
 namespace remote {
 
-using json = nlohmann::json;
+// Normalizes and applies OpenAI strict-mode requirements to a JSON Schema.
+static json PrepareSchemaForOpenAI(const json& schema) {
+    return SetNoAdditionalProperties(EnsureAllRequired(util::NormalizeSchema(schema)));
+}
 
 // Converts the polymorphic Input to an OpenAI Responses API input value.
 static json ToOpenAIInput(const core::ChatRequest& req) {
@@ -128,7 +133,7 @@ json ToOpenAIRequest(const core::ChatRequest& req) {
                 t["type"] = "function";
                 t["name"] = ext->ToolName();
                 t["description"] = ext->ToolDescription();
-                t["parameters"] = ext->ToolParameters();
+                t["parameters"] = PrepareSchemaForOpenAI(ext->ToolParameters());
                 tools.push_back(std::move(t));
             } else if (tool->GetToolType() == core::ToolType::kWebSearch) {
                 tools.push_back(json{{"type", "web_search"}});
@@ -144,7 +149,7 @@ json ToOpenAIRequest(const core::ChatRequest& req) {
         json fmt;
         fmt["type"] = "json_schema";
         fmt["name"] = req.response_format->name;
-        fmt["schema"] = req.response_format->schema;
+        fmt["schema"] = PrepareSchemaForOpenAI(req.response_format->schema);
         fmt["strict"] = true;
         if (!req.response_format->description.empty()) {
             fmt["description"] = req.response_format->description;

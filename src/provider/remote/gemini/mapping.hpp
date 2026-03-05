@@ -10,11 +10,13 @@ namespace foresthub {
 namespace provider {
 namespace remote {
 
+using json = nlohmann::json;
+
 /// Convert a ChatRequest to Gemini generateContent API JSON format.
-nlohmann::json ToGeminiRequest(const core::ChatRequest& req);
+json ToGeminiRequest(const core::ChatRequest& req);
 
 /// Parse a Gemini generateContent API JSON response into a ChatResponse.
-std::shared_ptr<core::ChatResponse> FromGeminiResponse(const nlohmann::json& j);
+std::shared_ptr<core::ChatResponse> FromGeminiResponse(const json& j);
 
 }  // namespace remote
 }  // namespace provider

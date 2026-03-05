@@ -12,6 +12,7 @@
 #include "foresthub/core/tools.hpp"
 #include "foresthub/util/json.hpp"
 #include "foresthub/util/optional.hpp"
+#include "foresthub/util/schema.hpp"
 
 namespace foresthub {
 namespace core {
@@ -79,6 +80,7 @@ struct ChatRequest {
 
     /// Set the structured output format.
     ChatRequest& WithResponseFormat(ResponseFormat format) {
+        format.schema = util::NormalizeSchema(std::move(format.schema));
         response_format = std::move(format);
         return *this;
     }

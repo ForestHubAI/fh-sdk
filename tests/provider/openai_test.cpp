@@ -305,6 +305,59 @@ TEST(OpenAIProvider, ChatWithResponseFormat) {
     EXPECT_TRUE(format.contains("schema"));
 }
 
+TEST(OpenAIProvider, ChatToolSchemaStrictified) {
+    TestFixture f;
+    f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
+    OpenAIProvider provider = f.MakeProvider();
+
+    auto input = std::make_shared<core::InputString>("Get weather");
+    core::ChatRequest req("gpt-4o", input);
+
+    // Minimal schema (no type, no required, no additionalProperties)
+    auto fn_tool = std::make_shared<core::FunctionTool>();
+    fn_tool->name = "get_weather";
+    fn_tool->description = "Get the weather";
+    fn_tool->parameters = json{{"city", {{"type", "string"}}}, {"units", {{"type", "string"}}}};
+    req.AddTool(fn_tool);
+
+    provider.Chat(req);
+
+    json body = json::parse(f.mock_http->last_body, nullptr, false);
+    ASSERT_FALSE(body.is_discarded());
+    const json& params = body["tools"][0]["parameters"];
+
+    // NormalizeSchema: wrapped into full format
+    EXPECT_EQ(params.value("type", ""), "object");
+    EXPECT_TRUE(params.contains("properties"));
+    // EnsureAllRequired: all keys in required
+    ASSERT_TRUE(params.contains("required"));
+    EXPECT_EQ(params["required"].size(), 2u);
+    // SetNoAdditionalProperties: additionalProperties:false
+    EXPECT_EQ(params["additionalProperties"], false);
+}
+
+TEST(OpenAIProvider, ChatResponseFormatSchemaStrictified) {
+    TestFixture f;
+    f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
+    OpenAIProvider provider = f.MakeProvider();
+
+    auto input = std::make_shared<core::InputString>("Give me JSON");
+    core::ChatRequest req("gpt-4o", input);
+    core::ResponseFormat fmt;
+    fmt.name = "test";
+    fmt.schema = json{{"type", "object"}, {"properties", {{"answer", {{"type", "string"}}}}}};
+    req.WithResponseFormat(fmt);
+    provider.Chat(req);
+
+    json body = json::parse(f.mock_http->last_body, nullptr, false);
+    ASSERT_FALSE(body.is_discarded());
+    const json& schema = body["text"]["format"]["schema"];
+
+    ASSERT_TRUE(schema.contains("required"));
+    EXPECT_EQ(schema["required"].size(), 1u);
+    EXPECT_EQ(schema["additionalProperties"], false);
+}
+
 TEST(OpenAIProvider, ChatToolResultInput) {
     TestFixture f;
     f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});

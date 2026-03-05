@@ -2,12 +2,17 @@
 
 #include "foresthub/core/input.hpp"
 #include "foresthub/core/tools.hpp"
+#include "foresthub/util/schema.hpp"
+#include "provider/remote/schema_utils.hpp"
 
 namespace foresthub {
 namespace provider {
 namespace remote {
 
-using json = nlohmann::json;
+// Normalizes and applies Gemini schema requirements (required all, no additionalProperties).
+static json PrepareSchemaForGemini(const json& schema) {
+    return StripAdditionalProperties(EnsureAllRequired(util::NormalizeSchema(schema)));
+}
 
 // Converts the polymorphic Input to Gemini contents array.
 static json ToGeminiContents(const core::ChatRequest& req) {
@@ -100,7 +105,7 @@ static void IncludeGenerationConfig(json& j, const core::Options& opts,
     // not a wrapper. The schema name/description are not used by the Gemini API.
     if (response_format.HasValue()) {
         config["responseMimeType"] = "application/json";
-        config["responseJsonSchema"] = response_format->schema;
+        config["responseJsonSchema"] = PrepareSchemaForGemini(response_format->schema);
     }
 
     if (!config.empty()) {
@@ -127,7 +132,7 @@ static void IncludeTools(json& j, const std::vector<std::shared_ptr<core::Tool>>
             json decl;
             decl["name"] = ext->ToolName();
             decl["description"] = ext->ToolDescription();
-            decl["parameters"] = ext->ToolParameters();
+            decl["parameters"] = PrepareSchemaForGemini(ext->ToolParameters());
             function_declarations.push_back(std::move(decl));
         } else if (tool->GetToolType() == core::ToolType::kWebSearch) {
             has_web_search = true;

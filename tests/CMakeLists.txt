@@ -47,6 +47,7 @@ gtest_discover_tests(run_agent_tests)
 
 add_executable(run_util_tests
     util/optional_test.cpp
+    util/schema_test.cpp
     util/ticker_test.cpp
 )
 
@@ -65,6 +66,7 @@ add_executable(run_provider_tests
     provider/foresthub_test.cpp
     provider/gemini_test.cpp
     provider/openai_test.cpp
+    provider/schema_utils_test.cpp
 )
 
 target_link_libraries(run_provider_tests
@@ -81,6 +83,7 @@ gtest_discover_tests(run_provider_tests)
 
 add_executable(run_platform_tests
     platform/platform_test.cpp
+    platform/console_test.cpp
     platform/gpio_test.cpp
 )
 

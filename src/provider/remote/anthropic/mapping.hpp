@@ -10,11 +10,13 @@ namespace foresthub {
 namespace provider {
 namespace remote {
 
+using json = nlohmann::json;
+
 /// Convert a ChatRequest to Anthropic Messages API JSON format.
-nlohmann::json ToAnthropicRequest(const core::ChatRequest& req, int default_max_tokens);
+json ToAnthropicRequest(const core::ChatRequest& req, int default_max_tokens);
 
 /// Parse an Anthropic Messages API JSON response into a ChatResponse.
-std::shared_ptr<core::ChatResponse> FromAnthropicResponse(const nlohmann::json& j);
+std::shared_ptr<core::ChatResponse> FromAnthropicResponse(const json& j);
 
 }  // namespace remote
 }  // namespace provider

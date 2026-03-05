@@ -2,12 +2,17 @@
 
 #include "foresthub/core/input.hpp"
 #include "foresthub/core/tools.hpp"
+#include "foresthub/util/schema.hpp"
+#include "provider/remote/schema_utils.hpp"
 
 namespace foresthub {
 namespace provider {
 namespace remote {
 
-using json = nlohmann::json;
+// Normalizes and applies Anthropic strict-mode requirements to a JSON Schema.
+static json PrepareSchemaForAnthropic(const json& schema) {
+    return SetNoAdditionalProperties(EnsureAllRequired(util::NormalizeSchema(schema)));
+}
 
 // Converts the polymorphic Input to Anthropic messages array.
 static json ToAnthropicMessages(const core::ChatRequest& req) {
@@ -125,7 +130,7 @@ json ToAnthropicRequest(const core::ChatRequest& req, int default_max_tokens) {
                 json t;
                 t["name"] = ext->ToolName();
                 t["description"] = ext->ToolDescription();
-                t["input_schema"] = ext->ToolParameters();
+                t["input_schema"] = PrepareSchemaForAnthropic(ext->ToolParameters());
                 tools.push_back(std::move(t));
             }
             // WebSearch and other non-external tools are silently skipped.
@@ -140,7 +145,7 @@ json ToAnthropicRequest(const core::ChatRequest& req, int default_max_tokens) {
     if (req.response_format.HasValue()) {
         json fmt;
         fmt["type"] = "json_schema";
-        fmt["schema"] = req.response_format->schema;
+        fmt["schema"] = PrepareSchemaForAnthropic(req.response_format->schema);
         j["output_config"] = json{{"format", std::move(fmt)}};
     }
 

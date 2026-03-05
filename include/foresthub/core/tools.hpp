@@ -9,6 +9,7 @@
 
 #include "foresthub/core/input.hpp"
 #include "foresthub/util/json.hpp"
+#include "foresthub/util/schema.hpp"
 
 namespace foresthub {
 namespace core {
@@ -168,7 +169,7 @@ std::shared_ptr<FunctionTool> NewFunctionTool(std::string name, std::string desc
 
     tool->name = std::move(name);
     tool->description = std::move(description);
-    tool->parameters = (!schema.is_null() && !schema.empty()) ? schema : json::object();
+    tool->parameters = util::NormalizeSchema(schema);
 
     tool->tool_call = [handler, tool_name = tool->name](const std::string& raw_args) -> json {
         json j_args = json::parse(raw_args, nullptr, false);

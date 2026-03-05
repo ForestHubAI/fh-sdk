@@ -16,6 +16,8 @@ set(FORESTHUB_SOURCES
     provider/remote/anthropic/mapping.cpp
     provider/remote/openai/provider.cpp
     provider/remote/openai/mapping.cpp
+    provider/remote/schema_utils.cpp
+    util/schema.cpp
 )
 
 # 2. Add PC Platform Sources

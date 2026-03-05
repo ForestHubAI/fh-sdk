@@ -10,11 +10,13 @@ namespace foresthub {
 namespace provider {
 namespace remote {
 
+using json = nlohmann::json;
+
 /// Convert a ChatRequest to OpenAI Responses API JSON format.
-nlohmann::json ToOpenAIRequest(const core::ChatRequest& req);
+json ToOpenAIRequest(const core::ChatRequest& req);
 
 /// Parse an OpenAI Responses API JSON response into a ChatResponse.
-std::shared_ptr<core::ChatResponse> FromOpenAIResponse(const nlohmann::json& j);
+std::shared_ptr<core::ChatResponse> FromOpenAIResponse(const json& j);
 
 }  // namespace remote
 }  // namespace provider

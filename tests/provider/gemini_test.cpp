@@ -332,6 +332,84 @@ TEST(GeminiProvider, ChatWithResponseFormat) {
     EXPECT_TRUE(gc["responseJsonSchema"].contains("properties"));
 }
 
+TEST(GeminiProvider, ChatToolSchemaStrictified) {
+    TestFixture f;
+    f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
+    GeminiProvider provider = f.MakeProvider();
+
+    auto input = std::make_shared<core::InputString>("Get weather");
+    core::ChatRequest req("gemini-2.5-flash", input);
+
+    // Minimal schema with additionalProperties (should be stripped)
+    auto fn_tool = std::make_shared<core::FunctionTool>();
+    fn_tool->name = "get_weather";
+    fn_tool->description = "Get the weather";
+    fn_tool->parameters = json{{"city", {{"type", "string"}}}, {"units", {{"type", "string"}}}};
+    req.AddTool(fn_tool);
+
+    provider.Chat(req);
+
+    json body = json::parse(f.mock_http->last_body, nullptr, false);
+    ASSERT_FALSE(body.is_discarded());
+    const json& params = body["tools"][0]["functionDeclarations"][0]["parameters"];
+
+    // NormalizeSchema: wrapped into full format
+    EXPECT_EQ(params.value("type", ""), "object");
+    EXPECT_TRUE(params.contains("properties"));
+    // EnsureAllRequired: all keys in required
+    ASSERT_TRUE(params.contains("required"));
+    EXPECT_EQ(params["required"].size(), 2u);
+    // StripAdditionalProperties: no additionalProperties
+    EXPECT_FALSE(params.contains("additionalProperties"));
+}
+
+TEST(GeminiProvider, ChatToolSchemaStripsUserAdditionalProperties) {
+    TestFixture f;
+    f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
+    GeminiProvider provider = f.MakeProvider();
+
+    auto input = std::make_shared<core::InputString>("Get weather");
+    core::ChatRequest req("gemini-2.5-flash", input);
+
+    // User-provided additionalProperties:false should be stripped for Gemini
+    auto fn_tool = std::make_shared<core::FunctionTool>();
+    fn_tool->name = "get_weather";
+    fn_tool->description = "Get the weather";
+    fn_tool->parameters =
+        json{{"type", "object"}, {"properties", {{"city", {{"type", "string"}}}}}, {"additionalProperties", false}};
+    req.AddTool(fn_tool);
+
+    provider.Chat(req);
+
+    json body = json::parse(f.mock_http->last_body, nullptr, false);
+    ASSERT_FALSE(body.is_discarded());
+    const json& params = body["tools"][0]["functionDeclarations"][0]["parameters"];
+
+    EXPECT_FALSE(params.contains("additionalProperties"));
+}
+
+TEST(GeminiProvider, ChatResponseFormatSchemaStrictified) {
+    TestFixture f;
+    f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
+    GeminiProvider provider = f.MakeProvider();
+
+    auto input = std::make_shared<core::InputString>("Give me JSON");
+    core::ChatRequest req("gemini-2.5-flash", input);
+    core::ResponseFormat fmt;
+    fmt.name = "test";
+    fmt.schema = json{{"type", "object"}, {"properties", {{"answer", {{"type", "string"}}}}}};
+    req.WithResponseFormat(fmt);
+    provider.Chat(req);
+
+    json body = json::parse(f.mock_http->last_body, nullptr, false);
+    ASSERT_FALSE(body.is_discarded());
+    const json& schema = body["generationConfig"]["responseJsonSchema"];
+
+    ASSERT_TRUE(schema.contains("required"));
+    EXPECT_EQ(schema["required"].size(), 1u);
+    EXPECT_FALSE(schema.contains("additionalProperties"));
+}
+
 TEST(GeminiProvider, ChatToolResultInput) {
     TestFixture f;
     f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
