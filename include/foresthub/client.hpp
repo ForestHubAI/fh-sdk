@@ -18,9 +18,6 @@ namespace foresthub {
 /// Routes chat requests to the appropriate provider based on model ID.
 class Client : public core::LLMClient {
 public:
-    /// Registered providers keyed by ProviderID.
-    std::map<core::ProviderID, std::shared_ptr<core::Provider>> providers;
-
     /// Default constructor. Prefer Client::Create() for initialization.
     Client();
 
@@ -49,7 +46,12 @@ public:
     /// @return Chat response, or nullptr if no provider supports the model.
     std::shared_ptr<core::ChatResponse> Chat(const core::ChatRequest& req) override;
 
+    /// Read-only access to the registered providers.
+    const std::map<core::ProviderID, std::shared_ptr<core::Provider>>& providers() const { return providers_; }
+
 private:
+    std::map<core::ProviderID, std::shared_ptr<core::Provider>> providers_;
+
     /// Find a provider that supports the requested model, or nullptr if none found.
     std::shared_ptr<core::Provider> InferProvider(const core::ModelID& model) const;
 };

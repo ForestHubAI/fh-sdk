@@ -39,17 +39,17 @@ Client::Client() {}
 
 void Client::RegisterProvider(const shared_ptr<core::Provider>& provider) {
     if (provider) {
-        providers[provider->ProviderId()] = provider;
+        providers_[provider->ProviderId()] = provider;
     }
 }
 
 std::string Client::Health() const {
-    if (providers.empty()) {
+    if (providers_.empty()) {
         return "No providers configured";
     }
 
     std::string errors;
-    for (const auto& entry : providers) {
+    for (const auto& entry : providers_) {
         std::string err = entry.second->Health();
         if (!err.empty()) {
             if (!errors.empty()) {
@@ -77,7 +77,7 @@ std::shared_ptr<core::ChatResponse> Client::Chat(const core::ChatRequest& req) {
 }
 
 std::shared_ptr<core::Provider> Client::InferProvider(const core::ModelID& model) const {
-    for (const auto& entry : providers) {
+    for (const auto& entry : providers_) {
         if (entry.second->SupportsModel(model)) {
             return entry.second;
         }

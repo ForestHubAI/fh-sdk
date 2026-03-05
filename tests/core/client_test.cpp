@@ -17,7 +17,7 @@ using namespace foresthub::core;
 
 TEST(ClientTest, DefaultConstruction) {
     Client client;
-    EXPECT_TRUE(client.providers.empty());
+    EXPECT_TRUE(client.providers().empty());
 }
 
 TEST(ClientTest, RegisterProvider) {
@@ -25,14 +25,14 @@ TEST(ClientTest, RegisterProvider) {
     auto mock = std::make_shared<tests::MockProvider>();
     mock->provider_id = "test-provider";
     client.RegisterProvider(mock);
-    EXPECT_EQ(client.providers.size(), 1u);
-    EXPECT_NE(client.providers.find("test-provider"), client.providers.end());
+    EXPECT_EQ(client.providers().size(), 1u);
+    EXPECT_NE(client.providers().find("test-provider"), client.providers().end());
 }
 
 TEST(ClientTest, RegisterNullProvider) {
     Client client;
     client.RegisterProvider(nullptr);
-    EXPECT_TRUE(client.providers.empty());
+    EXPECT_TRUE(client.providers().empty());
 }
 
 // ==========================================================================
@@ -166,14 +166,14 @@ TEST(ClientTest, CreateFactory_WithRemoteConfig) {
     std::unique_ptr<Client> client = Client::Create(cfg, http);
 
     ASSERT_NE(client, nullptr);
-    EXPECT_FALSE(client->providers.empty());
+    EXPECT_FALSE(client->providers().empty());
 }
 
 TEST(ClientTest, CreateFactory_EmptyConfig) {
     config::ClientConfig cfg;
     std::unique_ptr<Client> client = Client::Create(cfg);
     ASSERT_NE(client, nullptr);
-    EXPECT_TRUE(client->providers.empty());
+    EXPECT_TRUE(client->providers().empty());
 }
 
 TEST(ClientTest, Health_MultipleUnhealthy) {
