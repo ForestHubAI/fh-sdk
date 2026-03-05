@@ -39,16 +39,16 @@ static std::shared_ptr<FunctionTool> MakeWeatherTool() {
 
 TEST(AgentTest, Construction) {
     Agent agent("test-agent");
-    EXPECT_EQ(agent.name, "test-agent");
-    EXPECT_TRUE(agent.instructions.empty());
-    EXPECT_TRUE(agent.tools.empty());
-    EXPECT_FALSE(agent.response_format.HasValue());
+    EXPECT_EQ(agent.name(), "test-agent");
+    EXPECT_TRUE(agent.instructions().empty());
+    EXPECT_TRUE(agent.tools().empty());
+    EXPECT_FALSE(agent.response_format().HasValue());
 }
 
 TEST(AgentTest, WithInstructions) {
     Agent agent("a");
     Agent& ref = agent.WithInstructions("Be helpful");
-    EXPECT_EQ(agent.instructions, "Be helpful");
+    EXPECT_EQ(agent.instructions(), "Be helpful");
     EXPECT_EQ(&ref, &agent);
 }
 
@@ -58,8 +58,8 @@ TEST(AgentTest, WithResponseFormat) {
     fmt.name = "json_output";
     fmt.schema = json{{"type", "object"}};
     agent.WithResponseFormat(fmt);
-    EXPECT_TRUE(agent.response_format.HasValue());
-    EXPECT_EQ(agent.response_format->name, "json_output");
+    EXPECT_TRUE(agent.response_format().HasValue());
+    EXPECT_EQ(agent.response_format()->name, "json_output");
 }
 
 TEST(AgentTest, WithTools) {
@@ -68,23 +68,23 @@ TEST(AgentTest, WithTools) {
     tools.push_back(MakeWeatherTool());
     tools.push_back(std::make_shared<WebSearch>());
     agent.WithTools(tools);
-    EXPECT_EQ(agent.tools.size(), 2u);
+    EXPECT_EQ(agent.tools().size(), 2u);
 }
 
 TEST(AgentTest, AddTool) {
     Agent agent("a");
     Agent& ref = agent.AddTool(MakeWeatherTool());
-    EXPECT_EQ(agent.tools.size(), 1u);
+    EXPECT_EQ(agent.tools().size(), 1u);
     EXPECT_EQ(&ref, &agent);
     agent.AddTool(std::make_shared<WebSearch>());
-    EXPECT_EQ(agent.tools.size(), 2u);
+    EXPECT_EQ(agent.tools().size(), 2u);
 }
 
 TEST(AgentTest, FluentChaining) {
     Agent agent("a");
     agent.WithInstructions("instructions").AddTool(MakeWeatherTool()).AddTool(std::make_shared<WebSearch>());
-    EXPECT_EQ(agent.instructions, "instructions");
-    EXPECT_EQ(agent.tools.size(), 2u);
+    EXPECT_EQ(agent.instructions(), "instructions");
+    EXPECT_EQ(agent.tools().size(), 2u);
 }
 
 // ==========================================================================

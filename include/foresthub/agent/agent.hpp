@@ -13,15 +13,11 @@ namespace foresthub {
 namespace agent {
 
 /// Forward declaration to avoid circular dependency with Runner.
-struct Runner;
+class Runner;
 
 /// LLM agent with instructions, tools, and optional response format.
-struct Agent {
-    std::string name;                                           ///< Display name for identification.
-    std::string instructions;                                   ///< System prompt sent to the model.
-    foresthub::Optional<core::ResponseFormat> response_format;  ///< Optional structured output format.
-    std::vector<std::shared_ptr<core::Tool>> tools;             ///< Tools available to this agent.
-
+class Agent {
+public:
     /// Construct an agent with the given display name.
     explicit Agent(std::string name);
 
@@ -50,6 +46,21 @@ struct Agent {
     /// @return A Tool wrapping this agent as a callable handoff.
     std::shared_ptr<core::Tool> AsTool(std::string tool_name, std::string description,
                                        const std::shared_ptr<Runner>& runner);
+
+    /// @return Display name for identification.
+    const std::string& name() const { return name_; }
+    /// @return System prompt sent to the model.
+    const std::string& instructions() const { return instructions_; }
+    /// @return Optional structured output format.
+    const foresthub::Optional<core::ResponseFormat>& response_format() const { return response_format_; }
+    /// @return Tools available to this agent.
+    const std::vector<std::shared_ptr<core::Tool>>& tools() const { return tools_; }
+
+private:
+    std::string name_;                                           ///< Display name for identification.
+    std::string instructions_;                                   ///< System prompt sent to the model.
+    foresthub::Optional<core::ResponseFormat> response_format_;  ///< Optional structured output format.
+    std::vector<std::shared_ptr<core::Tool>> tools_;             ///< Tools available to this agent.
 };
 
 }  // namespace agent

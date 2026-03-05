@@ -47,10 +47,6 @@ struct RunResultOrError {
 /// Manages the agent execution loop: LLM calls, tool dispatch, and handoffs.
 class Runner {
 public:
-    std::shared_ptr<foresthub::core::LLMClient> client;  ///< LLM client for chat requests.
-    core::ModelID default_model;                         ///< Model used when agents don't specify one.
-    foresthub::Optional<int> max_turns;                  ///< Turn limit (empty = unlimited).
-
     /// Construct a runner with an LLM client and default model.
     /// @param client LLM client for chat requests.
     /// @param model Default model identifier.
@@ -65,7 +61,18 @@ public:
     /// @return Success with RunResult, or failure with error message.
     RunResultOrError Run(const std::shared_ptr<Agent>& starting_agent, const std::shared_ptr<core::Input>& input);
 
+    /// @return LLM client for chat requests.
+    const std::shared_ptr<foresthub::core::LLMClient>& client() const { return client_; }
+    /// @return Model used when agents don't specify one.
+    const core::ModelID& default_model() const { return default_model_; }
+    /// @return Turn limit (empty = unlimited).
+    const foresthub::Optional<int>& max_turns() const { return max_turns_; }
+
 private:
+    std::shared_ptr<foresthub::core::LLMClient> client_;  ///< LLM client for chat requests.
+    core::ModelID default_model_;                         ///< Model used when agents don't specify one.
+    foresthub::Optional<int> max_turns_;                  ///< Turn limit (empty = unlimited).
+
     /// Internal result from a single tool execution phase.
     struct ExecResult {
         std::shared_ptr<foresthub::core::Tool> handoff_tool;  ///< Set if a handoff occurred.

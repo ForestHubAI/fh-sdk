@@ -138,7 +138,7 @@ TEST(RunnerProviderIntegrationTest, HandoffThroughClient) {
 
     ASSERT_FALSE(result.HasError()) << result.error;
     EXPECT_EQ(result.result->final_output, "Hello from B");
-    EXPECT_EQ(result.result->last_agent->name, "agent-b");
+    EXPECT_EQ(result.result->last_agent->name(), "agent-b");
 }
 
 TEST(RunnerProviderIntegrationTest, ProviderReturnsNull) {

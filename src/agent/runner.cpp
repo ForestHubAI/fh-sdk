@@ -7,10 +7,10 @@ namespace foresthub {
 namespace agent {
 
 Runner::Runner(std::shared_ptr<foresthub::core::LLMClient> client, core::ModelID model)
-    : client(std::move(client)), default_model(std::move(model)) {}
+    : client_(std::move(client)), default_model_(std::move(model)) {}
 
 Runner& Runner::WithMaxTurns(int max_turns) {
-    this->max_turns = max_turns;
+    max_turns_ = max_turns;
     return *this;
 }
 
@@ -20,16 +20,16 @@ RunResultOrError Runner::Run(const std::shared_ptr<Agent>& starting_agent, const
     }
 
     std::shared_ptr<Agent> current_agent = starting_agent;
-    core::ModelID current_model = default_model;
+    core::ModelID current_model = default_model_;
     std::shared_ptr<core::InputItems> input_items_ptr = core::AsInputItems(input);
 
-    for (int turn = 0; !max_turns.HasValue() || turn < *max_turns; ++turn) {
+    for (int turn = 0; !max_turns_.HasValue() || turn < *max_turns_; ++turn) {
         core::ChatRequest req(current_model, input_items_ptr);
-        req.system_prompt = current_agent->instructions;
-        req.response_format = current_agent->response_format;
-        req.tools = current_agent->tools;
+        req.system_prompt = current_agent->instructions();
+        req.response_format = current_agent->response_format();
+        req.tools = current_agent->tools();
 
-        std::shared_ptr<core::ChatResponse> res_ptr = client->Chat(req);
+        std::shared_ptr<core::ChatResponse> res_ptr = client_->Chat(req);
         if (!res_ptr) {
             return RunResultOrError::Failure("Network error or empty response from provider");
         }
@@ -44,7 +44,7 @@ RunResultOrError Runner::Run(const std::shared_ptr<Agent>& starting_agent, const
 
         // 2. No text and no tool calls — model produced silence.
         if (res.tool_call_requests.empty()) {
-            return RunResultOrError::Failure("Agent " + current_agent->name +
+            return RunResultOrError::Failure("Agent " + current_agent->name() +
                                              " produced neither final output nor tool calls.");
         }
 
@@ -61,7 +61,7 @@ RunResultOrError Runner::Run(const std::shared_ptr<Agent>& starting_agent, const
             if (handoff && handoff->target_agent) {
                 current_agent = handoff->target_agent;
 
-                current_model = default_model;
+                current_model = default_model_;
                 if (!handoff->model.empty()) {
                     current_model = handoff->model;
                 }
@@ -87,7 +87,7 @@ Runner::ExecResult Runner::ExecuteFunctionTools(const std::vector<core::ToolCall
         std::shared_ptr<core::ExternalTool> tool = agent->FindExternalTool(req.name);
 
         if (!tool) {
-            result.error = "Tool " + req.name + " not found for agent " + agent->name;
+            result.error = "Tool " + req.name + " not found for agent " + agent->name();
             return result;
         }
 

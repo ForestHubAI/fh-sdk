@@ -13,30 +13,30 @@ namespace agent {
 
 using json = nlohmann::json;
 
-Agent::Agent(std::string name) : name(std::move(name)) {}
+Agent::Agent(std::string name) : name_(std::move(name)) {}
 
 Agent& Agent::WithInstructions(std::string instructions) {
-    this->instructions = std::move(instructions);
+    instructions_ = std::move(instructions);
     return *this;
 }
 
 Agent& Agent::WithResponseFormat(core::ResponseFormat format) {
-    response_format = std::move(format);
+    response_format_ = std::move(format);
     return *this;
 }
 
 Agent& Agent::WithTools(std::vector<std::shared_ptr<core::Tool>> tools) {
-    this->tools = std::move(tools);
+    tools_ = std::move(tools);
     return *this;
 }
 
 Agent& Agent::AddTool(std::shared_ptr<core::Tool> tool) {
-    tools.push_back(std::move(tool));
+    tools_.push_back(std::move(tool));
     return *this;
 }
 
 std::shared_ptr<core::ExternalTool> Agent::FindExternalTool(const std::string& name) const {
-    for (const auto& tool : tools) {
+    for (const auto& tool : tools_) {
         if (tool->ToolName() == name && tool->IsExternal()) {
             return std::static_pointer_cast<core::ExternalTool>(tool);
         }

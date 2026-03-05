@@ -78,16 +78,16 @@ TEST(RunResultOrErrorTest, Failure) {
 TEST(RunnerTest, Construction) {
     auto mock = std::make_shared<foresthub::tests::MockLLMClient>();
     auto runner = std::make_shared<Runner>(mock, "gpt-4o");
-    EXPECT_EQ(runner->default_model, "gpt-4o");
-    EXPECT_FALSE(runner->max_turns.HasValue());
+    EXPECT_EQ(runner->default_model(), "gpt-4o");
+    EXPECT_FALSE(runner->max_turns().HasValue());
 }
 
 TEST(RunnerTest, WithMaxTurns) {
     auto mock = std::make_shared<foresthub::tests::MockLLMClient>();
     auto runner = std::make_shared<Runner>(mock, "gpt-4o");
     Runner& ref = runner->WithMaxTurns(5);
-    EXPECT_TRUE(runner->max_turns.HasValue());
-    EXPECT_EQ(*runner->max_turns, 5);
+    EXPECT_TRUE(runner->max_turns().HasValue());
+    EXPECT_EQ(*runner->max_turns(), 5);
     EXPECT_EQ(&ref, runner.get());
 }
 
@@ -148,7 +148,7 @@ TEST(RunnerTest, SingleTurnTextResponse) {
     ASSERT_FALSE(result.HasError());
     EXPECT_EQ(result.result->final_output, json("Hello, world!"));
     EXPECT_EQ(result.result->turns, 1);
-    EXPECT_EQ(result.result->last_agent->name, "a");
+    EXPECT_EQ(result.result->last_agent->name(), "a");
 }
 
 TEST(RunnerTest, SingleTurnWithResponseFormat) {
@@ -215,11 +215,8 @@ TEST(RunnerTest, ToolNotFound) {
 
 TEST(RunnerTest, UnsupportedToolType) {
     auto mock = std::make_shared<foresthub::tests::MockLLMClient>();
-    // LLM requests "web_search" which is a WebSearch tool — not external, so FindExternalTool fails.
-    // But let's test the "Unsupported tool execution type" path by adding a tool
-    // that is external but has an unhandled ToolType.
-    // Actually, FindExternalTool returns nullptr for WebSearch (IsExternal()=false),
-    // so it hits "Tool not found" instead. Let's verify that path.
+    // WebSearch is not external (IsExternal()=false), so FindExternalTool returns nullptr
+    // and the runner hits the "Tool not found" error path.
     mock->responses.push_back(ToolCallResponse("web_search", "c1", "{}"));
 
     auto runner = std::make_shared<Runner>(mock, "gpt-4o");
@@ -298,7 +295,7 @@ TEST(RunnerTest, HandoffSwitchesAgent) {
 
     RunResultOrError result = runner->Run(agent_a, input);
     ASSERT_FALSE(result.HasError());
-    EXPECT_EQ(result.result->last_agent->name, "agent-b");
+    EXPECT_EQ(result.result->last_agent->name(), "agent-b");
     EXPECT_EQ(result.result->final_output, json("Hello from B"));
     // Turn 1 (handoff) + Turn 2 (text from B).
     EXPECT_EQ(result.result->turns, 2);
