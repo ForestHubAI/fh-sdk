@@ -6,7 +6,6 @@
 // =============================================================================
 //
 // Provides base Arduino types needed by non-WiFi code.
-// Include this instead of board_defs.hpp when WiFi/TLS is not needed.
 //
 // Supported boards:
 //   - ESP32 (all variants: DevKit, S2, S3, C3, etc.)

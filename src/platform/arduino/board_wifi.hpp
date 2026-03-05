@@ -51,6 +51,9 @@ using SecureClient = WiFiSSLClient;
 }  // namespace platform
 }  // namespace foresthub
 
+#else
+#error "Unsupported Arduino board for WiFi/TLS. Supported: ESP32, Portenta H7"
+
 #endif
 
 #endif  // FORESTHUB_PLATFORM_ARDUINO_BOARD_WIFI_HPP
