@@ -10,7 +10,7 @@ namespace remote {
 
 using json = nlohmann::json;
 
-static const char* kDefaultBaseUrl = "https://api.openai.com";
+static const char* const kDefaultBaseUrl = "https://api.openai.com";
 
 OpenAIProvider::OpenAIProvider(const config::ProviderConfig& cfg, std::shared_ptr<core::HttpClient> http_client)
     : http_(std::move(http_client)),
@@ -82,7 +82,7 @@ std::shared_ptr<core::ChatResponse> OpenAIProvider::Chat(const core::ChatRequest
     }
 
     json j_resp = json::parse(resp.body, nullptr, false);
-    if (j_resp.is_discarded()) {
+    if (j_resp.is_discarded() || !j_resp.is_object()) {
         return nullptr;
     }
 

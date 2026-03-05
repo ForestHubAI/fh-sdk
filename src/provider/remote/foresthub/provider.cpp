@@ -8,7 +8,7 @@ namespace foresthub {
 namespace provider {
 namespace remote {
 
-using json = foresthub::core::json;
+using json = nlohmann::json;
 
 ForestHubProvider::ForestHubProvider(const config::ProviderConfig& cfg, std::shared_ptr<core::HttpClient> http_client)
     : http_(std::move(http_client)),
@@ -80,7 +80,7 @@ std::shared_ptr<core::ChatResponse> ForestHubProvider::Chat(const core::ChatRequ
     }
 
     json j_resp = json::parse(resp.body, nullptr, false);
-    if (j_resp.is_discarded()) {
+    if (j_resp.is_discarded() || !j_resp.is_object()) {
         return nullptr;
     }
 

@@ -91,7 +91,8 @@ static void ExtractToolCalls(const json& output, std::vector<std::shared_ptr<cor
         } else if (type == "web_search_call") {
             auto ws = std::make_shared<core::WebSearchToolCall>();
             // OpenAI returns queries as an array; join into a single string.
-            if (item.contains("queries") && item["queries"].is_array() && !item["queries"].empty()) {
+            if (item.contains("queries") && item["queries"].is_array() && !item["queries"].empty() &&
+                item["queries"][0].is_string()) {
                 ws->query = item["queries"][0].get<std::string>();
             }
             tools_called.push_back(std::move(ws));

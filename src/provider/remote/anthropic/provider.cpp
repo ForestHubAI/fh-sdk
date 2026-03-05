@@ -10,7 +10,7 @@ namespace remote {
 
 using json = nlohmann::json;
 
-static const char* kDefaultBaseUrl = "https://api.anthropic.com";
+static const char* const kDefaultBaseUrl = "https://api.anthropic.com";
 static const int kDefaultMaxTokens = 4096;
 
 AnthropicProvider::AnthropicProvider(const config::ProviderConfig& cfg, std::shared_ptr<core::HttpClient> http_client)
@@ -84,7 +84,7 @@ std::shared_ptr<core::ChatResponse> AnthropicProvider::Chat(const core::ChatRequ
     }
 
     json j_resp = json::parse(resp.body, nullptr, false);
-    if (j_resp.is_discarded()) {
+    if (j_resp.is_discarded() || !j_resp.is_object()) {
         return nullptr;
     }
 
