@@ -16,6 +16,7 @@
 #include "foresthub/client.hpp"
 #include "foresthub/config/config.hpp"
 #include "foresthub/core/input.hpp"
+#include "foresthub/core/options.hpp"
 #include "foresthub/core/tools.hpp"
 
 // Application Shared Helper
@@ -107,6 +108,7 @@ int main() {  // NOLINT(bugprone-exception-escape)
 
     auto agent = std::make_shared<foresthub::agent::Agent>("WeatherBot");
     agent->WithInstructions("You are a helpful assistant. If asked about weather, use the provided tool.")
+        .WithOptions(foresthub::core::Options().WithTemperature(0.7f).WithMaxTokens(1024))
         .AddTool(weather_tool);
 
     // --- Setup Runner ---

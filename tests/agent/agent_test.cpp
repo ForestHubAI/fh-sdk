@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "foresthub/agent/runner.hpp"
+#include "foresthub/core/options.hpp"
 #include "foresthub/core/tools.hpp"
 #include "foresthub/util/json.hpp"
 #include "mocks/mock_llm_client.hpp"
@@ -60,6 +61,36 @@ TEST(AgentTest, WithResponseFormat) {
     agent.WithResponseFormat(fmt);
     EXPECT_TRUE(agent.response_format().HasValue());
     EXPECT_EQ(agent.response_format()->name, "json_output");
+}
+
+TEST(AgentTest, DefaultOptions) {
+    Agent agent("a");
+    const Options& opts = agent.options();
+    EXPECT_FALSE(opts.temperature.HasValue());
+    EXPECT_FALSE(opts.max_tokens.HasValue());
+    EXPECT_FALSE(opts.top_k.HasValue());
+    EXPECT_FALSE(opts.top_p.HasValue());
+    EXPECT_FALSE(opts.frequency_penalty.HasValue());
+    EXPECT_FALSE(opts.presence_penalty.HasValue());
+    EXPECT_FALSE(opts.seed.HasValue());
+}
+
+TEST(AgentTest, WithOptions) {
+    Agent agent("a");
+    Agent& ref = agent.WithOptions(Options().WithTemperature(0.7f).WithMaxTokens(512));
+    EXPECT_EQ(&ref, &agent);
+    EXPECT_TRUE(agent.options().temperature.HasValue());
+    EXPECT_FLOAT_EQ(*agent.options().temperature, 0.7f);
+    EXPECT_TRUE(agent.options().max_tokens.HasValue());
+    EXPECT_EQ(*agent.options().max_tokens, 512);
+}
+
+TEST(AgentTest, WithOptionsFluentChain) {
+    Agent agent("a");
+    agent.WithInstructions("Be helpful").WithOptions(Options().WithTemperature(0.5f)).AddTool(MakeWeatherTool());
+    EXPECT_EQ(agent.instructions(), "Be helpful");
+    EXPECT_FLOAT_EQ(*agent.options().temperature, 0.5f);
+    EXPECT_EQ(agent.tools().size(), 1u);
 }
 
 TEST(AgentTest, WithTools) {

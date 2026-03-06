@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+#include "foresthub/core/options.hpp"
 #include "foresthub/core/tools.hpp"
 #include "foresthub/core/types.hpp"
 #include "foresthub/util/optional.hpp"
@@ -26,6 +27,9 @@ public:
 
     /// Set the structured output format.
     Agent& WithResponseFormat(core::ResponseFormat format);
+
+    /// Set generation parameters (temperature, max_tokens, etc.).
+    Agent& WithOptions(core::Options options);
 
     /// Replace all tools with the given list.
     Agent& WithTools(std::vector<std::shared_ptr<core::Tool>> tools);
@@ -53,6 +57,8 @@ public:
     const std::string& instructions() const { return instructions_; }
     /// @return Optional structured output format.
     const foresthub::Optional<core::ResponseFormat>& response_format() const { return response_format_; }
+    /// @return Generation parameters for this agent.
+    const core::Options& options() const { return options_; }
     /// @return Tools available to this agent.
     const std::vector<std::shared_ptr<core::Tool>>& tools() const { return tools_; }
 
@@ -60,6 +66,7 @@ private:
     std::string name_;                                           ///< Display name for identification.
     std::string instructions_;                                   ///< System prompt sent to the model.
     foresthub::Optional<core::ResponseFormat> response_format_;  ///< Optional structured output format.
+    core::Options options_;                                      ///< Generation parameters.
     std::vector<std::shared_ptr<core::Tool>> tools_;             ///< Tools available to this agent.
 };
 

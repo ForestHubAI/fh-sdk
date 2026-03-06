@@ -25,6 +25,11 @@ Agent& Agent::WithResponseFormat(core::ResponseFormat format) {
     return *this;
 }
 
+Agent& Agent::WithOptions(core::Options options) {
+    options_ = std::move(options);
+    return *this;
+}
+
 Agent& Agent::WithTools(std::vector<std::shared_ptr<core::Tool>> tools) {
     tools_ = std::move(tools);
     return *this;

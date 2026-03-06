@@ -28,6 +28,7 @@ RunResultOrError Runner::Run(const std::shared_ptr<Agent>& starting_agent, const
         req.system_prompt = current_agent->instructions();
         req.response_format = current_agent->response_format();
         req.tools = current_agent->tools();
+        req.options = current_agent->options();
 
         std::shared_ptr<core::ChatResponse> res_ptr = client_->Chat(req);
         if (!res_ptr) {

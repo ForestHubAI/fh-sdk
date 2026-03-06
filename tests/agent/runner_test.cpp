@@ -8,6 +8,7 @@
 #include "foresthub/agent/agent.hpp"
 #include "foresthub/agent/handoff.hpp"
 #include "foresthub/core/input.hpp"
+#include "foresthub/core/options.hpp"
 #include "foresthub/core/tools.hpp"
 #include "foresthub/util/json.hpp"
 #include "mocks/mock_llm_client.hpp"
@@ -445,4 +446,77 @@ TEST(RunnerTest, HandoffWithNullTargetAgent) {
     RunResultOrError result = runner->Run(agent, input);
     ASSERT_FALSE(result.HasError());
     EXPECT_EQ(result.result->final_output, json("Recovered"));
+}
+
+// ==========================================================================
+// 10. Runner::Run — Options pass-through
+// ==========================================================================
+
+TEST(RunnerTest, OptionsPassThrough) {
+    auto mock = std::make_shared<foresthub::tests::MockLLMClient>();
+    mock->responses.push_back(TextResponse("Done"));
+
+    auto runner = std::make_shared<Runner>(mock, "gpt-4o");
+    auto agent = std::make_shared<Agent>("a");
+    agent->WithOptions(Options().WithTemperature(0.7f).WithMaxTokens(512));
+    auto input = std::make_shared<InputString>("hi");
+
+    RunResultOrError result = runner->Run(agent, input);
+    ASSERT_FALSE(result.HasError());
+
+    ASSERT_EQ(mock->captured_requests.size(), 1u);
+    const Options& opts = mock->captured_requests[0].options;
+    EXPECT_TRUE(opts.temperature.HasValue());
+    EXPECT_FLOAT_EQ(*opts.temperature, 0.7f);
+    EXPECT_TRUE(opts.max_tokens.HasValue());
+    EXPECT_EQ(*opts.max_tokens, 512);
+}
+
+TEST(RunnerTest, DefaultOptionsPassThrough) {
+    auto mock = std::make_shared<foresthub::tests::MockLLMClient>();
+    mock->responses.push_back(TextResponse("Done"));
+
+    auto runner = std::make_shared<Runner>(mock, "gpt-4o");
+    auto agent = std::make_shared<Agent>("a");
+    // No WithOptions — defaults should be empty.
+    auto input = std::make_shared<InputString>("hi");
+
+    RunResultOrError result = runner->Run(agent, input);
+    ASSERT_FALSE(result.HasError());
+
+    ASSERT_EQ(mock->captured_requests.size(), 1u);
+    const Options& opts = mock->captured_requests[0].options;
+    EXPECT_FALSE(opts.temperature.HasValue());
+    EXPECT_FALSE(opts.max_tokens.HasValue());
+}
+
+TEST(RunnerTest, HandoffOptionsSwitch) {
+    auto mock = std::make_shared<foresthub::tests::MockLLMClient>();
+
+    auto agent_b = std::make_shared<Agent>("agent-b");
+    agent_b->WithInstructions("I am B").WithOptions(Options().WithTemperature(0.9f));
+
+    auto agent_a = std::make_shared<Agent>("agent-a");
+    agent_a->WithOptions(Options().WithTemperature(0.5f));
+    auto handoff_tool = NewHandoff("transfer_to_b", "Transfer to B", agent_b);
+    agent_a->AddTool(handoff_tool);
+
+    // Turn 1: agent-a invokes handoff.
+    mock->responses.push_back(ToolCallResponse("transfer_to_b", "c1", "{}"));
+    // Turn 2: agent-b returns text.
+    mock->responses.push_back(TextResponse("Hello from B"));
+
+    auto runner = std::make_shared<Runner>(mock, "gpt-4o");
+    auto input = std::make_shared<InputString>("hi");
+
+    RunResultOrError result = runner->Run(agent_a, input);
+    ASSERT_FALSE(result.HasError());
+
+    ASSERT_EQ(mock->captured_requests.size(), 2u);
+    // Agent A's turn: temperature 0.5.
+    EXPECT_TRUE(mock->captured_requests[0].options.temperature.HasValue());
+    EXPECT_FLOAT_EQ(*mock->captured_requests[0].options.temperature, 0.5f);
+    // Agent B's turn: temperature 0.9.
+    EXPECT_TRUE(mock->captured_requests[1].options.temperature.HasValue());
+    EXPECT_FLOAT_EQ(*mock->captured_requests[1].options.temperature, 0.9f);
 }

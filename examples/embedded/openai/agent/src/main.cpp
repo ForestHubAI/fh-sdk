@@ -16,6 +16,7 @@
 #include "foresthub/client.hpp"
 #include "foresthub/config/config.hpp"
 #include "foresthub/core/input.hpp"
+#include "foresthub/core/options.hpp"
 #include "foresthub/core/tools.hpp"
 #include "foresthub/platform/platform.hpp"
 #include "foresthub/util/json.hpp"
@@ -137,6 +138,7 @@ void setup() {
     // 9. Create agent
     auto agent = std::make_shared<foresthub::agent::Agent>("WeatherBot");
     agent->WithInstructions("You are a helpful assistant. If asked about weather, use the provided tool.")
+        .WithOptions(foresthub::core::Options().WithTemperature(0.7f).WithMaxTokens(1024))
         .AddTool(weather_tool);
 
     // 10. Create runner and execute
