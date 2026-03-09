@@ -2,7 +2,7 @@
     "name": "fh-sdk",
     "version": "0.1.0",
     "description": "C++14 LLM proxy library with unified interface for multiple providers. Platform-agnostic via Hardware Abstraction Layer.",
-    "keywords": "llm, ai, foresthub, arduino, embedded, esp32, agent",
+    "keywords": "llm, ai, foresthub, arduino, embedded, esp32, agent, rag",
     "repository": {
         "type": "git",
         "url": "https://github.com/ForestHubAI/fh-sdk"
@@ -24,6 +24,7 @@
         ],
         "srcFilter": [
             "+<*>",
+            "+<rag/>",
             "-<platform/pc/>",
             "-<platform/pc/*>"
         ]
@@ -39,17 +40,12 @@
     "export": {
         "exclude": [
             "build",
-            ".pio",
-            ".planning",
-            ".claude",
-            "tests",
-            "app",
             "examples",
+            "pio",
+            "tests",
             ".git",
-            ".vscode",
             ".gitignore",
             "CMakeLists.txt",
-            "platformio.ini",
             "run_coverage.sh"
         ]
     }
