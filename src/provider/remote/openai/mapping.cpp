@@ -136,7 +136,8 @@ json ToOpenAIRequest(const core::ChatRequest& req) {
                 t["parameters"] = PrepareSchemaForOpenAI(ext->ToolParameters());
                 tools.push_back(std::move(t));
             } else if (tool->GetToolType() == core::ToolType::kWebSearch) {
-                tools.push_back(json{{"type", "web_search"}});
+                // Use "low" search context to minimize per-search cost.
+                tools.push_back(json{{"type", "web_search"}, {"search_context_size", "low"}});
             }
         }
         if (!tools.empty()) {

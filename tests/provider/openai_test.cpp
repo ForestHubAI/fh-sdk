@@ -274,8 +274,9 @@ TEST(OpenAIProvider, ChatWithTools) {
     EXPECT_EQ(body["tools"][0].value("description", ""), "Get the weather");
     EXPECT_TRUE(body["tools"][0].contains("parameters"));
 
-    // Web search tool
+    // Web search tool with conservative search_context_size
     EXPECT_EQ(body["tools"][1].value("type", ""), "web_search");
+    EXPECT_EQ(body["tools"][1].value("search_context_size", ""), "low");
 }
 
 TEST(OpenAIProvider, ChatWithResponseFormat) {
