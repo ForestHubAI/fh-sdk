@@ -5,7 +5,7 @@ C++14 LLM SDK with unified multi-provider interface. Supports ForestHub backend,
 ## Features
 
 - **Multi-provider routing** -- automatic request routing to the right LLM provider based on model ID
-- **Agent framework** -- tool calling, multi-turn conversations, agent handoffs, and built-in web search
+- **Agent framework** -- tool calling, multi-turn conversations, agent handoffs, generation parameters (temperature, max_tokens), and built-in web search
 - **Internal tools** -- provider-managed tools like web search with query logging via `InternalToolCall`
 - **Platform-agnostic** -- runs on PC (Linux/macOS) and embedded platforms via Hardware Abstraction Layer (Arduino as first implementation)
 - **No exceptions** -- embedded-safe design using string error returns and result structs
@@ -92,6 +92,7 @@ json get_weather(const WeatherArgs& a) { return {{"temp", "22C"}, {"city", a.cit
 // Create agent with tool
 foresthub::agent::Agent agent("weather-bot");
 agent.WithInstructions("You help with weather queries.")
+     .WithOptions(foresthub::core::Options().WithTemperature(0.7f).WithMaxTokens(1024))
      .AddTool(foresthub::core::NewFunctionTool<WeatherArgs, json>(
          "get_weather", "Get current weather", schema, get_weather));
 
@@ -180,12 +181,12 @@ cmake --build build -j4
 cd build && ctest --output-on-failure
 ```
 
-~383 tests across 7 executables:
+~389 tests across 7 executables:
 
 | Executable | Tests | Scope |
 |------------|-------|-------|
 | `run_core_tests` | 103 | Input, model, options, tools, types, json, client |
-| `run_agent_tests` | 33 | Agent construction, Runner execution loop |
+| `run_agent_tests` | 41 | Agent construction, Runner execution loop, options |
 | `run_provider_tests` | ~134 | ForestHub + OpenAI + Gemini + Anthropic HTTP, retry, errors, schema strictification |
 | `run_platform_tests` | 43 | PC platform factory, subsystems, GPIO, ENABLE macros, timezone, console |
 | `run_integration_tests` | 7 | Runner-Provider chain, Client routing |
@@ -213,7 +214,7 @@ examples/
   pc/                     PC examples (anthropic/, foresthub/, gemini/, openai/ -- chat + agent + websearch + structured_output)
   embedded/               Arduino examples (anthropic/, foresthub/, gemini/, openai/ -- PlatformIO projects per provider)
                           Standalone: blink/, http_test/, ticker/
-tests/                    GoogleTest suites (~383 tests)
+tests/                    GoogleTest suites (~389 tests)
   core/                   Core tests (input, model, options, tools, types, json, client)
   agent/                  Agent framework tests (agent, runner)
   provider/               Provider tests (Anthropic + ForestHub + OpenAI + Gemini HTTP, retry, errors)
