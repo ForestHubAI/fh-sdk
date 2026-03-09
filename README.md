@@ -6,6 +6,7 @@ C++14 LLM SDK with unified multi-provider interface. Supports ForestHub backend,
 
 - **Multi-provider routing** -- automatic request routing to the right LLM provider based on model ID
 - **Agent framework** -- tool calling, multi-turn conversations, agent handoffs, generation parameters (temperature, max_tokens), and built-in web search
+- **RAG retriever** -- semantic document search via ForestHub backend with XML context formatting for LLM prompt injection
 - **Internal tools** -- provider-managed tools like web search with query logging via `InternalToolCall`
 - **Platform-agnostic** -- runs on PC (Linux/macOS) and embedded platforms via Hardware Abstraction Layer (Arduino as first implementation)
 - **No exceptions** -- embedded-safe design using string error returns and result structs
@@ -106,7 +107,7 @@ if (!result.HasError()) {
 }
 ```
 
-See `examples/pc/foresthub/chat.cpp` and `examples/pc/foresthub/agent.cpp` for complete examples. For web search, see `examples/pc/foresthub/websearch.cpp`. For structured output (JSON schema), see `examples/pc/foresthub/structured_output.cpp`. For direct OpenAI usage, see `examples/pc/openai/`. For direct Gemini usage, see `examples/pc/gemini/`. For direct Anthropic Claude usage, see `examples/pc/anthropic/`.
+See `examples/pc/foresthub/chat.cpp` and `examples/pc/foresthub/agent.cpp` for complete examples. For web search, see `examples/pc/foresthub/websearch.cpp`. For structured output (JSON schema), see `examples/pc/foresthub/structured_output.cpp`. For RAG (retrieval-augmented generation), see `examples/pc/foresthub/rag.cpp`. For direct OpenAI usage, see `examples/pc/openai/`. For direct Gemini usage, see `examples/pc/gemini/`. For direct Anthropic Claude usage, see `examples/pc/anthropic/`.
 
 > **Note:** Web search is not currently supported for the Anthropic provider due to multi-turn conversation requirements. See the AnthropicProvider header documentation for details.
 
@@ -160,6 +161,7 @@ Console and Time are always available. Omitting macros saves significant Flash:
 | Minimal build (Console+Time) | `pio run -d pio/build_test -e esp32_none` |
 | ForestHub chat | `pio run -d examples/embedded/foresthub/chat -e esp32dev` |
 | ForestHub agent | `pio run -d examples/embedded/foresthub/agent -e esp32dev` |
+| ForestHub RAG | `pio run -d examples/embedded/foresthub/rag -e esp32dev` |
 | OpenAI chat | `pio run -d examples/embedded/openai/chat -e esp32dev` |
 | OpenAI agent | `pio run -d examples/embedded/openai/agent -e esp32dev` |
 | Gemini chat | `pio run -d examples/embedded/gemini/chat -e esp32dev` |
@@ -181,7 +183,7 @@ cmake --build build -j4
 cd build && ctest --output-on-failure
 ```
 
-~389 tests across 7 executables:
+~404 tests across 8 executables:
 
 | Executable | Tests | Scope |
 |------------|-------|-------|
@@ -189,6 +191,7 @@ cd build && ctest --output-on-failure
 | `run_agent_tests` | 41 | Agent construction, Runner execution loop, options |
 | `run_provider_tests` | ~134 | ForestHub + OpenAI + Gemini + Anthropic HTTP, retry, errors, schema strictification |
 | `run_platform_tests` | 43 | PC platform factory, subsystems, GPIO, ENABLE macros, timezone, console |
+| `run_rag_tests` | 15 | RemoteRetriever HTTP, retry, JSON, serialization, FormatContext |
 | `run_integration_tests` | 7 | Runner-Provider chain, Client routing |
 | `run_contract_tests` | 13 | ForestHub API JSON schema verification |
 | `run_util_tests` | 50 | Optional polyfill, Ticker, Schema normalization |
@@ -204,20 +207,23 @@ include/foresthub/        Public API headers
   core/                   Core abstractions (provider, tools, types, input)
   platform/               HAL interfaces (network, console, time, crypto)
   provider/remote/        Provider implementations (Anthropic, ForestHub, Gemini, OpenAI)
+  rag/                    RAG module (retriever interface, types, remote retriever)
   util/                   Utilities (Optional<T> polyfill, JSON wrapper, Ticker, Schema normalization)
 src/                      Implementation
   provider/remote/        Provider implementations (anthropic/, foresthub/, gemini/, openai/)
+  rag/                    RAG module (serialization, remote/retriever)
   platform/pc/            PC implementations (CPR, stdin/stdout, std::chrono)
   platform/arduino/       Arduino implementations (WiFi, Serial, NTP)
   platform/common/        Shared platform code (TLS certs)
 examples/
-  pc/                     PC examples (anthropic/, foresthub/, gemini/, openai/ -- chat + agent + websearch + structured_output)
-  embedded/               Arduino examples (anthropic/, foresthub/, gemini/, openai/ -- PlatformIO projects per provider)
+  pc/                     PC examples (anthropic/, foresthub/, gemini/, openai/ -- chat + agent + websearch + structured_output + rag)
+  embedded/               Arduino examples (anthropic/, foresthub/, gemini/, openai/ -- PlatformIO projects per provider + rag)
                           Standalone: blink/, http_test/, ticker/
-tests/                    GoogleTest suites (~389 tests)
+tests/                    GoogleTest suites (~404 tests)
   core/                   Core tests (input, model, options, tools, types, json, client)
   agent/                  Agent framework tests (agent, runner)
   provider/               Provider tests (Anthropic + ForestHub + OpenAI + Gemini HTTP, retry, errors)
+  rag/                    RAG tests (RemoteRetriever HTTP, retry, JSON, serialization)
   platform/               Platform tests (PC factory, subsystems)
   integration/            Integration tests (Runner-Provider, Client routing)
   contract/               Contract tests (ForestHub API JSON schema)
