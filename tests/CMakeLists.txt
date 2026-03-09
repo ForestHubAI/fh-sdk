@@ -112,6 +112,22 @@ target_include_directories(run_integration_tests PRIVATE ${CMAKE_CURRENT_SOURCE_
 
 gtest_discover_tests(run_integration_tests)
 
+# --- RAG Tests ----------------------------------------------------------------
+
+add_executable(run_rag_tests
+    rag/retriever_test.cpp
+)
+
+target_link_libraries(run_rag_tests
+    PRIVATE
+    foresthub_core
+    GTest::gtest_main
+)
+
+target_include_directories(run_rag_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
+gtest_discover_tests(run_rag_tests)
+
 # --- Contract Tests -----------------------------------------------------------
 
 add_executable(run_contract_tests

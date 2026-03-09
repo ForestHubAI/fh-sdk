@@ -17,6 +17,8 @@ set(FORESTHUB_SOURCES
     provider/remote/openai/provider.cpp
     provider/remote/openai/mapping.cpp
     provider/remote/schema_utils.cpp
+    rag/serialization.cpp
+    rag/remote/retriever.cpp
     util/schema.cpp
 )
 
