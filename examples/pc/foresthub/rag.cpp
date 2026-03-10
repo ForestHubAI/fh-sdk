@@ -37,9 +37,13 @@ int main() {  // NOLINT(bugprone-exception-escape)
     }
     std::string api_key = api_key_env;
 
-    // 3. Load Collection ID (env var or default)
+    // 3. Load Collection ID from Environment
     const char* collection_env = std::getenv("FORESTHUB_RAG_COLLECTION");
-    std::string collection_id = collection_env ? collection_env : "default";
+    if (!collection_env) {
+        platform->console->Printf("[ERROR] Environment variable 'FORESTHUB_RAG_COLLECTION' is missing.\n");
+        platform->console->Flush();
+        return 1;
+    }
 
     // 4. Create HTTP Client via HAL
     foresthub::platform::HttpClientConfig http_cfg;
