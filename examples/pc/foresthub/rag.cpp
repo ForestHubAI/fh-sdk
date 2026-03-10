@@ -66,11 +66,11 @@ int main() {  // NOLINT(bugprone-exception-escape)
     // 7. RAG Query
     std::string question = "Was ist ForestHub?";
 
-    platform->console->Printf("[INFO] Querying collection '%s'...\n", collection_id.c_str());
+    platform->console->Printf("[INFO] Querying collection '%s'...\n", collection_env);
     platform->console->Printf("       Query: %s\n", question.c_str());
 
     foresthub::rag::QueryRequest rag_req;
-    rag_req.collection_id = collection_id;
+    rag_req.collection_id = collection_env;
     rag_req.query = question;
     rag_req.top_k = 3;
 
