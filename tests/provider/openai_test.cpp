@@ -486,6 +486,62 @@ TEST(OpenAIProvider, ChatNoRetryOn4xx) {
     EXPECT_EQ(f.mock_http->post_call_count, 1);
 }
 
+// --- Coverage: Edge cases in request/response mapping ---
+
+TEST(OpenAIProvider, ChatWithNullInput) {
+    TestFixture f;
+    f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
+    OpenAIProvider provider = f.MakeProvider();
+
+    core::ChatRequest req("gpt-4o", nullptr);
+    provider.Chat(req);
+
+    json body = json::parse(f.mock_http->last_body, nullptr, false);
+    ASSERT_FALSE(body.is_discarded());
+    ASSERT_TRUE(body["input"].is_array());
+    EXPECT_TRUE(body["input"].empty());
+}
+
+TEST(OpenAIProvider, ChatWithStringItemInInputItems) {
+    TestFixture f;
+    f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
+    OpenAIProvider provider = f.MakeProvider();
+
+    auto items = std::make_shared<core::InputItems>();
+    items->PushBack(std::make_shared<core::InputString>("hello from user"));
+
+    core::ChatRequest req("gpt-4o", items);
+    provider.Chat(req);
+
+    json body = json::parse(f.mock_http->last_body, nullptr, false);
+    ASSERT_FALSE(body.is_discarded());
+    ASSERT_TRUE(body["input"].is_array());
+    ASSERT_EQ(body["input"].size(), 1u);
+    EXPECT_EQ(body["input"][0]["role"], "user");
+    EXPECT_EQ(body["input"][0]["content"], "hello from user");
+}
+
+TEST(OpenAIProvider, ChatResponseMultipleTextParts) {
+    // Response with two output_text content blocks in a single message.
+    json j = {{"id", "resp_multi"},
+              {"output",
+               {{{"type", "message"},
+                 {"content",
+                  {{{"type", "output_text"}, {"text", "Hello "}}, {{"type", "output_text"}, {"text", "world"}}}}}}},
+              {"usage", {{"total_tokens", 10}}}};
+
+    TestFixture f;
+    f.mock_http->post_responses.push_back({200, j.dump(), {}});
+    OpenAIProvider provider = f.MakeProvider();
+
+    auto input = std::make_shared<core::InputString>("Hi");
+    core::ChatRequest req("gpt-4o", input);
+    std::shared_ptr<core::ChatResponse> resp = provider.Chat(req);
+
+    ASSERT_NE(resp, nullptr);
+    EXPECT_EQ(resp->text, "Hello world");
+}
+
 }  // namespace
 }  // namespace remote
 }  // namespace provider

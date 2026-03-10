@@ -176,6 +176,82 @@ TEST(ClientTest, CreateFactory_EmptyConfig) {
     EXPECT_TRUE(client->providers().empty());
 }
 
+TEST(ClientTest, CreateFactory_WithAnthropicConfig) {
+    config::ClientConfig cfg;
+    config::ProviderConfig anthropic;
+    anthropic.api_key = "test-key";
+    anthropic.supported_models = {"claude-sonnet-4-6"};
+    cfg.remote.anthropic = anthropic;
+
+    auto http = std::make_shared<tests::MockHttpClient>();
+    std::unique_ptr<Client> client = Client::Create(cfg, http);
+
+    ASSERT_NE(client, nullptr);
+    EXPECT_TRUE(client->SupportsModel("claude-sonnet-4-6"));
+}
+
+TEST(ClientTest, CreateFactory_WithGeminiConfig) {
+    config::ClientConfig cfg;
+    config::ProviderConfig gemini;
+    gemini.api_key = "test-key";
+    gemini.supported_models = {"gemini-2.5-flash"};
+    cfg.remote.gemini = gemini;
+
+    auto http = std::make_shared<tests::MockHttpClient>();
+    std::unique_ptr<Client> client = Client::Create(cfg, http);
+
+    ASSERT_NE(client, nullptr);
+    EXPECT_TRUE(client->SupportsModel("gemini-2.5-flash"));
+}
+
+TEST(ClientTest, CreateFactory_WithOpenAIConfig) {
+    config::ClientConfig cfg;
+    config::ProviderConfig openai;
+    openai.api_key = "test-key";
+    openai.supported_models = {"gpt-4o"};
+    cfg.remote.openai = openai;
+
+    auto http = std::make_shared<tests::MockHttpClient>();
+    std::unique_ptr<Client> client = Client::Create(cfg, http);
+
+    ASSERT_NE(client, nullptr);
+    EXPECT_TRUE(client->SupportsModel("gpt-4o"));
+}
+
+TEST(ClientTest, CreateFactory_WithAllProviders) {
+    config::ClientConfig cfg;
+
+    config::ProviderConfig fh;
+    fh.api_key = "fh-key";
+    fh.supported_models = {"fh-model"};
+    cfg.remote.foresthub = fh;
+
+    config::ProviderConfig anthropic;
+    anthropic.api_key = "a-key";
+    anthropic.supported_models = {"claude-sonnet-4-6"};
+    cfg.remote.anthropic = anthropic;
+
+    config::ProviderConfig gemini;
+    gemini.api_key = "g-key";
+    gemini.supported_models = {"gemini-2.5-flash"};
+    cfg.remote.gemini = gemini;
+
+    config::ProviderConfig openai;
+    openai.api_key = "o-key";
+    openai.supported_models = {"gpt-4o"};
+    cfg.remote.openai = openai;
+
+    auto http = std::make_shared<tests::MockHttpClient>();
+    std::unique_ptr<Client> client = Client::Create(cfg, http);
+
+    ASSERT_NE(client, nullptr);
+    EXPECT_EQ(client->providers().size(), 4u);
+    EXPECT_TRUE(client->SupportsModel("fh-model"));
+    EXPECT_TRUE(client->SupportsModel("claude-sonnet-4-6"));
+    EXPECT_TRUE(client->SupportsModel("gemini-2.5-flash"));
+    EXPECT_TRUE(client->SupportsModel("gpt-4o"));
+}
+
 TEST(ClientTest, Health_MultipleUnhealthy) {
     Client client;
 

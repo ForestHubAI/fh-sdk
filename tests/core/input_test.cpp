@@ -118,6 +118,12 @@ TEST(AsInputItemsTest, HandleExistingInputItems) {
     EXPECT_EQ(result->items[0]->ToString(), "Already in list");
 }
 
+TEST(InputStringTest, GetItemType) {
+    auto input_str = std::make_shared<InputString>("test");
+    std::shared_ptr<InputItem> as_item = input_str;
+    EXPECT_EQ(as_item->GetItemType(), InputItemType::kString);
+}
+
 // Note: HandleUnknownInputType test removed — InputType is a closed enum (String, Items).
 // With enum-based dispatch, unknown types cannot exist at runtime.
 

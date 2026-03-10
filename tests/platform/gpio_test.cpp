@@ -50,6 +50,12 @@ TEST(GpioTest, AnalogReadDefaultIsZero) {
     EXPECT_EQ(ctx->gpio->AnalogRead(42), 0);
 }
 
+TEST(GpioTest, AnalogReadAfterDigitalWrite) {
+    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    ctx->gpio->DigitalWrite(10, 512);
+    EXPECT_EQ(ctx->gpio->AnalogRead(10), 512);
+}
+
 // --- PWM ---
 
 TEST(GpioTest, ConfigurePwmSuccess) {

@@ -27,6 +27,17 @@ void from_json(const json& j, EchoArgs& args) {
     args.text = j.value("text", "");
 }
 
+// Mock ExternalTool with kWebSearch type — triggers "unsupported tool execution type" in Runner.
+class UnsupportedTypeTool : public ExternalToolBase {
+public:
+    UnsupportedTypeTool() {
+        name = "unsupported_tool";
+        description = "Tool with unsupported execution type";
+        parameters = json::object();
+    }
+    ToolType GetToolType() const override { return ToolType::kWebSearch; }
+};
+
 static std::shared_ptr<FunctionTool> MakeEchoTool() {
     json schema = {{"type", "object"}, {"properties", {{"text", {{"type", "string"}}}}}};
     std::function<json(EchoArgs)> handler = [](const EchoArgs& args) -> json { return json("echo: " + args.text); };
@@ -519,4 +530,26 @@ TEST(RunnerTest, HandoffOptionsSwitch) {
     // Agent B's turn: temperature 0.9.
     EXPECT_TRUE(mock->captured_requests[1].options.temperature.HasValue());
     EXPECT_FLOAT_EQ(*mock->captured_requests[1].options.temperature, 0.9f);
+}
+
+// ==========================================================================
+// 11. Runner::Run — Unsupported tool execution type
+// ==========================================================================
+
+TEST(RunnerTest, UnsupportedToolExecutionType) {
+    auto mock = std::make_shared<foresthub::tests::MockLLMClient>();
+
+    auto agent = std::make_shared<Agent>("a");
+    agent->AddTool(std::make_shared<UnsupportedTypeTool>());
+
+    // LLM requests the unsupported tool.
+    mock->responses.push_back(ToolCallResponse("unsupported_tool", "c1", "{}"));
+
+    auto runner = std::make_shared<Runner>(mock, "gpt-4o");
+    auto input = std::make_shared<InputString>("hi");
+
+    RunResultOrError result = runner->Run(agent, input);
+    EXPECT_TRUE(result.HasError());
+    EXPECT_NE(result.error.find("Unsupported tool execution type"), std::string::npos);
+    EXPECT_NE(result.error.find("unsupported_tool"), std::string::npos);
 }

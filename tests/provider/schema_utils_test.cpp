@@ -150,6 +150,40 @@ TEST(SchemaUtils, StripAdditionalPropertiesNonObject) {
     EXPECT_EQ(result, input);
 }
 
+TEST(SchemaUtils, StripAdditionalPropertiesArrayItems) {
+    json input = {{"type", "array"},
+                  {"items", {{"type", "object"}, {"properties", json::object()}, {"additionalProperties", false}}}};
+    json result = StripAdditionalProperties(input);
+
+    EXPECT_FALSE(result["items"].contains("additionalProperties"));
+}
+
+// --- Non-JSON-object inputs (literal string/number/array) ---
+
+TEST(SchemaUtils, EnsureAllRequiredLiteralNonObject) {
+    json str = json("just a string");
+    EXPECT_EQ(EnsureAllRequired(str), str);
+
+    json num = json(42);
+    EXPECT_EQ(EnsureAllRequired(num), num);
+}
+
+TEST(SchemaUtils, SetNoAdditionalPropertiesLiteralNonObject) {
+    json str = json("just a string");
+    EXPECT_EQ(SetNoAdditionalProperties(str), str);
+
+    json arr = json::array({1, 2, 3});
+    EXPECT_EQ(SetNoAdditionalProperties(arr), arr);
+}
+
+TEST(SchemaUtils, StripAdditionalPropertiesLiteralNonObject) {
+    json str = json("just a string");
+    EXPECT_EQ(StripAdditionalProperties(str), str);
+
+    json null_val = json(nullptr);
+    EXPECT_EQ(StripAdditionalProperties(null_val), null_val);
+}
+
 }  // namespace
 }  // namespace remote
 }  // namespace provider

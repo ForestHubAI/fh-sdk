@@ -614,6 +614,139 @@ TEST(GeminiProvider, ChatNoRetryOn4xx) {
     EXPECT_EQ(f.mock_http->post_call_count, 1);
 }
 
+// --- Coverage: Edge cases in request/response mapping ---
+
+TEST(GeminiProvider, ChatWithNullInput) {
+    TestFixture f;
+    f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
+    GeminiProvider provider = f.MakeProvider();
+
+    core::ChatRequest req("gemini-2.5-flash", nullptr);
+    provider.Chat(req);
+
+    json body = json::parse(f.mock_http->last_body, nullptr, false);
+    ASSERT_FALSE(body.is_discarded());
+    ASSERT_TRUE(body["contents"].is_array());
+    EXPECT_TRUE(body["contents"].empty());
+}
+
+TEST(GeminiProvider, ChatWithDiscardedToolCallArgs) {
+    TestFixture f;
+    f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
+    GeminiProvider provider = f.MakeProvider();
+
+    auto items = std::make_shared<core::InputItems>();
+    auto tcr = std::make_shared<core::ToolCallRequest>();
+    tcr->call_id = "c1";
+    tcr->name = "my_tool";
+    tcr->arguments = "not valid json {{{";
+    items->PushBack(tcr);
+
+    core::ChatRequest req("gemini-2.5-flash", items);
+    provider.Chat(req);
+
+    json body = json::parse(f.mock_http->last_body, nullptr, false);
+    ASSERT_FALSE(body.is_discarded());
+    const json& fc = body["contents"][0]["parts"][0]["functionCall"];
+    EXPECT_EQ(fc["args"], json::object());
+}
+
+TEST(GeminiProvider, ChatWithStringToolResult) {
+    TestFixture f;
+    f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
+    GeminiProvider provider = f.MakeProvider();
+
+    auto items = std::make_shared<core::InputItems>();
+    auto tr = std::make_shared<core::ToolResult>();
+    tr->call_id = "c1";
+    tr->name = "my_tool";
+    tr->output = json("a plain string");
+    items->PushBack(tr);
+
+    core::ChatRequest req("gemini-2.5-flash", items);
+    provider.Chat(req);
+
+    json body = json::parse(f.mock_http->last_body, nullptr, false);
+    ASSERT_FALSE(body.is_discarded());
+    const json& resp_obj = body["contents"][0]["parts"][0]["functionResponse"]["response"];
+    EXPECT_EQ(resp_obj["result"], "a plain string");
+}
+
+TEST(GeminiProvider, ChatWithNonObjectToolResult) {
+    TestFixture f;
+    f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
+    GeminiProvider provider = f.MakeProvider();
+
+    auto items = std::make_shared<core::InputItems>();
+    auto tr = std::make_shared<core::ToolResult>();
+    tr->call_id = "c1";
+    tr->name = "my_tool";
+    tr->output = json(42);
+    items->PushBack(tr);
+
+    core::ChatRequest req("gemini-2.5-flash", items);
+    provider.Chat(req);
+
+    json body = json::parse(f.mock_http->last_body, nullptr, false);
+    ASSERT_FALSE(body.is_discarded());
+    const json& resp_obj = body["contents"][0]["parts"][0]["functionResponse"]["response"];
+    EXPECT_EQ(resp_obj["result"], "42");
+}
+
+TEST(GeminiProvider, ChatWithStringItemInInputItems) {
+    TestFixture f;
+    f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
+    GeminiProvider provider = f.MakeProvider();
+
+    auto items = std::make_shared<core::InputItems>();
+    items->PushBack(std::make_shared<core::InputString>("hello from user"));
+
+    core::ChatRequest req("gemini-2.5-flash", items);
+    provider.Chat(req);
+
+    json body = json::parse(f.mock_http->last_body, nullptr, false);
+    ASSERT_FALSE(body.is_discarded());
+    EXPECT_EQ(body["contents"][0]["role"], "user");
+    EXPECT_EQ(body["contents"][0]["parts"][0]["text"], "hello from user");
+}
+
+TEST(GeminiProvider, ChatResponseMultipleTextParts) {
+    json j = {{"candidates",
+               {{{"content", {{"parts", {{{"text", "Hello "}}, {{"text", "world"}}}}, {"role", "model"}}},
+                 {"finishReason", "STOP"}}}},
+              {"usageMetadata", {{"totalTokenCount", 10}}}};
+
+    TestFixture f;
+    f.mock_http->post_responses.push_back({200, j.dump(), {}});
+    GeminiProvider provider = f.MakeProvider();
+
+    auto input = std::make_shared<core::InputString>("Hi");
+    core::ChatRequest req("gemini-2.5-flash", input);
+    std::shared_ptr<core::ChatResponse> resp = provider.Chat(req);
+
+    ASSERT_NE(resp, nullptr);
+    EXPECT_EQ(resp->text, "Hello world");
+}
+
+TEST(GeminiProvider, ChatToolCallWithoutArgs) {
+    json j = {{"candidates",
+               {{{"content", {{"parts", {{{"functionCall", {{"name", "no_args_tool"}}}}}}, {"role", "model"}}},
+                 {"finishReason", "STOP"}}}},
+              {"usageMetadata", {{"totalTokenCount", 5}}}};
+
+    TestFixture f;
+    f.mock_http->post_responses.push_back({200, j.dump(), {}});
+    GeminiProvider provider = f.MakeProvider();
+
+    auto input = std::make_shared<core::InputString>("Hi");
+    core::ChatRequest req("gemini-2.5-flash", input);
+    std::shared_ptr<core::ChatResponse> resp = provider.Chat(req);
+
+    ASSERT_NE(resp, nullptr);
+    ASSERT_EQ(resp->tool_call_requests.size(), 1u);
+    EXPECT_EQ(resp->tool_call_requests[0].arguments, "{}");
+}
+
 }  // namespace
 }  // namespace remote
 }  // namespace provider

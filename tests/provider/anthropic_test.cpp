@@ -736,6 +736,102 @@ TEST(AnthropicProvider, ChatConsecutiveToolResultsMerged) {
     EXPECT_EQ(body["messages"][1]["content"].size(), 2u);
 }
 
+// --- Coverage: Edge cases in request/response mapping ---
+
+TEST(AnthropicProvider, ChatWithDiscardedToolCallArgs) {
+    TestFixture f;
+    f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
+    AnthropicProvider provider = f.MakeProvider();
+
+    auto items = std::make_shared<core::InputItems>();
+    auto tcr = std::make_shared<core::ToolCallRequest>();
+    tcr->call_id = "toolu_1";
+    tcr->name = "my_tool";
+    tcr->arguments = "not valid json {{{";
+    items->PushBack(tcr);
+
+    core::ChatRequest req("claude-sonnet-4-6", items);
+    provider.Chat(req);
+
+    json body = json::parse(f.mock_http->last_body, nullptr, false);
+    ASSERT_FALSE(body.is_discarded());
+    const json& input_obj = body["messages"][0]["content"][0]["input"];
+    EXPECT_EQ(input_obj, json::object());
+}
+
+TEST(AnthropicProvider, ChatWithStringItemInInputItems) {
+    TestFixture f;
+    f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
+    AnthropicProvider provider = f.MakeProvider();
+
+    auto items = std::make_shared<core::InputItems>();
+    items->PushBack(std::make_shared<core::InputString>("hello from user"));
+
+    core::ChatRequest req("claude-sonnet-4-6", items);
+    provider.Chat(req);
+
+    json body = json::parse(f.mock_http->last_body, nullptr, false);
+    ASSERT_FALSE(body.is_discarded());
+    ASSERT_EQ(body["messages"].size(), 1u);
+    EXPECT_EQ(body["messages"][0]["role"], "user");
+    EXPECT_EQ(body["messages"][0]["content"][0]["type"], "text");
+    EXPECT_EQ(body["messages"][0]["content"][0]["text"], "hello from user");
+}
+
+TEST(AnthropicProvider, ChatResponseMissingContent) {
+    json j = {{"id", "msg_no_content"},
+              {"type", "message"},
+              {"role", "assistant"},
+              {"stop_reason", "end_turn"},
+              {"usage", {{"input_tokens", 5}, {"output_tokens", 0}}}};
+
+    TestFixture f;
+    f.mock_http->post_responses.push_back({200, j.dump(), {}});
+    AnthropicProvider provider = f.MakeProvider();
+
+    auto input = std::make_shared<core::InputString>("Hi");
+    core::ChatRequest req("claude-sonnet-4-6", input);
+    std::shared_ptr<core::ChatResponse> resp = provider.Chat(req);
+
+    EXPECT_EQ(resp, nullptr);
+}
+
+TEST(AnthropicProvider, ChatResponseEmptyContent) {
+    json j = {{"id", "msg_empty"},        {"type", "message"},
+              {"role", "assistant"},      {"stop_reason", "end_turn"},
+              {"content", json::array()}, {"usage", {{"input_tokens", 5}, {"output_tokens", 0}}}};
+
+    TestFixture f;
+    f.mock_http->post_responses.push_back({200, j.dump(), {}});
+    AnthropicProvider provider = f.MakeProvider();
+
+    auto input = std::make_shared<core::InputString>("Hi");
+    core::ChatRequest req("claude-sonnet-4-6", input);
+    std::shared_ptr<core::ChatResponse> resp = provider.Chat(req);
+
+    EXPECT_EQ(resp, nullptr);
+}
+
+TEST(AnthropicProvider, ChatResponseMultipleTextBlocks) {
+    json j = {{"id", "msg_multi"},
+              {"type", "message"},
+              {"role", "assistant"},
+              {"stop_reason", "end_turn"},
+              {"content", {{{"type", "text"}, {"text", "Hello "}}, {{"type", "text"}, {"text", "world"}}}},
+              {"usage", {{"input_tokens", 5}, {"output_tokens", 10}}}};
+
+    TestFixture f;
+    f.mock_http->post_responses.push_back({200, j.dump(), {}});
+    AnthropicProvider provider = f.MakeProvider();
+
+    auto input = std::make_shared<core::InputString>("Hi");
+    core::ChatRequest req("claude-sonnet-4-6", input);
+    std::shared_ptr<core::ChatResponse> resp = provider.Chat(req);
+
+    ASSERT_NE(resp, nullptr);
+    EXPECT_EQ(resp->text, "Hello world");
+}
+
 }  // namespace
 }  // namespace remote
 }  // namespace provider
