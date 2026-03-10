@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 
 # Define the project name and supported language (C++)
-project(fh-backend-cpp VERSION 0.1.0 LANGUAGES CXX)
+project(fh-sdk VERSION 0.1.0 LANGUAGES CXX)
 
 # ==============================================================================
 # Global Compiler Settings
