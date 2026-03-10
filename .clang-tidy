@@ -1,0 +1,110 @@
+---
+# --- Clang-Tidy Configuration ---
+
+# We start by disabling ALL default checks (-*) to ensure a clean configuration.
+# Then, we only enable specific categories focused on code stability and efficiency,
+# plus readability-identifier-naming for Google Style naming enforcement.
+Checks: >
+  -*,
+  bugprone-*,
+  performance-*,
+  readability-identifier-naming,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-narrowing-conversions
+
+# Do not treat warnings as errors. This ensures the project compiles
+# even if Clang-Tidy finds issues.
+WarningsAsErrors: ''
+
+# --- Google Style Naming Rules ---
+# Enforced via readability-identifier-naming check.
+# clang-tidy "CamelCase" = PascalCase (UpperCamelCase).
+CheckOptions:
+  # Types (PascalCase)
+  - key: readability-identifier-naming.ClassCase
+    value: CamelCase
+  - key: readability-identifier-naming.StructCase
+    value: CamelCase
+  - key: readability-identifier-naming.EnumCase
+    value: CamelCase
+  - key: readability-identifier-naming.TypeAliasCase
+    value: CamelCase
+  - key: readability-identifier-naming.TypeAliasIgnoredRegexp
+    value: 'json'
+
+  # Functions/Methods (PascalCase)
+  - key: readability-identifier-naming.FunctionCase
+    value: CamelCase
+  - key: readability-identifier-naming.FunctionIgnoredRegexp
+    value: '(to|from)_json'
+  - key: readability-identifier-naming.MethodCase
+    value: CamelCase
+
+  # Variables (snake_case)
+  - key: readability-identifier-naming.VariableCase
+    value: lower_case
+  - key: readability-identifier-naming.ParameterCase
+    value: lower_case
+  - key: readability-identifier-naming.MemberCase
+    value: lower_case
+
+  # Private members (snake_case with trailing underscore)
+  - key: readability-identifier-naming.PrivateMemberSuffix
+    value: '_'
+
+  # Constants (kPascalCase)
+  - key: readability-identifier-naming.ConstexprVariableCase
+    value: CamelCase
+  - key: readability-identifier-naming.ConstexprVariablePrefix
+    value: 'k'
+  - key: readability-identifier-naming.StaticConstantCase
+    value: CamelCase
+  - key: readability-identifier-naming.StaticConstantPrefix
+    value: 'k'
+  - key: readability-identifier-naming.GlobalConstantCase
+    value: CamelCase
+  - key: readability-identifier-naming.GlobalConstantPrefix
+    value: 'k'
+
+  # Enum values (kPascalCase)
+  - key: readability-identifier-naming.EnumConstantCase
+    value: CamelCase
+  - key: readability-identifier-naming.EnumConstantPrefix
+    value: 'k'
+
+  # Namespaces (lowercase)
+  - key: readability-identifier-naming.NamespaceCase
+    value: lower_case
+
+  # Macros (UPPER_CASE)
+  - key: readability-identifier-naming.MacroDefinitionCase
+    value: UPPER_CASE
+
+  # Template parameters (PascalCase)
+  - key: readability-identifier-naming.TemplateParameterCase
+    value: CamelCase
+
+# --- Explanation of Active Checks ---
+
+# 1. bugprone-*
+#    Detects code patterns that are likely to cause bugs, crashes, or
+#    undefined behavior (e.g., memory leaks, incorrect casting, use-after-free).
+#    This is the most critical category for software stability.
+
+# 2. performance-*
+#    Detects inefficient code patterns (e.g., unnecessary copying of large
+#    objects, suboptimal STL usage) to improve runtime speed.
+
+# 3. readability-identifier-naming
+#    Enforces Google Style naming conventions (PascalCase methods, snake_case
+#    variables, kPascalCase constants) to maintain consistent codebase style.
+
+# --- Explanation of Explicitly Disabled Checks ---
+
+# -bugprone-easily-swappable-parameters
+#    Disabled to reduce noise. This check flags functions with adjacent parameters
+#    of the same type (e.g., `func(int x, int y)`), which is common and often valid.
+
+# -bugprone-narrowing-conversions
+#    Disabled to reduce noise. This check flags implicit type conversions
+#    (e.g., int to short) that are often intentional in logic.

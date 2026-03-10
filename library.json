@@ -46,7 +46,7 @@
             ".git",
             ".gitignore",
             "CMakeLists.txt",
-            "run_coverage.sh"
+            "scripts"
         ]
     }
 }

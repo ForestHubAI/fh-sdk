@@ -32,6 +32,10 @@ echo -e "${BLUE}=========================================${NC}"
 # -----------------------------------------------------------------------------
 # 1. Clean Build Directory
 # -----------------------------------------------------------------------------
+# Navigate to project root (one level up from scripts/)
+PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$PROJECT_ROOT"
+
 echo -e "${BLUE}[1/8] Cleaning build directory...${NC}"
 rm -rf build
 mkdir build

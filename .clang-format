@@ -1,0 +1,41 @@
+---
+Language:        Cpp
+# Based on Google Style (a widely accepted industrial standard)
+BasedOnStyle:    Google
+
+# --- Indentation & Spacing ---
+# Use 4 spaces for indentation (standard in VS Code / general development)
+# Google uses 2, but 4 is often preferred for readability on larger screens.
+IndentWidth:     4
+TabWidth:        4
+AccessModifierOffset: -4  # Aligns 'public:' with 'class' keyword
+
+# --- C++14 Specifics ---
+# Forces the formattery to respect C++14 syntax (e.g. structured bindings)
+Standard:        c++14
+
+# --- Line Breaking ---
+# 120 chars is the modern standard for HD screens (80 is outdated)
+ColumnLimit:     120
+
+# --- Includes ---
+# Sorts includes alphabetically. Critical for finding missing dependencies.
+SortIncludes:    true
+# Groups includes (e.g. standard libs first, then 3rd party, then local)
+IncludeBlocks:   Regroup
+
+# --- Pointers & References ---
+# Left alignment is standard in C++ (int* ptr) vs C style (int *ptr)
+DerivePointerAlignment: false
+PointerAlignment: Left
+
+# --- Braces ---
+# Attach braces to the end of the line (Java/Google style)
+# Example: if (x) {
+BreakBeforeBraces: Attach
+
+# --- Cleanups ---
+# Allow short functions (like getters) to be on a single line
+AllowShortFunctionsOnASingleLine: Inline
+# Remove empty lines at start of blocks { \n ... }
+KeepEmptyLinesAtTheStartOfBlocks: false

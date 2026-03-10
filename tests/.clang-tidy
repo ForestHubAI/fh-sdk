@@ -1,0 +1,11 @@
+---
+# Inherits from root .clang-tidy, with test-specific overrides.
+
+InheritParentConfig: true
+
+Checks: >
+  -performance-unnecessary-value-param
+
+# GoogleTest's TEST() macro generates code that triggers this warning.
+# It's a false positive — the copied parameter is internal to the macro,
+# not user code.

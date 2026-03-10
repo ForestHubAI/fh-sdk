@@ -1,18 +1,31 @@
-.vscode
-.DS_Store
-.cache
+# Build artifacts
+build/
+*.o
+*.a
+*.so
+*.dylib
+*.dSYM
+
+# IDE / Editor
+.vscode/
 .clangd
-.clang-format
-.clang-tidy
+compile_commands.json
+
+# macOS
+.DS_Store
+
+# PlatformIO
+.pio/
+
+# Cache
+.cache/
+
+# Internal project management
 .claude/
 .claudeignore
 .planning/
-build
-.pio
-agent_test_debug.dSYM
-agent_test_debug
-docs
 CLAUDE.md
+docs/
 
 # User-specific secrets (copy env.cpp.example → env.cpp and fill in your values)
 **/env.cpp
