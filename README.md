@@ -183,14 +183,14 @@ cmake --build build -j4
 cd build && ctest --output-on-failure
 ```
 
-~404 tests across 8 executables:
+~430 tests across 8 executables:
 
 | Executable | Tests | Scope |
 |------------|-------|-------|
-| `run_core_tests` | 103 | Input, model, options, tools, types, json, client |
-| `run_agent_tests` | 41 | Agent construction, Runner execution loop, options |
-| `run_provider_tests` | ~134 | ForestHub + OpenAI + Gemini + Anthropic HTTP, retry, errors, schema strictification |
-| `run_platform_tests` | 43 | PC platform factory, subsystems, GPIO, ENABLE macros, timezone, console |
+| `run_core_tests` | 108 | Input, model, options, tools, types, json, client |
+| `run_agent_tests` | 42 | Agent construction, Runner execution loop, options |
+| `run_provider_tests` | ~149 | ForestHub + OpenAI + Gemini + Anthropic HTTP, retry, errors, schema strictification |
+| `run_platform_tests` | 44 | PC platform factory, subsystems, GPIO, ENABLE macros, timezone, console |
 | `run_rag_tests` | 15 | RemoteRetriever HTTP, retry, JSON, serialization, FormatContext |
 | `run_integration_tests` | 7 | Runner-Provider chain, Client routing |
 | `run_contract_tests` | 13 | ForestHub API JSON schema verification |
@@ -219,7 +219,8 @@ examples/
   pc/                     PC examples (anthropic/, foresthub/, gemini/, openai/ -- chat + agent + websearch + structured_output + rag)
   embedded/               Arduino examples (anthropic/, foresthub/, gemini/, openai/ -- PlatformIO projects per provider + rag)
                           Standalone: blink/, http_test/, ticker/
-tests/                    GoogleTest suites (~404 tests)
+tests/                    GoogleTest suites (~430 tests)
+scripts/                  Build and coverage scripts
   core/                   Core tests (input, model, options, tools, types, json, client)
   agent/                  Agent framework tests (agent, runner)
   provider/               Provider tests (Anthropic + ForestHub + OpenAI + Gemini HTTP, retry, errors)
