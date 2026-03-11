@@ -207,25 +207,5 @@ void from_json(const json& j, ChatResponse& resp) {
     }
 }
 
-// 4. File Operations
-
-void to_json(json& j, const FileUploadResponse& response) {
-    j = json{{"fileID", response.file_id}, {"fileName", response.file_name}};
-}
-
-void from_json(const json& j, FileUploadResponse& response) {
-    response.file_id = j.value("fileID", "");
-    response.file_name = j.value("fileName", "");
-}
-
-void to_json(json& j, const FileDeleteRequest& req) {
-    j = json{{"fileID", req.file_id}, {"providerID", req.provider_id}};
-}
-
-void to_json(json& j, const FileUploadRequest& req) {
-    j = json{{"fileName", req.file_name}, {"providerID", req.provider_id}, {"fileType", req.file_type}};
-    if (!req.purpose.empty()) j["purpose"] = req.purpose;
-}
-
 }  // namespace core
 }  // namespace foresthub

@@ -14,21 +14,7 @@ using namespace foresthub::core;
 using json = nlohmann::json;
 
 // ==========================================
-// 1. Tests for Constants (ContentTypes)
-// ==========================================
-
-TEST(TypesTest, ContentTypeConstants) {
-    EXPECT_EQ(content_types::kPlainText, "text/plain");
-    EXPECT_EQ(content_types::kCsv, "text/csv");
-    EXPECT_EQ(content_types::kPng, "image/png");
-    EXPECT_EQ(content_types::kJpeg, "image/jpeg");
-    EXPECT_EQ(content_types::kPdf, "application/pdf");
-    EXPECT_EQ(content_types::kJson, "application/json");
-    EXPECT_EQ(content_types::kZip, "application/zip");
-}
-
-// ==========================================
-// 2. Tests for ResponseFormat
+// 1. Tests for ResponseFormat
 // ==========================================
 
 TEST(TypesTest, ResponseFormatStruct) {
@@ -160,42 +146,7 @@ TEST(TypesTest, ChatResponseInternalTools) {
 }
 
 // ==========================================
-// 5. Tests for File Operations
-// ==========================================
-
-TEST(TypesTest, FileUploadRequest) {
-    FileUploadRequest req;
-    req.file_name = "test.txt";
-    req.file_type = content_types::kPlainText;
-    req.provider_id = "OpenAI";
-
-    req.file = {0x48, 0x65, 0x6C, 0x6C, 0x6F};  // "Hello" in ASCII
-
-    EXPECT_EQ(req.file_name, "test.txt");
-    EXPECT_EQ(req.file.size(), 5);
-    EXPECT_EQ(static_cast<char>(req.file[0]), 'H');
-}
-
-TEST(TypesTest, FileDeleteRequest) {
-    FileDeleteRequest req;
-    req.file_id = "file-123";
-    req.provider_id = "Mistral";
-
-    EXPECT_EQ(req.file_id, "file-123");
-    EXPECT_EQ(req.provider_id, "Mistral");
-}
-
-TEST(TypesTest, FileUploadResponse) {
-    FileUploadResponse res;
-    res.file_id = "file-xyz";
-    res.file_name = "image.png";
-
-    EXPECT_EQ(res.file_id, "file-xyz");
-    EXPECT_EQ(res.file_name, "image.png");
-}
-
-// ==========================================
-// 6. Tests for ChatRequest Builder Methods
+// 5. Tests for ChatRequest Builder Methods
 // ==========================================
 
 TEST(TypesTest, ChatRequestBuilderMethods) {

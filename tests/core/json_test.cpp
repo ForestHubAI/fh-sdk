@@ -239,34 +239,7 @@ TEST(JsonTest, DeserializeChatResponse) {
 }
 
 // ==========================================
-// 7. Tests for File Operations
-// ==========================================
-
-TEST(JsonTest, FileUploadResponseSerialization) {
-    FileUploadResponse resp;
-    resp.file_id = "file-99";
-    resp.file_name = "data.csv";
-
-    json j = resp;
-    EXPECT_EQ(j["fileID"], "file-99");
-    EXPECT_EQ(j["fileName"], "data.csv");
-
-    FileUploadResponse resp2 = j.get<FileUploadResponse>();
-    EXPECT_EQ(resp2.file_id, "file-99");
-}
-
-TEST(JsonTest, FileDeleteRequestSerialization) {
-    FileDeleteRequest req;
-    req.file_id = "f-1";
-    req.provider_id = "OpenAI";
-
-    json j = req;
-    EXPECT_EQ(j["fileID"], "f-1");
-    EXPECT_EQ(j["providerID"], "OpenAI");
-}
-
-// ==========================================
-// 8. Tests for Missing Serialization Branches
+// 7. Tests for Missing Serialization Branches
 // ==========================================
 
 TEST(JsonTest, SerializeNullInputItemPointer) {
@@ -420,26 +393,6 @@ TEST(JsonTest, DeserializeChatResponse_InternalToolCalls_UnknownTypeIgnored) {
 
     EXPECT_EQ(resp.text, "Hello");
     EXPECT_TRUE(resp.tools_called.empty());
-}
-
-TEST(JsonTest, SerializeFileUploadRequest) {
-    FileUploadRequest req;
-    req.file_name = "data.csv";
-    req.provider_id = "OpenAI";
-    req.file_type = "text/csv";
-
-    // Without purpose
-    json j1 = req;
-    EXPECT_EQ(j1["fileName"], "data.csv");
-    EXPECT_EQ(j1["providerID"], "OpenAI");
-    EXPECT_EQ(j1["fileType"], "text/csv");
-    EXPECT_FALSE(j1.contains("purpose"));
-
-    // With purpose
-    req.purpose = "assistants";
-    json j2 = req;
-    EXPECT_TRUE(j2.contains("purpose"));
-    EXPECT_EQ(j2["purpose"], "assistants");
 }
 
 TEST(JsonTest, SerializeOptionsAllFields) {

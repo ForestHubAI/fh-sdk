@@ -42,17 +42,6 @@ void from_json(const json& j, ChatRequest& req);
 /// Deserialize ChatResponse from JSON.
 void from_json(const json& j, ChatResponse& resp);
 
-// -- File operation serialization --
-
-/// Serialize FileUploadResponse to JSON.
-void to_json(json& j, const FileUploadResponse& response);
-/// Deserialize FileUploadResponse from JSON.
-void from_json(const json& j, FileUploadResponse& response);
-/// Serialize FileDeleteRequest to JSON.
-void to_json(json& j, const FileDeleteRequest& req);
-/// Serialize FileUploadRequest to JSON.
-void to_json(json& j, const FileUploadRequest& req);
-
 }  // namespace core
 }  // namespace foresthub
 

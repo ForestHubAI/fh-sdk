@@ -1,7 +1,6 @@
 #ifndef FORESTHUB_CORE_TYPES_HPP
 #define FORESTHUB_CORE_TYPES_HPP
 
-#include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
@@ -18,20 +17,6 @@ namespace foresthub {
 namespace core {
 
 using json = nlohmann::json;
-
-/// MIME content type string.
-using ContentType = std::string;
-
-/// Well-known MIME content type constants.
-namespace content_types {
-static constexpr const char* kPlainText = "text/plain";   ///< MIME type for plain text.
-static constexpr const char* kCsv = "text/csv";           ///< MIME type for CSV data.
-static constexpr const char* kPng = "image/png";          ///< MIME type for PNG images.
-static constexpr const char* kJpeg = "image/jpeg";        ///< MIME type for JPEG images.
-static constexpr const char* kPdf = "application/pdf";    ///< MIME type for PDF documents.
-static constexpr const char* kJson = "application/json";  ///< MIME type for JSON data.
-static constexpr const char* kZip = "application/zip";    ///< MIME type for ZIP archives.
-}  // namespace content_types
 
 /// Unique identifier for an uploaded file.
 using FileID = std::string;
@@ -159,27 +144,6 @@ struct ChatResponse {
     std::vector<ToolCallRequest> tool_call_requests;              ///< Pending function calls requested by the model.
     std::string response_id;                                      ///< Provider-assigned response identifier.
     int tokens_used = 0;                                          ///< Total tokens consumed.
-};
-
-/// Request to upload a file to a provider.
-struct FileUploadRequest {
-    std::vector<uint8_t> file;  ///< Raw file bytes.
-    std::string file_name;      ///< Original filename.
-    ContentType file_type;      ///< MIME content type.
-    std::string purpose;        ///< Upload purpose (e.g., "assistants").
-    ProviderID provider_id;     ///< Target provider for the upload.
-};
-
-/// Request to delete a previously uploaded file.
-struct FileDeleteRequest {
-    FileID file_id;          ///< Identifier of the file to delete.
-    ProviderID provider_id;  ///< Provider that holds the file.
-};
-
-/// Response after a successful file upload.
-struct FileUploadResponse {
-    FileID file_id;         ///< Provider-assigned file identifier.
-    std::string file_name;  ///< Confirmed filename.
 };
 
 }  // namespace core

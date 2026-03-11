@@ -213,20 +213,8 @@ TEST(ForestHubApiContractTest, ChatRequestRoundtrip) {
     EXPECT_EQ(*restored.options.max_tokens, 100);
 }
 
-TEST(ForestHubApiContractTest, FileUploadResponseRoundtrip) {
-    FileUploadResponse original;
-    original.file_id = "file_abc";
-    original.file_name = "data.csv";
-
-    json j = original;
-    FileUploadResponse restored = j.get<FileUploadResponse>();
-
-    EXPECT_EQ(restored.file_id, "file_abc");
-    EXPECT_EQ(restored.file_name, "data.csv");
-}
-
 // ===========================================================================
-// 4. Wire Format Key Names
+// 3. Wire Format Key Names
 // ===========================================================================
 
 TEST(ForestHubApiContractTest, WireFormatKeyNames) {
