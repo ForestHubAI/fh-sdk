@@ -22,4 +22,4 @@
 - [ ] All existing tests pass (`ctest --output-on-failure`)
 - [ ] I have added tests for my changes (if applicable)
 - [ ] Public API headers include Doxygen documentation (`///`)
-- [ ] I have read [CONTRIBUTING.md](CONTRIBUTING.md) and [ARCHITECTURE.md](ARCHITECTURE.md)
+- [ ] I have read [CONTRIBUTING.md](https://github.com/ForestHubAI/fh-sdk/blob/main/.github/CONTRIBUTING.md) and [ARCHITECTURE.md](https://github.com/ForestHubAI/fh-sdk/blob/main/.github/ARCHITECTURE.md)

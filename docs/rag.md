@@ -157,10 +157,10 @@ if (resp) {
 }
 ```
 
-> See [`examples/pc/foresthub/rag.cpp`](../examples/pc/foresthub/rag.cpp) for the full example with platform setup and error handling.
+> See [`examples/pc/foresthub/rag.cpp`](https://github.com/ForestHubAI/fh-sdk/blob/main/examples/pc/foresthub/rag.cpp) for the full example with platform setup and error handling.
 
 ## Further Reading
 
-- [Getting Started](getting-started.md) -- build the SDK and send your first request
-- [Provider Guide](providers.md) -- configure ForestHub and other providers
-- [Agent Framework](agents.md) -- combine RAG with agent workflows
+- [Getting Started](https://github.com/ForestHubAI/fh-sdk/blob/main/docs/getting-started.md) -- build the SDK and send your first request
+- [Provider Guide](https://github.com/ForestHubAI/fh-sdk/blob/main/docs/providers.md) -- configure ForestHub and other providers
+- [Agent Framework](https://github.com/ForestHubAI/fh-sdk/blob/main/docs/agents.md) -- combine RAG with agent workflows

@@ -219,6 +219,6 @@ If `WithMaxTurns` is not called, the runner has no turn limit. Each tool call an
 
 ## Further Reading
 
-- [Getting Started](getting-started.md) -- build the SDK and run your first example
-- [Provider Guide](providers.md) -- configure each LLM provider
-- [`examples/pc/foresthub/agent.cpp`](../examples/pc/foresthub/agent.cpp) -- complete agent example
+- [Getting Started](https://github.com/ForestHubAI/fh-sdk/blob/main/docs/getting-started.md) -- build the SDK and run your first example
+- [Provider Guide](https://github.com/ForestHubAI/fh-sdk/blob/main/docs/providers.md) -- configure each LLM provider
+- [`examples/pc/foresthub/agent.cpp`](https://github.com/ForestHubAI/fh-sdk/blob/main/examples/pc/foresthub/agent.cpp) -- complete agent example

@@ -152,4 +152,4 @@ auto tool = foresthub::core::NewFunctionTool<MyArgs, json>("my_tool", "Descripti
 
 ## License
 
-This project is licensed under the [GNU Affero General Public License v3.0](LICENSE) with a commercial licensing option. See [LICENSE](LICENSE) for details.
+This project is licensed under the [GNU Affero General Public License v3.0](https://github.com/ForestHubAI/fh-sdk/blob/main/LICENSE) with a commercial licensing option. See [LICENSE](https://github.com/ForestHubAI/fh-sdk/blob/main/LICENSE) for details.

@@ -1,6 +1,6 @@
 # ForestHub SDK
 
-[![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](LICENSE) [![C++14](https://img.shields.io/badge/C%2B%2B-14-blue.svg)](https://isocpp.org/) [![PlatformIO](https://img.shields.io/badge/PlatformIO-Registry-orange.svg)](https://registry.platformio.org/libraries/ForestHubAI/fh-sdk) [![Release](https://img.shields.io/github/v/release/ForestHubAI/fh-sdk)](https://github.com/ForestHubAI/fh-sdk/releases)
+[![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](https://github.com/ForestHubAI/fh-sdk/blob/main/LICENSE) [![C++14](https://img.shields.io/badge/C%2B%2B-14-blue.svg)](https://isocpp.org/) [![PlatformIO](https://img.shields.io/badge/PlatformIO-Registry-orange.svg)](https://registry.platformio.org/libraries/ForestHubAI/fh-sdk) [![Release](https://img.shields.io/github/v/release/ForestHubAI/fh-sdk)](https://github.com/ForestHubAI/fh-sdk/releases)
 
 C++14 LLM SDK with unified multi-provider interface. Supports ForestHub backend, direct OpenAI (Responses API), direct Google Gemini (generateContent API), and direct Anthropic Claude (Messages API). Designed for PC and embedded platforms (MCUs).
 
@@ -106,17 +106,17 @@ Route requests to any supported provider -- the client selects the right one bas
 | Gemini | `cfg.remote.gemini = gem_cfg;` | `GEMINI_API_KEY` |
 | Anthropic | `cfg.remote.anthropic = ant_cfg;` | `ANTHROPIC_API_KEY` |
 
-See [Provider Guide](docs/providers.md) for detailed configuration.
+See [Provider Guide](https://github.com/ForestHubAI/fh-sdk/blob/main/docs/providers.md) for detailed configuration.
 
-For complete examples see `examples/pc/` and `examples/embedded/`.
+For complete examples see [`examples/pc/`](https://github.com/ForestHubAI/fh-sdk/tree/main/examples/pc) and [`examples/embedded/`](https://github.com/ForestHubAI/fh-sdk/tree/main/examples/embedded).
 
 ## Documentation
 
-- [Getting Started](docs/getting-started.md) -- Build and run your first chat
-- [Provider Guide](docs/providers.md) -- ForestHub, OpenAI, Gemini, Anthropic configuration
-- [Agent Framework](docs/agents.md) -- Tools, Runner, handoffs, options
-- [RAG Retriever](docs/rag.md) -- Retrieval-augmented generation
-- [Embedded Platforms](docs/embedded.md) -- ESP32, Portenta H7, PlatformIO
+- [Getting Started](https://github.com/ForestHubAI/fh-sdk/blob/main/docs/getting-started.md) -- Build and run your first chat
+- [Provider Guide](https://github.com/ForestHubAI/fh-sdk/blob/main/docs/providers.md) -- ForestHub, OpenAI, Gemini, Anthropic configuration
+- [Agent Framework](https://github.com/ForestHubAI/fh-sdk/blob/main/docs/agents.md) -- Tools, Runner, handoffs, options
+- [RAG Retriever](https://github.com/ForestHubAI/fh-sdk/blob/main/docs/rag.md) -- Retrieval-augmented generation
+- [Embedded Platforms](https://github.com/ForestHubAI/fh-sdk/blob/main/docs/embedded.md) -- ESP32, Portenta H7, PlatformIO
 - [API Reference](https://foresthubai.github.io/fh-sdk/) -- Generated from source
 
 ## Architecture
@@ -180,14 +180,14 @@ Console and Time are always available. Omitting macros saves significant Flash:
 | Anthropic chat | `pio run -d examples/embedded/anthropic/chat -e esp32dev` |
 | Anthropic agent | `pio run -d examples/embedded/anthropic/agent -e esp32dev` |
 | Anthropic websearch | `pio run -d examples/embedded/anthropic/websearch -e esp32dev` |
-| HTTP/HTTPS test | `pio run -d examples/embedded/http_test -e esp32dev` |
-| HTTP-only test (no Crypto) | `pio run -d examples/embedded/http_test -e esp32_http_only` |
-| Ticker example | `pio run -d examples/embedded/ticker -e esp32dev` |
+| HTTP/HTTPS test | `pio run -d examples/embedded/utility/http_test -e esp32dev` |
+| HTTP-only test (no Crypto) | `pio run -d examples/embedded/utility/http_test -e esp32_http_only` |
+| Ticker example | `pio run -d examples/embedded/utility/ticker -e esp32dev` |
 | Portenta H7 | `pio run -d pio/build_test -e portenta_h7_m7` |
 
 ForestHub examples require `FORESTHUB_API_KEY`, OpenAI examples require `OPENAI_API_KEY`, Gemini examples require `GEMINI_API_KEY`, Anthropic examples require `ANTHROPIC_API_KEY`.
 
-See [Embedded Guide](docs/embedded.md) for detailed setup.
+See [Embedded Guide](https://github.com/ForestHubAI/fh-sdk/blob/main/docs/embedded.md) for detailed setup.
 
 ## Testing
 
@@ -261,13 +261,13 @@ pio/build_test/           PlatformIO build verification (ESP32, Portenta H7)
 | GoogleTest | 1.17.0 | Unit testing framework | CMake FetchContent |
 | ArduinoHttpClient | >=0.6.1 | HTTP client for Arduino builds (auto-resolved, framework-gated) | PlatformIO (`library.json`) |
 
-See [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES) for full license details of all third-party components.
+See [THIRD_PARTY_NOTICES](https://github.com/ForestHubAI/fh-sdk/blob/main/THIRD_PARTY_NOTICES) for full license details of all third-party components.
 
 ## License
 
 This project is dual-licensed:
 
-- **Open Source**: [GNU Affero General Public License v3.0](LICENSE) (AGPL-3.0-only)
+- **Open Source**: [GNU Affero General Public License v3.0](https://github.com/ForestHubAI/fh-sdk/blob/main/LICENSE) (AGPL-3.0-only)
 - **Commercial**: For commercial licensing options, contact root@foresthub.ai
 
 By using this software, you agree to the terms of the AGPL-3.0 license unless you have obtained a separate commercial license.

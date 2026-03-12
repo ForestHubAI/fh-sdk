@@ -231,6 +231,6 @@ Each example includes an `env.cpp.example` file. Copy it to `env.cpp` and fill i
 
 ## Further Reading
 
-- [Getting Started](getting-started.md) -- PC build and first steps
-- [Provider Guide](providers.md) -- configure each LLM provider
-- [Agent Framework](agents.md) -- tools and multi-turn agent workflows
+- [Getting Started](https://github.com/ForestHubAI/fh-sdk/blob/main/docs/getting-started.md) -- PC build and first steps
+- [Provider Guide](https://github.com/ForestHubAI/fh-sdk/blob/main/docs/providers.md) -- configure each LLM provider
+- [Agent Framework](https://github.com/ForestHubAI/fh-sdk/blob/main/docs/agents.md) -- tools and multi-turn agent workflows

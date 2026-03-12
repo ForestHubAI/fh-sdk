@@ -9,14 +9,14 @@ This guide walks you through building the ForestHub SDK from source and sending 
 - **Internet connection** (CMake fetches CPR and GoogleTest automatically)
 - An API key from at least one supported provider (ForestHub, OpenAI, Gemini, or Anthropic)
 
-For embedded development, see the [Embedded Platforms](embedded.md) guide instead.
+For embedded development, see the [Embedded Platforms](https://github.com/ForestHubAI/fh-sdk/blob/main/docs/embedded.md) guide instead.
 
 ## Installation
 
 Clone the repository and build with CMake:
 
 ```bash
-git clone https://github.com/foresthub-ai/fh-sdk.git
+git clone https://github.com/ForestHubAI/fh-sdk.git
 cd fh-sdk
 cmake -S . -B build
 cmake --build build -j4
@@ -32,7 +32,7 @@ cd build && ctest --output-on-failure
 
 ## Your First Chat
 
-The simplest use case is sending a single prompt to an LLM and printing the response. This example uses the ForestHub provider, but any provider follows the same pattern (see the [Provider Guide](providers.md)).
+The simplest use case is sending a single prompt to an LLM and printing the response. This example uses the ForestHub provider, but any provider follows the same pattern (see the [Provider Guide](https://github.com/ForestHubAI/fh-sdk/blob/main/docs/providers.md)).
 
 ```cpp
 #include "foresthub/client.hpp"
@@ -66,7 +66,7 @@ int main() {
 }
 ```
 
-> See [`examples/pc/foresthub/chat.cpp`](../examples/pc/foresthub/chat.cpp) for the full example with platform setup and error handling.
+> See [`examples/pc/foresthub/chat.cpp`](https://github.com/ForestHubAI/fh-sdk/blob/main/examples/pc/foresthub/chat.cpp) for the full example with platform setup and error handling.
 
 ## Your First Agent
 
@@ -112,7 +112,7 @@ if (!result.HasError()) {
 }
 ```
 
-> See [`examples/pc/foresthub/agent.cpp`](../examples/pc/foresthub/agent.cpp) for the full example.
+> See [`examples/pc/foresthub/agent.cpp`](https://github.com/ForestHubAI/fh-sdk/blob/main/examples/pc/foresthub/agent.cpp) for the full example.
 
 ## Configuration
 
@@ -154,7 +154,7 @@ export ANTHROPIC_API_KEY=your_anthropic_key
 
 ## Next Steps
 
-- [Provider Guide](providers.md) -- configure ForestHub, OpenAI, Gemini, and Anthropic
-- [Agent Framework](agents.md) -- tools, multi-turn execution, structured output, and handoffs
-- [RAG Guide](rag.md) -- retrieval-augmented generation with document search
-- [Embedded Platforms](embedded.md) -- deploy on ESP32, Portenta H7, and other MCUs
+- [Provider Guide](https://github.com/ForestHubAI/fh-sdk/blob/main/docs/providers.md) -- configure ForestHub, OpenAI, Gemini, and Anthropic
+- [Agent Framework](https://github.com/ForestHubAI/fh-sdk/blob/main/docs/agents.md) -- tools, multi-turn execution, structured output, and handoffs
+- [RAG Guide](https://github.com/ForestHubAI/fh-sdk/blob/main/docs/rag.md) -- retrieval-augmented generation with document search
+- [Embedded Platforms](https://github.com/ForestHubAI/fh-sdk/blob/main/docs/embedded.md) -- deploy on ESP32, Portenta H7, and other MCUs

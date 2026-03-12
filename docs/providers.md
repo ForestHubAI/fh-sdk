@@ -52,7 +52,7 @@ cfg.remote.foresthub = fh_cfg;
 | Authentication | `Device-Key` header |
 | Supported features | Chat, tool calling, web search, structured output, RAG |
 
-> See [`examples/pc/foresthub/`](../examples/pc/foresthub/) for complete examples.
+> See [`examples/pc/foresthub/`](https://github.com/ForestHubAI/fh-sdk/tree/main/examples/pc/foresthub) for complete examples.
 
 ## OpenAI
 
@@ -76,7 +76,7 @@ cfg.remote.openai = oai_cfg;
 | Authentication | `Authorization: Bearer` header |
 | Supported features | Chat, tool calling, web search, structured output |
 
-> See [`examples/pc/openai/`](../examples/pc/openai/) for complete examples.
+> See [`examples/pc/openai/`](https://github.com/ForestHubAI/fh-sdk/tree/main/examples/pc/openai) for complete examples.
 
 ## Google Gemini
 
@@ -105,7 +105,7 @@ cfg.remote.gemini = gemini_cfg;
 - The SDK uses the `v1beta` API endpoint, which is required for function calling support.
 - Function calling and web search cannot be combined in the same request. If you need both, use separate requests.
 
-> See [`examples/pc/gemini/`](../examples/pc/gemini/) for complete examples.
+> See [`examples/pc/gemini/`](https://github.com/ForestHubAI/fh-sdk/tree/main/examples/pc/gemini) for complete examples.
 
 ## Anthropic Claude
 
@@ -133,7 +133,7 @@ cfg.remote.anthropic = anthropic_cfg;
 
 - **Web search is not supported.** Anthropic's server-side web search tool returns encrypted content that cannot be processed in multi-turn conversations. Use a different provider for web search.
 
-> See [`examples/pc/anthropic/`](../examples/pc/anthropic/) for complete examples.
+> See [`examples/pc/anthropic/`](https://github.com/ForestHubAI/fh-sdk/tree/main/examples/pc/anthropic) for complete examples.
 
 ## Multi-Provider Routing
 

@@ -1,6 +1,6 @@
 # Contributing to fh-sdk
 
-Thank you for your interest in contributing to fh-sdk! Please read our [Code of Conduct](CODE_OF_CONDUCT.md) before participating.
+Thank you for your interest in contributing to fh-sdk! Please read our [Code of Conduct](https://github.com/ForestHubAI/fh-sdk/blob/main/.github/CODE_OF_CONDUCT.md) before participating.
 
 ## How to Contribute
 
@@ -62,7 +62,7 @@ pio run -d pio/build_test -e esp32dev
 
 ## Architectural Rules
 
-The SDK enforces strict rules to support embedded platforms. See [ARCHITECTURE.md](ARCHITECTURE.md) for full details.
+The SDK enforces strict rules to support embedded platforms. See [ARCHITECTURE.md](https://github.com/ForestHubAI/fh-sdk/blob/main/.github/ARCHITECTURE.md) for full details.
 
 - **No exceptions** — return `std::string` for errors (empty = success)
 - **No RTTI** — no `dynamic_cast`, `dynamic_pointer_cast`, or `typeid`
@@ -82,7 +82,7 @@ The SDK enforces strict rules to support embedded platforms. See [ARCHITECTURE.m
 2. **Implement** your changes following the code style and architectural rules above
 3. **Test** your changes: `cd build && ctest --output-on-failure`
 4. **Format** your code: run clang-format on all modified files
-5. **Submit** a pull request using the [PR template](.github/PULL_REQUEST_TEMPLATE.md)
+5. **Submit** a pull request using the [PR template](https://github.com/ForestHubAI/fh-sdk/blob/main/.github/PULL_REQUEST_TEMPLATE.md)
 6. **Review** — a maintainer will review your PR. Address any feedback.
 
 ### Commit Messages
@@ -103,4 +103,4 @@ Use the GitHub issue templates:
 
 ## License
 
-By contributing to fh-sdk, you agree that your contributions will be licensed under the [GNU Affero General Public License v3.0](LICENSE).
+By contributing to fh-sdk, you agree that your contributions will be licensed under the [GNU Affero General Public License v3.0](https://github.com/ForestHubAI/fh-sdk/blob/main/LICENSE).
