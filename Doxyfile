@@ -15,7 +15,7 @@ OUTPUT_DIRECTORY       = docs/api
 #---------------------------------------------------------------------------
 
 INPUT                  = README.md \
-                         namespaces.dox \
+                         docs/doxygen/namespaces.dox \
                          include/foresthub
 RECURSIVE              = YES
 FILE_PATTERNS          = *.hpp *.md
@@ -52,11 +52,20 @@ PREDEFINED             = FORESTHUB_ENABLE_NETWORK \
 
 GENERATE_HTML          = YES
 HTML_OUTPUT            = html
-HTML_EXTRA_STYLESHEET  = third_party/doxygen-awesome/doxygen-awesome.css
+HTML_HEADER            = docs/doxygen/header.html
+HTML_FOOTER            = docs/doxygen/footer.html
+HTML_EXTRA_STYLESHEET  = third_party/doxygen-awesome/doxygen-awesome.css \
+                         third_party/doxygen-awesome/doxygen-awesome-sidebar-only.css \
+                         docs/doxygen/foresthub-doxygen.css
+HTML_EXTRA_FILES       = third_party/doxygen-awesome/doxygen-awesome-darkmode-toggle.js \
+                         third_party/doxygen-awesome/doxygen-awesome-fragment-copy-button.js \
+                         third_party/doxygen-awesome/doxygen-awesome-paragraph-link.js \
+                         third_party/doxygen-awesome/doxygen-awesome-interactive-toc.js
 GENERATE_TREEVIEW      = YES
 DISABLE_INDEX          = NO
 FULL_SIDEBAR           = NO
 HTML_COLORSTYLE        = LIGHT
+SEARCHENGINE           = YES
 
 #---------------------------------------------------------------------------
 # Other output formats (disabled)
@@ -72,7 +81,7 @@ GENERATE_XML           = NO
 
 HAVE_DOT               = NO
 ALPHABETICAL_INDEX     = NO
-LAYOUT_FILE            = DoxygenLayout.xml
+LAYOUT_FILE            = docs/doxygen/DoxygenLayout.xml
 
 #---------------------------------------------------------------------------
 # Warnings
