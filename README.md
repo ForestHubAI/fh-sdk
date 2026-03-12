@@ -239,7 +239,18 @@ pio/build_test/           PlatformIO build verification (ESP32, Portenta H7)
 
 | Dependency | Version | Purpose | Source |
 |------------|---------|---------|--------|
-| nlohmann/json | 3.11.2 | JSON parsing and serialization | Vendored (`third_party/`) |
+| nlohmann/json | 3.12.0 | JSON parsing and serialization | Vendored (`third_party/`), MIT license |
 | CPR | 1.9.9 | HTTP client for PC builds | CMake FetchContent |
 | GoogleTest | 1.17.0 | Unit testing framework | CMake FetchContent |
 | ArduinoHttpClient | >=0.6.1 | HTTP client for Arduino builds (auto-resolved, framework-gated) | PlatformIO (`library.json`) |
+
+See [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES) for full license details of all third-party components.
+
+## License
+
+This project is dual-licensed:
+
+- **Open Source**: [GNU Affero General Public License v3.0](LICENSE) (AGPL-3.0-only)
+- **Commercial**: For commercial licensing options, contact root@foresthub.ai
+
+By using this software, you agree to the terms of the AGPL-3.0 license unless you have obtained a separate commercial license.
