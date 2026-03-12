@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: AGPL-3.0-only
+// Copyright (c) 2026 ForestHub. All rights reserved.
+// For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
+
 #ifndef FORESTHUB_CORE_TYPES_HPP
 #define FORESTHUB_CORE_TYPES_HPP
 

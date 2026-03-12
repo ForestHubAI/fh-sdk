@@ -5,7 +5,7 @@
     "keywords": "llm, ai, foresthub, arduino, embedded, esp32, agent, rag, tool-calling, multi-provider, c++14, portenta, openai, gemini, anthropic",
     "authors": [
         {
-            "name": "ForestHub AI",
+            "name": "ForestHub",
             "url": "https://github.com/ForestHubAI"
         }
     ],
