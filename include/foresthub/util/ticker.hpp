@@ -1,6 +1,9 @@
 #ifndef FORESTHUB_UTIL_TICKER_HPP
 #define FORESTHUB_UTIL_TICKER_HPP
 
+/// @file
+/// Periodic, one-shot, and calendar-aligned scheduling utility.
+
 namespace foresthub {
 namespace util {
 

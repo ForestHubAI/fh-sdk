@@ -1,6 +1,9 @@
 #ifndef FORESTHUB_PLATFORM_GPIO_HPP
 #define FORESTHUB_PLATFORM_GPIO_HPP
 
+/// @file
+/// Abstract interface for general-purpose pin I/O and PWM.
+
 #include <cstdint>
 #include <string>
 

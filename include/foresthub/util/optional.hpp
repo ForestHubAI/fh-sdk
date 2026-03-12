@@ -1,6 +1,9 @@
 #ifndef FORESTHUB_UTIL_OPTIONAL_HPP
 #define FORESTHUB_UTIL_OPTIONAL_HPP
 
+/// @file
+/// Minimal Optional<T> polyfill for C++14 compatibility.
+
 #include <utility>
 
 namespace foresthub {

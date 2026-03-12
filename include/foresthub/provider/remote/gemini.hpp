@@ -1,6 +1,9 @@
 #ifndef FORESTHUB_PROVIDER_REMOTE_GEMINI_HPP
 #define FORESTHUB_PROVIDER_REMOTE_GEMINI_HPP
 
+/// @file
+/// Google Gemini generateContent API provider implementation.
+
 #include <memory>
 #include <string>
 #include <vector>

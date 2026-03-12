@@ -1,6 +1,9 @@
 #ifndef FORESTHUB_PROVIDER_REMOTE_OPENAI_HPP
 #define FORESTHUB_PROVIDER_REMOTE_OPENAI_HPP
 
+/// @file
+/// OpenAI Responses API provider implementation.
+
 #include <memory>
 #include <string>
 #include <vector>

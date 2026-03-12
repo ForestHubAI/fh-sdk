@@ -1,6 +1,9 @@
 #ifndef FORESTHUB_RAG_REMOTE_RETRIEVER_HPP
 #define FORESTHUB_RAG_REMOTE_RETRIEVER_HPP
 
+/// @file
+/// RemoteRetriever that queries the ForestHub backend via HTTP.
+
 #include <memory>
 #include <string>
 

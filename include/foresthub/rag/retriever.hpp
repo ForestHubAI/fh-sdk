@@ -1,6 +1,9 @@
 #ifndef FORESTHUB_RAG_RETRIEVER_HPP
 #define FORESTHUB_RAG_RETRIEVER_HPP
 
+/// @file
+/// Abstract Retriever interface for document retrieval.
+
 #include <memory>
 
 #include "foresthub/rag/types.hpp"

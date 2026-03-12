@@ -1,6 +1,9 @@
 #ifndef FORESTHUB_CORE_TOOLS_HPP
 #define FORESTHUB_CORE_TOOLS_HPP
 
+/// @file
+/// Tool system: ExternalTool, FunctionTool, WebSearch, and tool call types.
+
 #include <cstdint>
 #include <functional>
 #include <memory>

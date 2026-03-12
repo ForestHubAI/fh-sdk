@@ -1,6 +1,9 @@
 #ifndef FORESTHUB_AGENT_AGENT_HPP
 #define FORESTHUB_AGENT_AGENT_HPP
 
+/// @file
+/// Agent with instructions, tools, and optional response format.
+
 #include <memory>
 #include <string>
 #include <vector>

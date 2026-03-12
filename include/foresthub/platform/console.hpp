@@ -1,6 +1,9 @@
 #ifndef FORESTHUB_PLATFORM_CONSOLE_HPP
 #define FORESTHUB_PLATFORM_CONSOLE_HPP
 
+/// @file
+/// Abstract interface for console I/O.
+
 #include <cstdarg>
 #include <string>
 

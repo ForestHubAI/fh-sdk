@@ -1,6 +1,9 @@
 #ifndef FORESTHUB_RAG_TYPES_HPP
 #define FORESTHUB_RAG_TYPES_HPP
 
+/// @file
+/// RAG query and response types.
+
 #include <string>
 #include <vector>
 

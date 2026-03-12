@@ -1,6 +1,9 @@
 #ifndef FORESTHUB_AGENT_RUNNER_HPP
 #define FORESTHUB_AGENT_RUNNER_HPP
 
+/// @file
+/// Runner that executes agent loops with LLM calls, tool dispatch, and handoffs.
+
 #include <memory>
 #include <string>
 #include <vector>

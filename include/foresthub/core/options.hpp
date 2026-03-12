@@ -1,6 +1,9 @@
 #ifndef FORESTHUB_CORE_OPTIONS_HPP
 #define FORESTHUB_CORE_OPTIONS_HPP
 
+/// @file
+/// Model-specific generation options (temperature, max_tokens, etc.).
+
 #include "foresthub/util/optional.hpp"
 
 namespace foresthub {

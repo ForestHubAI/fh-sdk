@@ -1,6 +1,9 @@
 #ifndef FORESTHUB_PROVIDER_REMOTE_FORESTHUB_HPP
 #define FORESTHUB_PROVIDER_REMOTE_FORESTHUB_HPP
 
+/// @file
+/// ForestHub backend provider implementation.
+
 #include <memory>
 #include <string>
 #include <vector>

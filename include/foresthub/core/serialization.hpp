@@ -1,6 +1,9 @@
 #ifndef FORESTHUB_CORE_SERIALIZATION_HPP
 #define FORESTHUB_CORE_SERIALIZATION_HPP
 
+/// @file
+/// JSON serialization and deserialization for core types.
+
 #include <memory>
 
 #include "foresthub/core/input.hpp"

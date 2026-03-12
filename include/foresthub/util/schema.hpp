@@ -1,6 +1,9 @@
 #ifndef FORESTHUB_UTIL_SCHEMA_HPP
 #define FORESTHUB_UTIL_SCHEMA_HPP
 
+/// @file
+/// JSON Schema normalization utilities.
+
 #include "foresthub/util/json.hpp"
 
 namespace foresthub {

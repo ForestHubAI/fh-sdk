@@ -1,6 +1,9 @@
 #ifndef FORESTHUB_CORE_PROVIDER_HPP
 #define FORESTHUB_CORE_PROVIDER_HPP
 
+/// @file
+/// LLMClient and Provider interfaces for chat operations.
+
 #include <memory>
 #include <string>
 

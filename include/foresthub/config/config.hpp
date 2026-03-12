@@ -1,6 +1,9 @@
 #ifndef FORESTHUB_CONFIG_CONFIG_HPP
 #define FORESTHUB_CONFIG_CONFIG_HPP
 
+/// @file
+/// Client and provider configuration types.
+
 #include <string>
 #include <vector>
 

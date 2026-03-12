@@ -1,6 +1,9 @@
 #ifndef FORESTHUB_AGENT_HANDOFF_HPP
 #define FORESTHUB_AGENT_HANDOFF_HPP
 
+/// @file
+/// Handoff tool that transfers control between agents.
+
 #include <memory>
 #include <string>
 #include <utility>

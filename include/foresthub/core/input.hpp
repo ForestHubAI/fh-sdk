@@ -1,6 +1,9 @@
 #ifndef FORESTHUB_CORE_INPUT_HPP
 #define FORESTHUB_CORE_INPUT_HPP
 
+/// @file
+/// Polymorphic input types for chat requests.
+
 #include <cstdint>
 #include <memory>
 #include <string>

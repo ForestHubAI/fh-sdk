@@ -1,6 +1,9 @@
 #ifndef FORESTHUB_PLATFORM_NETWORK_HPP
 #define FORESTHUB_PLATFORM_NETWORK_HPP
 
+/// @file
+/// Abstract interface for network connectivity.
+
 #include <cstdint>
 #include <string>
 

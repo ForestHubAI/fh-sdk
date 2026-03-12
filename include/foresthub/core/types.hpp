@@ -1,6 +1,9 @@
 #ifndef FORESTHUB_CORE_TYPES_HPP
 #define FORESTHUB_CORE_TYPES_HPP
 
+/// @file
+/// ChatRequest and ChatResponse types with fluent builder API.
+
 #include <memory>
 #include <string>
 #include <vector>

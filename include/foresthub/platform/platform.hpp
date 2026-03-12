@@ -1,6 +1,9 @@
 #ifndef FORESTHUB_PLATFORM_PLATFORM_HPP
 #define FORESTHUB_PLATFORM_PLATFORM_HPP
 
+/// @file
+/// PlatformContext factory and subsystem aggregation.
+
 #include <cstdint>
 #include <memory>
 

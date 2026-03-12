@@ -1,6 +1,9 @@
 #ifndef FORESTHUB_PROVIDER_REMOTE_ANTHROPIC_HPP
 #define FORESTHUB_PROVIDER_REMOTE_ANTHROPIC_HPP
 
+/// @file
+/// Anthropic Messages API provider implementation.
+
 #include <memory>
 #include <string>
 #include <vector>

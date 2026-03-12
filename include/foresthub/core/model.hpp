@@ -1,6 +1,9 @@
 #ifndef FORESTHUB_CORE_MODEL_HPP
 #define FORESTHUB_CORE_MODEL_HPP
 
+/// @file
+/// Model metadata and capability identifiers.
+
 #include <string>
 #include <vector>
 

@@ -1,6 +1,9 @@
 #ifndef FORESTHUB_PLATFORM_CRYPTO_HPP
 #define FORESTHUB_PLATFORM_CRYPTO_HPP
 
+/// @file
+/// Abstract interfaces for TLS/crypto operations.
+
 #include <memory>
 
 namespace foresthub {

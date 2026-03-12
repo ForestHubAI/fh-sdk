@@ -1,6 +1,9 @@
 #ifndef FORESTHUB_CLIENT_HPP
 #define FORESTHUB_CLIENT_HPP
 
+/// @file
+/// Multi-provider Client that routes chat requests by model ID.
+
 #include <map>
 #include <memory>
 #include <string>

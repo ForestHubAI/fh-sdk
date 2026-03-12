@@ -1,6 +1,9 @@
 #ifndef FORESTHUB_CORE_HTTP_CLIENT_HPP
 #define FORESTHUB_CORE_HTTP_CLIENT_HPP
 
+/// @file
+/// Abstract HTTP client interface and response type.
+
 #include <map>
 #include <string>
 

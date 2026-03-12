@@ -1,6 +1,9 @@
 #ifndef FORESTHUB_PLATFORM_TIME_HPP
 #define FORESTHUB_PLATFORM_TIME_HPP
 
+/// @file
+/// Abstract interface for time operations and synchronization.
+
 #include <ctime>
 #include <string>
 
