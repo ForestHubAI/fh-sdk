@@ -1,6 +1,6 @@
 # ForestHub SDK
 
-[![CI](https://github.com/ForestHubAI/fh-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/ForestHubAI/fh-sdk/actions/workflows/ci.yml) [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](https://github.com/ForestHubAI/fh-sdk/blob/main/LICENSE) [![C++14](https://img.shields.io/badge/C%2B%2B-14-blue.svg)](https://isocpp.org/) [![PlatformIO](https://img.shields.io/badge/PlatformIO-Registry-orange.svg)](https://registry.platformio.org/libraries/ForestHubAI/fh-sdk) [![Release](https://img.shields.io/github/v/release/ForestHubAI/fh-sdk)](https://github.com/ForestHubAI/fh-sdk/releases)
+[![CI](https://github.com/ForestHubAI/fh-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/ForestHubAI/fh-sdk/actions/workflows/ci.yml) [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](https://github.com/ForestHubAI/fh-sdk/blob/main/LICENSE) [![C++14](https://img.shields.io/badge/C%2B%2B-14-blue.svg)](https://isocpp.org/) [![PlatformIO](https://img.shields.io/badge/PlatformIO-Registry-orange.svg)](https://registry.platformio.org/libraries/foresthubai/fh-sdk) [![Release](https://img.shields.io/github/v/release/ForestHubAI/fh-sdk)](https://github.com/ForestHubAI/fh-sdk/releases)
 
 C++14 LLM SDK with unified multi-provider interface. Supports ForestHub backend, direct OpenAI (Responses API), direct Google Gemini (generateContent API), and direct Anthropic Claude (Messages API). Designed for PC and embedded platforms (MCUs).
 
