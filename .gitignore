@@ -25,7 +25,6 @@ compile_commands.json
 .claudeignore
 .planning/
 CLAUDE.md
-docs/
 
 # User-specific secrets (copy env.cpp.example → env.cpp and fill in your values)
 **/env.cpp

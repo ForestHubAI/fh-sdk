@@ -1,13 +1,20 @@
 {
     "name": "fh-sdk",
     "version": "0.1.0",
-    "description": "C++14 LLM proxy library with unified interface for multiple providers. Platform-agnostic via Hardware Abstraction Layer.",
-    "keywords": "llm, ai, foresthub, arduino, embedded, esp32, agent, rag",
+    "description": "C++14 LLM SDK with unified interface for ForestHub, OpenAI, Gemini, and Anthropic. Agent framework with tool-calling, RAG, and multi-turn conversations. Platform-agnostic via HAL — targets PC and embedded (Arduino/ESP32/Portenta).",
+    "keywords": "llm, ai, foresthub, arduino, embedded, esp32, agent, rag, tool-calling, multi-provider, c++14, portenta, openai, gemini, anthropic",
+    "authors": [
+        {
+            "name": "ForestHub AI",
+            "url": "https://github.com/ForestHubAI"
+        }
+    ],
+    "homepage": "https://github.com/ForestHubAI/fh-sdk",
     "repository": {
         "type": "git",
         "url": "https://github.com/ForestHubAI/fh-sdk"
     },
-    "license": "MIT",
+    "license": "AGPL-3.0-only",
     "frameworks": "arduino",
     "platforms": "*",
     "build": {
@@ -38,15 +45,12 @@
         }
     ],
     "export": {
-        "exclude": [
-            "build",
-            "examples",
-            "pio",
-            "tests",
-            ".git",
-            ".gitignore",
-            "CMakeLists.txt",
-            "scripts"
+        "include": [
+            "include",
+            "src",
+            "third_party",
+            "LICENSE",
+            "THIRD_PARTY_NOTICES"
         ]
     }
 }
