@@ -4,8 +4,8 @@
 // Blinks the built-in LED and prints status messages to the console.
 // Uses only the ForestHub HAL (GPIO, Console, Time) — no direct Arduino calls.
 //
-// Build: pio run -d examples/embedded/blink -e esp32dev
-//        pio run -d examples/embedded/blink -e portenta_h7_m7
+// Build: pio run -d examples/embedded/utility/blink -e esp32dev
+//        pio run -d examples/embedded/utility/blink -e portenta_h7_m7
 // =============================================================================
 
 #include <Arduino.h>

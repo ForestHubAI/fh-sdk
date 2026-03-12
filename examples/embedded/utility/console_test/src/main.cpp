@@ -8,8 +8,8 @@
 //
 // No WiFi or API key required — uses only Console, Time, and GPIO.
 //
-// Build: pio run -d examples/embedded/console_test -e esp32dev
-//        pio run -d examples/embedded/console_test -e portenta_h7_m7
+// Build: pio run -d examples/embedded/utility/console_test -e esp32dev
+//        pio run -d examples/embedded/utility/console_test -e portenta_h7_m7
 //
 // Open serial monitor at 115200 baud, type text, press Enter.
 // =============================================================================

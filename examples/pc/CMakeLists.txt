@@ -47,6 +47,6 @@ target_link_libraries(foresthub_structured_output_openai PRIVATE foresthub_core)
 add_executable(foresthub_rag foresthub/rag.cpp)
 target_link_libraries(foresthub_rag PRIVATE foresthub_core)
 
-# --- Console Demo ---
-add_executable(foresthub_console_test console_test.cpp)
+# --- Utility Demos ---
+add_executable(foresthub_console_test utility/console_test.cpp)
 target_link_libraries(foresthub_console_test PRIVATE foresthub_core)
