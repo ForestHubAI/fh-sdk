@@ -1,5 +1,7 @@
 # ForestHub SDK
 
+[![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](LICENSE) [![C++14](https://img.shields.io/badge/C%2B%2B-14-blue.svg)](https://isocpp.org/) [![PlatformIO](https://img.shields.io/badge/PlatformIO-Registry-orange.svg)](https://registry.platformio.org/libraries/ForestHubAI/fh-sdk) [![Release](https://img.shields.io/github/v/release/ForestHubAI/fh-sdk)](https://github.com/ForestHubAI/fh-sdk/releases)
+
 C++14 LLM SDK with unified multi-provider interface. Supports ForestHub backend, direct OpenAI (Responses API), direct Google Gemini (generateContent API), and direct Anthropic Claude (Messages API). Designed for PC and embedded platforms (MCUs).
 
 ## Features
@@ -40,76 +42,82 @@ export FORESTHUB_API_KEY=your_key
 
 ## Usage
 
-### Simple Chat
-
-```cpp
-#include "foresthub/client.hpp"
-#include "foresthub/config/config.hpp"
-#include "foresthub/core/input.hpp"
-#include "foresthub/core/types.hpp"
-#include "platform_setup.hpp"
-
-int main() {
-    std::shared_ptr<foresthub::platform::PlatformContext> platform = app::SetupPlatform();
-
-    foresthub::platform::HttpClientConfig http_cfg;
-    http_cfg.host = "fh-backend-368736749905.europe-west1.run.app";
-    std::shared_ptr<foresthub::core::HttpClient> http_client =
-        platform->CreateHttpClient(http_cfg);
-
-    foresthub::config::ClientConfig cfg;
-    foresthub::config::ProviderConfig fh_cfg;
-    fh_cfg.base_url = "https://fh-backend-368736749905.europe-west1.run.app";
-    fh_cfg.api_key = std::getenv("FORESTHUB_API_KEY");
-    fh_cfg.supported_models = {"gpt-4.1", "gpt-4.1-mini"};
-    cfg.remote.foresthub = fh_cfg;
-
-    std::shared_ptr<foresthub::Client> client = foresthub::Client::Create(cfg, http_client);
-
-    foresthub::core::ChatRequest req;
-    req.model = "gpt-4.1-mini";
-    req.input = std::make_shared<foresthub::core::InputString>("Hello!");
-    req.WithSystemPrompt("You are a helpful assistant.");
-
-    std::shared_ptr<foresthub::core::ChatResponse> response = client->Chat(req);
-    if (response) {
-        printf("%s\n", response->text.c_str());
-    }
-}
-```
-
 ### Agent with Tools
 
 ```cpp
 #include "foresthub/agent/agent.hpp"
 #include "foresthub/agent/runner.hpp"
+#include "foresthub/client.hpp"
+#include "foresthub/config/config.hpp"
+#include "foresthub/core/input.hpp"
 #include "foresthub/core/tools.hpp"
+#include "foresthub/util/json.hpp"
+#include "platform_setup.hpp"
 
-// Define tool arguments + handler
+using json = nlohmann::json;
+
+// 1. Define tool: argument struct, deserializer, handler
 struct WeatherArgs { std::string city; };
 void from_json(const json& j, WeatherArgs& a) { a.city = j.value("city", ""); }
-json get_weather(const WeatherArgs& a) { return {{"temp", "22C"}, {"city", a.city}}; }
+json GetWeather(const WeatherArgs& a) { return {{"temp", "22C"}, {"city", a.city}}; }
 
-// Create agent with tool
-foresthub::agent::Agent agent("weather-bot");
-agent.WithInstructions("You help with weather queries.")
-     .WithOptions(foresthub::core::Options().WithTemperature(0.7f).WithMaxTokens(1024))
-     .AddTool(foresthub::core::NewFunctionTool<WeatherArgs, json>(
-         "get_weather", "Get current weather", schema, get_weather));
+int main() {
+    // 2. Platform + HTTP client via HAL
+    auto platform = app::SetupPlatform();
+    foresthub::platform::HttpClientConfig http_cfg;
+    http_cfg.host = "fh-backend-368736749905.europe-west1.run.app";
+    auto http_client = platform->CreateHttpClient(http_cfg);
 
-// Run agent
-foresthub::agent::Runner runner(client, "gpt-4.1-mini");
-foresthub::agent::RunResultOrError result = runner.Run(
-    std::make_shared<foresthub::agent::Agent>(agent),
-    std::make_shared<foresthub::core::InputString>("What's the weather in Berlin?"));
-if (!result.HasError()) {
-    printf("%s\n", result.result->final_output.dump().c_str());
+    // 3. Configure provider + create client
+    foresthub::config::ClientConfig cfg;
+    foresthub::config::ProviderConfig fh_cfg;
+    fh_cfg.base_url = "https://fh-backend-368736749905.europe-west1.run.app";
+    fh_cfg.api_key = std::getenv("FORESTHUB_API_KEY");
+    fh_cfg.supported_models = {"gpt-4.1", "gpt-4o"};
+    cfg.remote.foresthub = fh_cfg;
+    auto client = foresthub::Client::Create(cfg, http_client);
+
+    // 4. Build agent with tool
+    json schema = json::parse(R"({"properties":{"city":{"type":"string"}}})", nullptr, false);
+    auto agent = std::make_shared<foresthub::agent::Agent>("weather-bot");
+    agent->WithInstructions("You help with weather queries.")
+         .WithOptions(foresthub::core::Options().WithTemperature(0.7f).WithMaxTokens(1024))
+         .AddTool(foresthub::core::NewFunctionTool<WeatherArgs, json>(
+             "get_weather", "Get current weather for a city", schema, GetWeather));
+
+    // 5. Run agent
+    auto runner = std::make_shared<foresthub::agent::Runner>(client, "gpt-4o");
+    auto input = std::make_shared<foresthub::core::InputString>("Weather in Berlin?");
+    foresthub::agent::RunResultOrError result = runner->Run(agent, input);
+    if (!result.HasError()) {
+        printf("%s\n", result.result->final_output.dump().c_str());
+    }
 }
 ```
 
-See `examples/pc/foresthub/chat.cpp` and `examples/pc/foresthub/agent.cpp` for complete examples. For web search, see `examples/pc/foresthub/websearch.cpp`. For structured output (JSON schema), see `examples/pc/foresthub/structured_output.cpp`. For RAG (retrieval-augmented generation), see `examples/pc/foresthub/rag.cpp`. For direct OpenAI usage, see `examples/pc/openai/`. For direct Gemini usage, see `examples/pc/gemini/`. For direct Anthropic Claude usage, see `examples/pc/anthropic/`.
+### Multi-Provider Support
 
-> **Note:** Web search is not currently supported for the Anthropic provider due to multi-turn conversation requirements. See the AnthropicProvider header documentation for details.
+Route requests to any supported provider -- the client selects the right one based on model ID:
+
+| Provider | Config | Env Variable |
+|----------|--------|-------------|
+| ForestHub | `cfg.remote.foresthub = fh_cfg;` | `FORESTHUB_API_KEY` |
+| OpenAI | `cfg.remote.openai = oai_cfg;` | `OPENAI_API_KEY` |
+| Gemini | `cfg.remote.gemini = gem_cfg;` | `GEMINI_API_KEY` |
+| Anthropic | `cfg.remote.anthropic = ant_cfg;` | `ANTHROPIC_API_KEY` |
+
+See [Provider Guide](docs/providers.md) for detailed configuration.
+
+For complete examples see `examples/pc/` and `examples/embedded/`.
+
+## Documentation
+
+- [Getting Started](docs/getting-started.md) -- Build and run your first chat
+- [Provider Guide](docs/providers.md) -- ForestHub, OpenAI, Gemini, Anthropic configuration
+- [Agent Framework](docs/agents.md) -- Tools, Runner, handoffs, options
+- [RAG Retriever](docs/rag.md) -- Retrieval-augmented generation
+- [Embedded Platforms](docs/embedded.md) -- ESP32, Portenta H7, PlatformIO
+- [API Reference](https://foresthubai.github.io/fh-sdk/) -- Generated from source
 
 ## Architecture
 
@@ -162,18 +170,24 @@ Console and Time are always available. Omitting macros saves significant Flash:
 | ForestHub chat | `pio run -d examples/embedded/foresthub/chat -e esp32dev` |
 | ForestHub agent | `pio run -d examples/embedded/foresthub/agent -e esp32dev` |
 | ForestHub RAG | `pio run -d examples/embedded/foresthub/rag -e esp32dev` |
+| ForestHub websearch | `pio run -d examples/embedded/foresthub/websearch -e esp32dev` |
 | OpenAI chat | `pio run -d examples/embedded/openai/chat -e esp32dev` |
 | OpenAI agent | `pio run -d examples/embedded/openai/agent -e esp32dev` |
+| OpenAI websearch | `pio run -d examples/embedded/openai/websearch -e esp32dev` |
 | Gemini chat | `pio run -d examples/embedded/gemini/chat -e esp32dev` |
 | Gemini agent | `pio run -d examples/embedded/gemini/agent -e esp32dev` |
+| Gemini websearch | `pio run -d examples/embedded/gemini/websearch -e esp32dev` |
 | Anthropic chat | `pio run -d examples/embedded/anthropic/chat -e esp32dev` |
 | Anthropic agent | `pio run -d examples/embedded/anthropic/agent -e esp32dev` |
+| Anthropic websearch | `pio run -d examples/embedded/anthropic/websearch -e esp32dev` |
 | HTTP/HTTPS test | `pio run -d examples/embedded/http_test -e esp32dev` |
 | HTTP-only test (no Crypto) | `pio run -d examples/embedded/http_test -e esp32_http_only` |
 | Ticker example | `pio run -d examples/embedded/ticker -e esp32dev` |
 | Portenta H7 | `pio run -d pio/build_test -e portenta_h7_m7` |
 
 ForestHub examples require `FORESTHUB_API_KEY`, OpenAI examples require `OPENAI_API_KEY`, Gemini examples require `GEMINI_API_KEY`, Anthropic examples require `ANTHROPIC_API_KEY`.
+
+See [Embedded Guide](docs/embedded.md) for detailed setup.
 
 ## Testing
 
@@ -220,7 +234,6 @@ examples/
   embedded/               Arduino examples (anthropic/, foresthub/, gemini/, openai/ -- PlatformIO projects per provider + rag)
                           Standalone: blink/, http_test/, ticker/
 tests/                    GoogleTest suites (~422 tests)
-scripts/                  Build and coverage scripts
   core/                   Core tests (input, model, options, tools, types, json, client)
   agent/                  Agent framework tests (agent, runner)
   provider/               Provider tests (Anthropic + ForestHub + OpenAI + Gemini HTTP, retry, errors)
@@ -230,7 +243,11 @@ scripts/                  Build and coverage scripts
   contract/               Contract tests (ForestHub API JSON schema)
   util/                   Utility tests (Optional polyfill, Ticker)
   mocks/                  Hand-rolled mocks (HttpClient, Provider, LLMClient)
-third_party/              Vendored dependencies (nlohmann/json)
+docs/                     User guides (getting-started, providers, agents, rag, embedded)
+.github/                  Issue/PR templates, community docs (ARCHITECTURE, CONTRIBUTING, SECURITY)
+third_party/              Vendored dependencies (nlohmann/json, doxygen-awesome-css)
+scripts/                  Build and coverage scripts
+Doxyfile                  Doxygen configuration (generates docs/api/)
 library.json              PlatformIO library manifest
 pio/build_test/           PlatformIO build verification (ESP32, Portenta H7)
 ```

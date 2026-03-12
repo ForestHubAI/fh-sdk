@@ -1,7 +1,7 @@
 {
     "name": "fh-sdk",
     "version": "0.1.0",
-    "description": "C++14 LLM SDK with unified interface for ForestHub, OpenAI, Gemini, and Anthropic. Agent framework with tool-calling, RAG, and multi-turn conversations. Platform-agnostic via HAL — targets PC and embedded (Arduino/ESP32/Portenta).",
+    "description": "C++14 LLM SDK with unified interface for ForestHub, OpenAI, Gemini, and Anthropic. Agent framework with tool-calling, RAG, and multi-turn conversations. Platform-agnostic via HAL — targets PC and embedded.",
     "keywords": "llm, ai, foresthub, arduino, embedded, esp32, agent, rag, tool-calling, multi-provider, c++14, portenta, openai, gemini, anthropic",
     "authors": [
         {
