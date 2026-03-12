@@ -1,0 +1,84 @@
+# Doxyfile for ForestHub SDK
+# Generated API reference documentation
+
+#---------------------------------------------------------------------------
+# Project settings
+#---------------------------------------------------------------------------
+
+PROJECT_NAME           = "ForestHub SDK"
+PROJECT_BRIEF          = "C++14 LLM SDK for PC and embedded platforms"
+PROJECT_NUMBER         = 0.1.0
+OUTPUT_DIRECTORY       = docs/api
+
+#---------------------------------------------------------------------------
+# Input settings
+#---------------------------------------------------------------------------
+
+INPUT                  = README.md \
+                         namespaces.dox \
+                         include/foresthub
+RECURSIVE              = YES
+FILE_PATTERNS          = *.hpp *.md
+EXCLUDE_PATTERNS       = */detail/*
+USE_MDFILE_AS_MAINPAGE = README.md
+INPUT_FILTER           = "sed '/shields\.io/d'"
+
+#---------------------------------------------------------------------------
+# Extraction settings
+#---------------------------------------------------------------------------
+
+EXTRACT_ALL            = NO
+EXTRACT_PRIVATE        = NO
+EXTRACT_STATIC         = YES
+HIDE_UNDOC_MEMBERS     = YES
+HIDE_UNDOC_CLASSES     = YES
+JAVADOC_AUTOBRIEF      = YES
+BUILTIN_STL_SUPPORT    = YES
+
+#---------------------------------------------------------------------------
+# Preprocessing
+#---------------------------------------------------------------------------
+
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+EXPAND_ONLY_PREDEF     = YES
+PREDEFINED             = FORESTHUB_ENABLE_NETWORK \
+                         FORESTHUB_ENABLE_CRYPTO \
+                         FORESTHUB_ENABLE_GPIO
+
+#---------------------------------------------------------------------------
+# HTML output
+#---------------------------------------------------------------------------
+
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+HTML_EXTRA_STYLESHEET  = third_party/doxygen-awesome/doxygen-awesome.css
+GENERATE_TREEVIEW      = YES
+DISABLE_INDEX          = NO
+FULL_SIDEBAR           = NO
+HTML_COLORSTYLE        = LIGHT
+
+#---------------------------------------------------------------------------
+# Other output formats (disabled)
+#---------------------------------------------------------------------------
+
+GENERATE_LATEX         = NO
+GENERATE_MAN           = NO
+GENERATE_XML           = NO
+
+#---------------------------------------------------------------------------
+# Diagrams
+#---------------------------------------------------------------------------
+
+HAVE_DOT               = NO
+ALPHABETICAL_INDEX     = NO
+LAYOUT_FILE            = DoxygenLayout.xml
+
+#---------------------------------------------------------------------------
+# Warnings
+#---------------------------------------------------------------------------
+
+WARN_IF_UNDOCUMENTED   = YES
+WARN_IF_DOC_ERROR      = YES
+WARN_NO_PARAMDOC       = YES
+QUIET                  = YES

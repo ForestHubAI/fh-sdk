@@ -1,0 +1,32 @@
+/// @namespace foresthub
+/// Top-level namespace for the ForestHub SDK.
+
+/// @namespace foresthub::agent
+/// Agent framework: multi-turn execution with tool calling and handoffs.
+
+/// @namespace foresthub::config
+/// Client and provider configuration types.
+
+/// @namespace foresthub::core
+/// Core abstractions: requests, responses, tools, input types, and provider interface.
+
+/// @namespace foresthub::core::capability
+/// Model capability identifiers.
+
+/// @namespace foresthub::platform
+/// Hardware abstraction layer: network, console, time, crypto, and GPIO interfaces.
+
+/// @namespace foresthub::provider
+/// LLM provider implementations.
+
+/// @namespace foresthub::provider::remote
+/// Remote provider implementations (ForestHub, OpenAI, Gemini, Anthropic).
+
+/// @namespace foresthub::rag
+/// Retrieval-augmented generation: retriever interface and query types.
+
+/// @namespace foresthub::rag::remote
+/// HTTP-based RAG retriever implementation.
+
+/// @namespace foresthub::util
+/// Utility types: Optional polyfill, JSON Schema normalization, Ticker.
