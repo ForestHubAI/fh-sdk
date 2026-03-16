@@ -197,7 +197,7 @@ cmake --build build -j4
 cd build && ctest --output-on-failure
 ```
 
-~422 tests across 8 executables:
+~436 tests across 8 executables:
 
 | Executable | Tests | Scope |
 |------------|-------|-------|
@@ -208,7 +208,7 @@ cd build && ctest --output-on-failure
 | `run_rag_tests` | 15 | RemoteRetriever HTTP, retry, JSON, serialization, FormatContext |
 | `run_integration_tests` | 7 | Runner-Provider chain, Client routing |
 | `run_contract_tests` | 12 | ForestHub API JSON schema verification |
-| `run_util_tests` | 50 | Optional polyfill, Ticker, Schema normalization |
+| `run_util_tests` | 64 | Optional polyfill, Ticker, Schema normalization, StrPrintf |
 
 Hand-rolled mocks in `tests/mocks/` (no GMock -- incompatible with `-fno-rtti`).
 
@@ -222,7 +222,7 @@ include/foresthub/        Public API headers
   platform/               HAL interfaces (network, console, time, crypto)
   provider/remote/        Provider implementations (Anthropic, ForestHub, Gemini, OpenAI)
   rag/                    RAG module (retriever interface, types, remote retriever)
-  util/                   Utilities (Optional<T> polyfill, JSON wrapper, Ticker, Schema normalization)
+  util/                   Utilities (Optional<T>, JSON wrapper, Ticker, Schema, StrPrintf)
 src/                      Implementation
   provider/remote/        Provider implementations (anthropic/, foresthub/, gemini/, openai/)
   rag/                    RAG module (serialization, remote/retriever)
@@ -233,7 +233,7 @@ examples/
   pc/                     PC examples (anthropic/, foresthub/, gemini/, openai/ -- chat + agent + websearch + structured_output + rag)
   embedded/               Arduino examples (anthropic/, foresthub/, gemini/, openai/ -- PlatformIO projects per provider + rag)
                           Standalone: blink/, http_test/, ticker/
-tests/                    GoogleTest suites (~422 tests)
+tests/                    GoogleTest suites (~436 tests)
   core/                   Core tests (input, model, options, tools, types, json, client)
   agent/                  Agent framework tests (agent, runner)
   provider/               Provider tests (Anthropic + ForestHub + OpenAI + Gemini HTTP, retry, errors)

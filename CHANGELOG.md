@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2026-03-16
+
+### Added
+
+- `foresthub::util::StrPrintf` -- printf-style string formatting with single heap allocation via two-pass vsnprintf, preventing heap fragmentation on memory-constrained embedded devices (ESP32) for large RAG contexts
+
 ## [0.1.0] - 2026-03-12
 
 ### Added
@@ -26,4 +32,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Doxygen API reference generation
 - C++14 compatible, no exceptions, no RTTI -- targets any C++14-capable toolchain
 
+[0.1.1]: https://github.com/ForestHubAI/fh-sdk/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/ForestHubAI/fh-sdk/releases/tag/v0.1.0
