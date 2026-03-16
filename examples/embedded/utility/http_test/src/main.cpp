@@ -61,7 +61,7 @@ static bool TestPlainHttp() {
 // Test: HTTPS (port 443, TLS)
 // ---------------------------------------------------------------------------
 
-static const char* kForesthubHost = "fh-backend-368736749905.europe-west1.run.app";
+static const char* const kForesthubHost = "fh-backend-368736749905.europe-west1.run.app";
 
 static bool TestHttps() {
 #ifdef FORESTHUB_ENABLE_CRYPTO

@@ -9,8 +9,8 @@
 // User Configuration
 // =============================================================================
 
-extern const char* kWifiSsid;
-extern const char* kWifiPassword;
-extern const char* kOpenaiApiKey;
+extern const char* const kWifiSsid;
+extern const char* const kWifiPassword;
+extern const char* const kOpenaiApiKey;
 
 #endif  // EXAMPLE_ENV_HPP

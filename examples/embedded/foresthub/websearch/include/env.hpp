@@ -9,8 +9,8 @@
 // User Configuration
 // =============================================================================
 
-extern const char* kWifiSsid;
-extern const char* kWifiPassword;
-extern const char* kForesthubApiKey;
+extern const char* const kWifiSsid;
+extern const char* const kWifiPassword;
+extern const char* const kForesthubApiKey;
 
 #endif  // EXAMPLE_ENV_HPP
