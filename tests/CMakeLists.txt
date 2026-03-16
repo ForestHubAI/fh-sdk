@@ -48,6 +48,7 @@ gtest_discover_tests(run_agent_tests)
 add_executable(run_util_tests
     util/optional_test.cpp
     util/schema_test.cpp
+    util/strprintf_test.cpp
     util/ticker_test.cpp
 )
 
