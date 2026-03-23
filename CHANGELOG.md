@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.2] - 2026-03-23
+
+### Added
+
+- `Ticker::WithTimezoneOffset()` builder and `SetTimezoneOffset()` for timezone-aware calendar scheduling (Daily/Weekly/Hourly) -- pass raw UTC epoch to Start()/Check(), Ticker applies offset internally
+- `Ticker::tz_offset_sec()` getter for reading configured timezone offset
+- `TimeInterface::GetLocalEpoch()` non-virtual convenience method returning `GetEpochTime() + utc_offset_sec()`
+
+### Changed
+
+- `TimeConfig.gmt_offset_sec` renamed to `std_offset_sec` -- industry-standard "standard offset" terminology (Java, NodaTime, IANA)
+- `TimeConfig.daylight_offset_sec` renamed to `dst_offset_sec` -- universally understood "DST" terminology
+- `SetOffset()` parameter names updated accordingly (`std_offset_sec`, `dst_offset_sec`)
+
+### Fixed
+
+- `GetLocalTime()` now sets `tm_isdst` field based on whether DST offset is active
+- Ticker documentation references correct method name `utc_offset_sec()` and shows `WithTimezoneOffset()` pattern
+
 ## [0.1.1] - 2026-03-16
 
 ### Added

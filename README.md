@@ -204,11 +204,11 @@ cd build && ctest --output-on-failure
 | `run_core_tests` | 101 | Input, model, options, tools, types, json, client |
 | `run_agent_tests` | 42 | Agent construction, Runner execution loop, options |
 | `run_provider_tests` | ~149 | ForestHub + OpenAI + Gemini + Anthropic HTTP, retry, errors, schema strictification |
-| `run_platform_tests` | 44 | PC platform factory, subsystems, GPIO, ENABLE macros, timezone, console |
+| `run_platform_tests` | 48 | PC platform factory, subsystems, GPIO, ENABLE macros, timezone, console |
 | `run_rag_tests` | 15 | RemoteRetriever HTTP, retry, JSON, serialization, FormatContext |
 | `run_integration_tests` | 7 | Runner-Provider chain, Client routing |
 | `run_contract_tests` | 12 | ForestHub API JSON schema verification |
-| `run_util_tests` | 64 | Optional polyfill, Ticker, Schema normalization, StrPrintf |
+| `run_util_tests` | 72 | Optional polyfill, Ticker, Schema normalization, StrPrintf |
 
 Hand-rolled mocks in `tests/mocks/` (no GMock -- incompatible with `-fno-rtti`).
 
