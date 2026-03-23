@@ -32,16 +32,16 @@ public:
     bool IsSynced(unsigned long min_epoch = 1767225600) const override;
 
     /// Stores offset locally (PC system timezone is unaffected).
-    void SetOffset(long gmt_offset_sec, int daylight_offset_sec) override;
-    /// Returns stored total offset (GMT + daylight).
-    long gmt_offset_sec() const override;
+    void SetOffset(long std_offset_sec, int dst_offset_sec) override;
+    /// Returns stored total offset (standard + DST).
+    long utc_offset_sec() const override;
     /// Computes local time via gmtime(epoch + total_offset).
     void GetLocalTime(struct tm& result) const override;
 
 private:
     std::chrono::steady_clock::time_point start_time_;  ///< Baseline for GetMillis() calculation.
-    long gmt_offset_sec_ = 0;
-    int daylight_offset_sec_ = 0;
+    long std_offset_sec_ = 0;
+    int dst_offset_sec_ = 0;
 };
 
 }  // namespace pc

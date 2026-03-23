@@ -246,22 +246,72 @@ TEST(Ticker, HourlyRepeats) {
 }
 
 // =============================================================================
-// Timezone offset tests
+// Timezone offset tests (WithTimezoneOffset)
 // =============================================================================
 
-TEST(Ticker, PositiveOffsetShiftsMatch) {
-    // Daily at 15:00. User passes epoch + 3600 (CET): UTC 14:00 → local 15:00.
-    auto ticker = Ticker::Daily(15, 0);
-    ticker.Start(MakeEpoch(2026, 2, 25, 13, 59) + 3600);
-    // UTC 14:00 + offset 3600 = 15:00 local epoch.
-    EXPECT_TRUE(ticker.Check(MakeEpoch(2026, 2, 25, 14, 0) + 3600));
+TEST(Ticker, WithTimezoneOffsetPositive) {
+    // Daily at 15:00 local, CET (UTC+1). Raw UTC 14:00 should fire.
+    auto ticker = Ticker::Daily(15, 0).WithTimezoneOffset(3600);
+    ticker.Start(MakeEpoch(2026, 2, 25, 13, 59));
+    EXPECT_TRUE(ticker.Check(MakeEpoch(2026, 2, 25, 14, 0)));
 }
 
-TEST(Ticker, NegativeOffsetShiftsMatch) {
-    // Daily at 15:00. User passes epoch - 3600: UTC 16:00 → local 15:00.
-    auto ticker = Ticker::Daily(15, 0);
-    ticker.Start(MakeEpoch(2026, 2, 25, 15, 59) - 3600);
-    EXPECT_TRUE(ticker.Check(MakeEpoch(2026, 2, 25, 16, 0) - 3600));
+TEST(Ticker, WithTimezoneOffsetNegative) {
+    // Daily at 15:00 local, UTC-1. Raw UTC 16:00 should fire.
+    auto ticker = Ticker::Daily(15, 0).WithTimezoneOffset(-3600);
+    ticker.Start(MakeEpoch(2026, 2, 25, 15, 59));
+    EXPECT_TRUE(ticker.Check(MakeEpoch(2026, 2, 25, 16, 0)));
+}
+
+TEST(Ticker, WithTimezoneOffsetBuilderChaining) {
+    // Builder returns Ticker& for chaining.
+    auto ticker = Ticker::Daily(14, 0);
+    Ticker& ref = ticker.WithTimezoneOffset(3600);
+    EXPECT_EQ(&ref, &ticker);
+}
+
+TEST(Ticker, TzOffsetSecDefaultZero) {
+    auto ticker = Ticker::Daily(14, 0);
+    EXPECT_EQ(ticker.tz_offset_sec(), 0);
+}
+
+TEST(Ticker, TzOffsetSecReturnsConfiguredValue) {
+    auto ticker = Ticker::Daily(14, 0).WithTimezoneOffset(7200);
+    EXPECT_EQ(ticker.tz_offset_sec(), 7200);
+}
+
+TEST(Ticker, SetTimezoneOffsetRuntime) {
+    // Start with CET (+3600), switch to CEST (+7200) mid-run.
+    // Daily at 10:00 local.
+    auto ticker = Ticker::Daily(10, 0).WithTimezoneOffset(3600);
+    ticker.Start(MakeEpoch(2026, 2, 25, 8, 59));
+
+    // UTC 09:00 = CET 10:00 → fires.
+    EXPECT_TRUE(ticker.Check(MakeEpoch(2026, 2, 25, 9, 0)));
+
+    // DST transition: switch to CEST (+7200).
+    ticker.SetTimezoneOffset(7200);
+    EXPECT_EQ(ticker.tz_offset_sec(), 7200);
+
+    // Next day: UTC 08:00 = CEST 10:00 → fires.
+    EXPECT_TRUE(ticker.Check(MakeEpoch(2026, 2, 26, 8, 0)));
+}
+
+TEST(Ticker, WithTimezoneOffsetWeekly) {
+    // Monday at 08:00 local, CET (UTC+1). UTC 07:00 Mon should fire.
+    auto ticker = Ticker::Weekly(1, 8, 0).WithTimezoneOffset(3600);
+    unsigned long start = MakeEpoch(2026, 2, 22, 12, 0);  // Sunday.
+    ticker.Start(start);
+    EXPECT_TRUE(ticker.Check(MakeEpoch(2026, 2, 23, 7, 0)));  // Monday 07:00 UTC = 08:00 CET
+    EXPECT_EQ(ticker.fire_count(), 1u);
+}
+
+TEST(Ticker, TzOffsetIgnoredInRelativeMode) {
+    // Periodic mode does not use Slot(), so tz_offset has no effect.
+    auto ticker = Ticker::Periodic(1000).WithTimezoneOffset(9999);
+    ticker.Start(0);
+    EXPECT_TRUE(ticker.Check(1000));
+    EXPECT_EQ(ticker.fire_count(), 1u);
 }
 
 // =============================================================================

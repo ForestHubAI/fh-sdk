@@ -29,10 +29,10 @@ namespace util {
 /// ticker.Start(now_ms);
 /// if (ticker.Check(now_ms)) { readSensor(); }
 ///
-/// // Daily: sync data at 14:00 UTC (now_epoch = seconds since Unix epoch)
-/// auto daily = Ticker::Daily(14, 0);
+/// // Daily: sync data at 14:00 Berlin time (now_epoch = UTC epoch seconds)
+/// auto daily = Ticker::Daily(14, 0).WithTimezoneOffset(3600);
 /// daily.Start(now_epoch);
-/// if (daily.Check(now_epoch + gmt_offset)) { syncData(); }
+/// if (daily.Check(now_epoch)) { syncData(); }
 ///
 /// // OneShot: timeout after 30 seconds
 /// auto timeout = Ticker::OneShot(30000);
@@ -41,14 +41,15 @@ namespace util {
 /// @endcode
 class Ticker {
 public:
-    /// Construct a Ticker with custom period and offset (absolute mode).
+    /// Construct a Ticker with custom period and offset.
     ///
     /// For most use cases, prefer the static factory methods (Daily, Weekly, Hourly, Periodic, OneShot).
-    /// @param period Period in time units (seconds for absolute, milliseconds for relative).
-    /// @param offset Internal offset for slot calculation (absolute mode only).
+    /// @param period Period in time units (seconds for calendar-based, milliseconds for relative).
+    /// @param offset Internal offset for slot calculation (calendar-based scheduling only).
     explicit Ticker(unsigned long period, long offset = 0)
         : period_(period),
           offset_(offset),
+          tz_offset_sec_(0),
           relative_(false),
           start_time_(0),
           last_slot_(0),
@@ -82,8 +83,8 @@ public:
 
     /// Create a daily ticker that fires once per day at a specific hour and minute.
     ///
-    /// Uses absolute mode with epoch seconds. To schedule in local time,
-    /// pass `epoch + gmt_offset_sec` to Check().
+    /// Uses absolute mode with epoch seconds. For local time scheduling,
+    /// use `WithTimezoneOffset(utc_offset_sec)` and pass raw UTC epoch to Check().
     /// @param hour Hour of day (0-23).
     /// @param minute Minute of hour (0-59).
     static Ticker Daily(int hour, int minute = 0) {
@@ -113,12 +114,23 @@ public:
         return *this;
     }
 
+    /// Set timezone offset for calendar-based scheduling (Daily/Weekly/Hourly).
+    ///
+    /// Applied internally in slot calculation — pass raw UTC epoch to Start()/Check().
+    /// Mutually exclusive with manual offset addition at the call site.
+    /// For DST changes at runtime, use SetTimezoneOffset().
+    /// @param tz_offset_sec Total timezone offset from UTC in seconds (e.g., 7200 for CEST).
+    Ticker& WithTimezoneOffset(long tz_offset_sec) {
+        tz_offset_sec_ = tz_offset_sec;
+        return *this;
+    }
+
     // -- Lifecycle ------------------------------------------------------------
 
     /// Start (or restart) the ticker with the given time reference.
     ///
     /// Resets fire_count and missed ticks. For relative mode, pass a millisecond
-    /// or tick counter. For absolute mode, pass epoch seconds (optionally with timezone offset).
+    /// or tick counter. For calendar-based mode, pass UTC epoch seconds.
     /// @param time Current time value.
     void Start(unsigned long time) {
         if (relative_) {
@@ -162,6 +174,10 @@ public:
     /// Stop the ticker. Call Start() to restart.
     void Stop() { running_ = false; }
 
+    /// Update timezone offset at runtime (e.g., after DST transition).
+    /// @param tz_offset_sec Total timezone offset from UTC in seconds.
+    void SetTimezoneOffset(long tz_offset_sec) { tz_offset_sec_ = tz_offset_sec; }
+
     // -- Getters --------------------------------------------------------------
 
     /// Whether the ticker is currently running.
@@ -178,24 +194,28 @@ public:
     /// Configured period in time units.
     unsigned long period() const { return period_; }
 
+    /// Configured timezone offset in seconds (0 if not set).
+    long tz_offset_sec() const { return tz_offset_sec_; }
+
 private:
     /// Epoch alignment constant: Unix epoch (1970-01-01) was a Thursday.
     /// Sunday is 4 days earlier, so offset = 4 * 86400 seconds.
     /// This makes slot boundaries align with calendar weeks starting on Sunday.
     static constexpr long kEpochSundayOffset = 4L * 86400L;
 
-    /// Compute the scheduling slot for a given time (absolute mode only).
+    /// Compute the scheduling slot for a given time (calendar-based scheduling only).
     ///
     /// Uses floor division to handle negative values correctly:
     /// `val / p - (val % p < 0)` ensures consistent rounding toward negative infinity.
     long Slot(unsigned long time) const {
-        long val = static_cast<long>(time) + offset_;
+        long val = static_cast<long>(time) + tz_offset_sec_ + offset_;
         long p = static_cast<long>(period_);
         return val / p - (val % p < 0);
     }
 
     unsigned long period_;
     long offset_;
+    long tz_offset_sec_;  // Timezone offset in seconds (applied in Slot()).
     bool relative_;
     unsigned long start_time_;  // Reference time for relative mode (unsigned, wrap-safe).
     long last_slot_;            // Last computed slot for absolute mode (signed for negative slots).

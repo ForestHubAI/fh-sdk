@@ -20,9 +20,9 @@ namespace platform {
 /// All fields have sensible defaults, so `SyncTime()` works without arguments.
 struct TimeConfig {
     const char* time_server = "pool.ntp.org";  ///< Hostname of the time server.
-    long gmt_offset_sec = 0;                   ///< Offset from UTC in seconds.
-    int daylight_offset_sec = 0;               ///< Daylight saving offset in seconds.
-    unsigned long timeout_ms = 5000;           ///< Maximum wait for synchronization in milliseconds.
+    long std_offset_sec = 0;                   ///< Timezone standard offset from UTC in seconds (e.g., 3600 for CET).
+    int dst_offset_sec = 0;           ///< Additional daylight saving offset in seconds (e.g., 3600 when active).
+    unsigned long timeout_ms = 5000;  ///< Maximum wait for synchronization in milliseconds.
 };
 
 /// Abstract interface for time operations.
@@ -53,12 +53,20 @@ public:
     virtual bool IsSynced(unsigned long min_epoch = 1767225600) const = 0;
 
     /// Set timezone offset locally (no network I/O). Overrides offset from SyncTime().
-    /// @param gmt_offset_sec Offset from UTC in seconds (e.g., 3600 for CET).
-    /// @param daylight_offset_sec Additional daylight saving offset in seconds.
-    virtual void SetOffset(long gmt_offset_sec, int daylight_offset_sec) = 0;
+    /// @param std_offset_sec Timezone standard offset from UTC in seconds (e.g., 3600 for CET).
+    /// @param dst_offset_sec Additional daylight saving offset in seconds (e.g., 3600 when active).
+    virtual void SetOffset(long std_offset_sec, int dst_offset_sec) = 0;
 
-    /// Get total timezone offset (GMT + daylight saving) in seconds.
-    virtual long gmt_offset_sec() const = 0;
+    /// Get total UTC offset (standard + DST) in seconds.
+    virtual long utc_offset_sec() const = 0;
+
+    /// Get current local epoch time (UTC + timezone offset) in seconds.
+    ///
+    /// Convenience method combining GetEpochTime() and utc_offset_sec().
+    /// @return Local epoch seconds. Safe for all real-world offsets (UTC-12 to UTC+14).
+    unsigned long GetLocalEpoch() const {
+        return static_cast<unsigned long>(static_cast<long>(GetEpochTime()) + utc_offset_sec());
+    }
 
     /// Get current local time as calendar fields (UTC + stored timezone offset).
     /// @param result Output struct filled with local time fields.
