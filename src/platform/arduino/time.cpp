@@ -146,10 +146,10 @@ static unsigned long NtpQueryEpoch(const char* server, unsigned long timeout_ms)
 // =============================================================================
 
 std::string ArduinoTime::SyncTime(const TimeConfig& config) {
-    // Store timezone offsets for GetLocalTime() / gmt_offset_sec()
+    // Store timezone offsets for GetLocalTime() / utc_offset_sec()
     // regardless of whether NTP sync is needed.
-    gmt_offset_sec_ = config.gmt_offset_sec;
-    daylight_offset_sec_ = config.daylight_offset_sec;
+    std_offset_sec_ = config.std_offset_sec;
+    dst_offset_sec_ = config.dst_offset_sec;
 
     // Already synchronized -- skip NTP traffic
     if (GetEpochTime() >= kMinValidEpoch) {
@@ -164,7 +164,7 @@ std::string ArduinoTime::SyncTime(const TimeConfig& config) {
     // Configure NTP (idempotent -- safe to call multiple times)
 #if defined(ARDUINO_ARCH_ESP32)
     last_server_ = config.time_server;
-    configTime(config.gmt_offset_sec, config.daylight_offset_sec, config.time_server);
+    configTime(config.std_offset_sec, config.dst_offset_sec, config.time_server);
 #elif defined(ARDUINO_PORTENTA_H7_M7)
     // Portenta H7 M7: Manual NTP via raw UDP + set_time().
     // gmtOffset/dstOffset are unused -- set_time() stores UTC, and time(nullptr)
@@ -260,22 +260,23 @@ bool ArduinoTime::IsSynced(unsigned long min_epoch) const {
 // Timezone Support
 // =============================================================================
 
-void ArduinoTime::SetOffset(long gmt_offset_sec, int daylight_offset_sec) {
-    gmt_offset_sec_ = gmt_offset_sec;
-    daylight_offset_sec_ = daylight_offset_sec;
+void ArduinoTime::SetOffset(long std_offset_sec, int dst_offset_sec) {
+    std_offset_sec_ = std_offset_sec;
+    dst_offset_sec_ = dst_offset_sec;
 
 #if defined(ARDUINO_ARCH_ESP32)
-    configTime(gmt_offset_sec, daylight_offset_sec, last_server_);
+    configTime(std_offset_sec, dst_offset_sec, last_server_);
 #endif
 }
 
-long ArduinoTime::gmt_offset_sec() const {
-    return gmt_offset_sec_ + daylight_offset_sec_;
+long ArduinoTime::utc_offset_sec() const {
+    return std_offset_sec_ + dst_offset_sec_;
 }
 
 void ArduinoTime::GetLocalTime(struct tm& result) const {
-    time_t local = static_cast<time_t>(GetEpochTime()) + gmt_offset_sec_ + daylight_offset_sec_;
+    time_t local = static_cast<time_t>(GetEpochTime()) + utc_offset_sec();
     gmtime_r(&local, &result);
+    result.tm_isdst = (dst_offset_sec_ != 0) ? 1 : 0;
 }
 
 }  // namespace arduino

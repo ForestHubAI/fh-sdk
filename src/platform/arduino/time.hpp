@@ -32,15 +32,15 @@ public:
     bool IsSynced(unsigned long min_epoch = 1767225600) const override;
 
     /// ESP32: calls configTime(). Other boards: stores offset only.
-    void SetOffset(long gmt_offset_sec, int daylight_offset_sec) override;
-    /// Returns stored total offset (GMT + daylight).
-    long gmt_offset_sec() const override;
+    void SetOffset(long std_offset_sec, int dst_offset_sec) override;
+    /// Returns stored total offset (standard + DST).
+    long utc_offset_sec() const override;
     /// Computes local time via gmtime(epoch + total_offset).
     void GetLocalTime(struct tm& result) const override;
 
 private:
-    long gmt_offset_sec_ = 0;
-    int daylight_offset_sec_ = 0;
+    long std_offset_sec_ = 0;
+    int dst_offset_sec_ = 0;
 #if defined(ARDUINO_ARCH_ESP32)
     const char* last_server_ = "pool.ntp.org";
 #endif

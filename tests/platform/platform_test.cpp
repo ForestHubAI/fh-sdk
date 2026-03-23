@@ -202,28 +202,28 @@ TEST(PlatformTest, CreateHttpClientWithAllSubsystems) {
 
 TEST(PlatformTest, DefaultOffsetIsZero) {
     std::shared_ptr<PlatformContext> ctx = CreatePlatform();
-    EXPECT_EQ(ctx->time->gmt_offset_sec(), 0);
+    EXPECT_EQ(ctx->time->utc_offset_sec(), 0);
 }
 
 TEST(PlatformTest, SetOffsetGmtOnly) {
     std::shared_ptr<PlatformContext> ctx = CreatePlatform();
     ctx->time->SetOffset(3600, 0);
-    EXPECT_EQ(ctx->time->gmt_offset_sec(), 3600);
+    EXPECT_EQ(ctx->time->utc_offset_sec(), 3600);
 }
 
 TEST(PlatformTest, SetOffsetGmtPlusDaylight) {
     std::shared_ptr<PlatformContext> ctx = CreatePlatform();
     ctx->time->SetOffset(3600, 3600);
-    EXPECT_EQ(ctx->time->gmt_offset_sec(), 7200);
+    EXPECT_EQ(ctx->time->utc_offset_sec(), 7200);
 }
 
 TEST(PlatformTest, SyncTimeStoresOffset) {
     std::shared_ptr<PlatformContext> ctx = CreatePlatform();
     TimeConfig config;
-    config.gmt_offset_sec = 7200;
-    config.daylight_offset_sec = 3600;
+    config.std_offset_sec = 7200;
+    config.dst_offset_sec = 3600;
     ctx->time->SyncTime(config);
-    EXPECT_EQ(ctx->time->gmt_offset_sec(), 10800);
+    EXPECT_EQ(ctx->time->utc_offset_sec(), 10800);
 }
 
 TEST(PlatformTest, GetLocalTimeAppliesOffset) {
@@ -255,6 +255,38 @@ TEST(PlatformTest, GetLocalTimeUtcMatchesGmtime) {
 
     EXPECT_EQ(local.tm_hour, utc->tm_hour);
     EXPECT_EQ(local.tm_min, utc->tm_min);
+}
+
+TEST(PlatformTest, GetLocalTimeIsDstWhenActive) {
+    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    ctx->time->SetOffset(3600, 3600);  // CEST: UTC+2, DST active
+
+    struct tm local = {};
+    ctx->time->GetLocalTime(local);
+    EXPECT_EQ(local.tm_isdst, 1);
+}
+
+TEST(PlatformTest, GetLocalTimeIsDstWhenInactive) {
+    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    ctx->time->SetOffset(3600, 0);  // CET: UTC+1, no DST
+
+    struct tm local = {};
+    ctx->time->GetLocalTime(local);
+    EXPECT_EQ(local.tm_isdst, 0);
+}
+
+TEST(PlatformTest, GetLocalEpochMatchesManualCalc) {
+    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    ctx->time->SetOffset(3600, 3600);  // CEST: UTC+2
+
+    unsigned long expected = ctx->time->GetEpochTime() + ctx->time->utc_offset_sec();
+    EXPECT_EQ(ctx->time->GetLocalEpoch(), expected);
+}
+
+TEST(PlatformTest, GetLocalEpochDefaultNoOffset) {
+    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    // No offset — GetLocalEpoch should equal GetEpochTime.
+    EXPECT_EQ(ctx->time->GetLocalEpoch(), ctx->time->GetEpochTime());
 }
 
 TEST(PlatformTest, PlatformConfigNoEnableGpioField) {

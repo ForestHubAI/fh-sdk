@@ -17,9 +17,9 @@ namespace pc {
 PcTime::PcTime() : start_time_(std::chrono::steady_clock::now()) {}
 
 std::string PcTime::SyncTime(const TimeConfig& config) {
-    // Store timezone offsets so GetLocalTime() / gmt_offset_sec() reflect them.
-    gmt_offset_sec_ = config.gmt_offset_sec;
-    daylight_offset_sec_ = config.daylight_offset_sec;
+    // Store timezone offsets so GetLocalTime() / utc_offset_sec() reflect them.
+    std_offset_sec_ = config.std_offset_sec;
+    dst_offset_sec_ = config.dst_offset_sec;
     return "";
 }
 
@@ -44,23 +44,24 @@ bool PcTime::IsSynced(unsigned long min_epoch) const {
     return GetEpochTime() >= min_epoch;
 }
 
-void PcTime::SetOffset(long gmt_offset_sec, int daylight_offset_sec) {
-    gmt_offset_sec_ = gmt_offset_sec;
-    daylight_offset_sec_ = daylight_offset_sec;
+void PcTime::SetOffset(long std_offset_sec, int dst_offset_sec) {
+    std_offset_sec_ = std_offset_sec;
+    dst_offset_sec_ = dst_offset_sec;
 }
 
-long PcTime::gmt_offset_sec() const {
-    return gmt_offset_sec_ + daylight_offset_sec_;
+long PcTime::utc_offset_sec() const {
+    return std_offset_sec_ + dst_offset_sec_;
 }
 
 void PcTime::GetLocalTime(struct tm& result) const {
     // Apply stored offset to UTC epoch, then convert to calendar (thread-safe).
-    time_t local = static_cast<time_t>(GetEpochTime()) + gmt_offset_sec_ + daylight_offset_sec_;
+    time_t local = static_cast<time_t>(GetEpochTime()) + utc_offset_sec();
 #ifdef _MSC_VER
     gmtime_s(&result, &local);
 #else
     gmtime_r(&local, &result);
 #endif
+    result.tm_isdst = (dst_offset_sec_ != 0) ? 1 : 0;
 }
 
 }  // namespace pc
