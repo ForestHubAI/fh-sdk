@@ -2,47 +2,54 @@
 
 [![CI](https://github.com/ForestHubAI/fh-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/ForestHubAI/fh-sdk/actions/workflows/ci.yml) [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](https://github.com/ForestHubAI/fh-sdk/blob/main/LICENSE) [![C++14](https://img.shields.io/badge/C%2B%2B-14-blue.svg)](https://isocpp.org/) [![PlatformIO](https://img.shields.io/badge/PlatformIO-Registry-orange.svg)](https://registry.platformio.org/libraries/foresthubai/fh-sdk) [![Release](https://img.shields.io/github/v/release/ForestHubAI/fh-sdk)](https://github.com/ForestHubAI/fh-sdk/releases)
 
-C++14 LLM SDK with unified multi-provider interface. Supports ForestHub backend, direct OpenAI (Responses API), direct Google Gemini (generateContent API), and direct Anthropic Claude (Messages API). Designed for PC and embedded platforms (MCUs).
+A platform-agnostic C++14 framework for building LLM-powered applications, from cloud servers to microcontrollers. Write your code once and deploy it on PC (Linux/macOS/Windows) or embedded devices (ESP32, Portenta H7) without changing a line.
+
+Built on a **Hardware Abstraction Layer (HAL)** that abstracts network, console, time, crypto, and GPIO -- the LLM SDK, agent framework, and RAG system run on top of it unchanged across platforms.
 
 ## Features
 
-- **Multi-provider routing** -- automatic request routing to the right LLM provider based on model ID
-- **Agent framework** -- tool calling, multi-turn conversations, agent handoffs, generation parameters (temperature, max_tokens), and built-in web search
-- **RAG retriever** -- semantic document search via ForestHub backend with XML context formatting for LLM prompt injection
-- **Internal tools** -- provider-managed tools like web search with query logging via `InternalToolCall`
-- **Platform-agnostic** -- runs on PC (Linux/macOS) and embedded platforms via Hardware Abstraction Layer (Arduino as first implementation)
-- **No exceptions** -- embedded-safe design using string error returns and result structs
-- **No RTTI** -- all polymorphic dispatch via virtual methods and type enums (no dynamic_cast)
-- **Google Style `struct`/`class` convention** -- `struct` for passive data (DTOs, configs), `class` for types with behavior (interfaces, implementations with virtual methods or private state)
-- **Automatic schema handling** -- minimal JSON Schema input auto-normalized and strictified per provider requirements
-- **Fluent builder API** -- method chaining for requests, agents, and configuration
-- **C++14 compatible** -- targets any C++14-capable toolchain (GCC 7+, Clang 5+, MSVC 2017+, embedded compilers)
+- **Platform-agnostic via HAL** -- same application code runs on PC and embedded targets; platform-specific implementations (CPR on PC, ArduinoHttpClient on ESP32) are injected at build time
+- **Multi-provider LLM client** -- unified interface for ForestHub, OpenAI, Gemini, and Anthropic; routes requests to the right provider based on model ID
+- **Agent framework** -- tool calling, multi-turn conversations, agent handoffs, and web search
+- **RAG retriever** -- semantic document search via ForestHub backend
+- **Embedded-safe** -- C++14, no exceptions, no RTTI; targets any C++14-capable toolchain including embedded compilers
 
-## Quick Start
+## Installation
 
-### Prerequisites
+### PC (CMake)
 
-- **PC**: CMake 3.14+, C++14 compiler (GCC 7+, Clang 5+, MSVC 2017+)
-- **Embedded**: PlatformIO CLI (`pip install platformio`)
-- Internet connection (dependencies fetched automatically)
+Add to your project's `CMakeLists.txt`:
 
-### Build
+```cmake
+include(FetchContent)
+FetchContent_Declare(
+    fh-sdk
+    GIT_REPOSITORY https://github.com/ForestHubAI/fh-sdk.git
+    GIT_TAG v0.1.1
+)
+FetchContent_MakeAvailable(fh-sdk)
 
-```bash
-cmake -S . -B build
-cmake --build build -j4
+target_link_libraries(your_app PRIVATE foresthub_core)
 ```
 
-### Run
+**Requirements:** CMake 3.14+, C++14 compiler (GCC 7+, Clang 5+, MSVC 2017+). Dependencies (CPR, nlohmann/json) are fetched automatically.
 
-```bash
-export FORESTHUB_API_KEY=your_key
-./build/foresthub_chat
+### Embedded (PlatformIO)
+
+Add to your `platformio.ini`:
+
+```ini
+lib_deps =
+    foresthubai/fh-sdk@^0.1.1
 ```
+
+**Requirements:** PlatformIO CLI (`pip install platformio`).
+
+See [Embedded Guide](https://github.com/ForestHubAI/fh-sdk/blob/main/docs/embedded.md) for detailed setup.
 
 ## Usage
 
-### Agent with Tools
+### PC -- Agent with Tools
 
 ```cpp
 #include "foresthub/agent/agent.hpp"
@@ -95,6 +102,64 @@ int main() {
 }
 ```
 
+### Embedded -- Chat on ESP32
+
+The same SDK, but with Arduino `setup()`/`loop()` and explicit WiFi + time sync:
+
+```cpp
+#include <Arduino.h>
+#include "env.hpp"  // WiFi credentials + API key
+#include "foresthub/client.hpp"
+#include "foresthub/config/config.hpp"
+#include "foresthub/core/input.hpp"
+#include "foresthub/core/types.hpp"
+#include "foresthub/platform/platform.hpp"
+
+static std::shared_ptr<foresthub::platform::PlatformContext> platform;
+
+void setup() {
+    // 1. Create platform (WiFi, Serial, NTP, TLS)
+    foresthub::platform::PlatformConfig config;
+    config.network.ssid = kWifiSsid;
+    config.network.password = kWifiPassword;
+    platform = foresthub::platform::CreatePlatform(config);
+
+    // 2. Connect network + sync time (required for TLS)
+    platform->console->Begin();
+    platform->network->Connect();
+    platform->time->SyncTime();
+
+    // 3. Create client (same API as PC)
+    foresthub::platform::HttpClientConfig http_cfg;
+    http_cfg.host = "fh-backend-368736749905.europe-west1.run.app";
+    auto http_client = platform->CreateHttpClient(http_cfg);
+
+    foresthub::config::ClientConfig cfg;
+    foresthub::config::ProviderConfig fh_cfg;
+    fh_cfg.base_url = "https://fh-backend-368736749905.europe-west1.run.app";
+    fh_cfg.api_key = kForesthubApiKey;
+    fh_cfg.supported_models = {"gpt-4.1", "gpt-4.1-mini"};
+    cfg.remote.foresthub = fh_cfg;
+    auto client = foresthub::Client::Create(cfg, http_client);
+
+    // 4. Send chat request
+    foresthub::core::ChatRequest req;
+    req.model = "gpt-4.1-mini";
+    req.input = std::make_shared<foresthub::core::InputString>("What is the capital of France?");
+    auto response = client->Chat(req);
+
+    if (response) {
+        platform->console->Printf("Response: %s\n", response->text.c_str());
+    }
+}
+
+void loop() {
+    platform->time->Delay(10000);
+}
+```
+
+Note how steps 3-4 (client setup and chat request) are **identical** on both platforms -- only the platform initialization differs.
+
 ### Multi-Provider Support
 
 Route requests to any supported provider -- the client selects the right one based on model ID:
@@ -116,6 +181,7 @@ For complete examples see [`examples/pc/`](https://github.com/ForestHubAI/fh-sdk
 - [Provider Guide](https://github.com/ForestHubAI/fh-sdk/blob/main/docs/providers.md) -- ForestHub, OpenAI, Gemini, Anthropic configuration
 - [Agent Framework](https://github.com/ForestHubAI/fh-sdk/blob/main/docs/agents.md) -- Tools, Runner, handoffs, options
 - [RAG Retriever](https://github.com/ForestHubAI/fh-sdk/blob/main/docs/rag.md) -- Retrieval-augmented generation
+- [HAL Architecture](https://github.com/ForestHubAI/fh-sdk/blob/main/docs/hal.md) -- Platform abstraction design and how to add new platforms
 - [Embedded Platforms](https://github.com/ForestHubAI/fh-sdk/blob/main/docs/embedded.md) -- ESP32, Portenta H7, PlatformIO
 - [API Reference](https://foresthubai.github.io/fh-sdk/) -- Generated from source
 
@@ -152,116 +218,34 @@ Console and Time are always available. Omitting macros saves significant Flash:
 | Minimal (Console+Time) | 389 KB | 270 KB |
 | **Savings** | **519 KB (57%)** | **203 KB (43%)** |
 
-## Building
+---
 
-### PC (CMake)
+## Development
 
-| Target | Command |
-|--------|---------|
-| Standard | `cmake -S . -B build && cmake --build build` |
-| With tests | `cmake -S . -B build -DBUILD_TESTING=ON && cmake --build build` |
+Everything below is for **contributors and maintainers** working on the SDK itself.
 
-### Embedded (PlatformIO)
+### Building from Source
 
-| Target | Command |
-|--------|---------|
-| Full build (all subsystems) | `pio run -d pio/build_test -e esp32dev` |
-| Minimal build (Console+Time) | `pio run -d pio/build_test -e esp32_none` |
-| ForestHub chat | `pio run -d examples/embedded/foresthub/chat -e esp32dev` |
-| ForestHub agent | `pio run -d examples/embedded/foresthub/agent -e esp32dev` |
-| ForestHub RAG | `pio run -d examples/embedded/foresthub/rag -e esp32dev` |
-| ForestHub websearch | `pio run -d examples/embedded/foresthub/websearch -e esp32dev` |
-| OpenAI chat | `pio run -d examples/embedded/openai/chat -e esp32dev` |
-| OpenAI agent | `pio run -d examples/embedded/openai/agent -e esp32dev` |
-| OpenAI websearch | `pio run -d examples/embedded/openai/websearch -e esp32dev` |
-| Gemini chat | `pio run -d examples/embedded/gemini/chat -e esp32dev` |
-| Gemini agent | `pio run -d examples/embedded/gemini/agent -e esp32dev` |
-| Gemini websearch | `pio run -d examples/embedded/gemini/websearch -e esp32dev` |
-| Anthropic chat | `pio run -d examples/embedded/anthropic/chat -e esp32dev` |
-| Anthropic agent | `pio run -d examples/embedded/anthropic/agent -e esp32dev` |
-| Anthropic websearch | `pio run -d examples/embedded/anthropic/websearch -e esp32dev` |
-| HTTP/HTTPS test | `pio run -d examples/embedded/utility/http_test -e esp32dev` |
-| HTTP-only test (no Crypto) | `pio run -d examples/embedded/utility/http_test -e esp32_http_only` |
-| Ticker example | `pio run -d examples/embedded/utility/ticker -e esp32dev` |
-| Portenta H7 | `pio run -d pio/build_test -e portenta_h7_m7` |
+```bash
+# PC
+cmake -S . -B build -DBUILD_TESTING=ON
+cmake --build build -j4
 
-ForestHub examples require `FORESTHUB_API_KEY`, OpenAI examples require `OPENAI_API_KEY`, Gemini examples require `GEMINI_API_KEY`, Anthropic examples require `ANTHROPIC_API_KEY`.
+# Embedded (pattern: pio run -d examples/embedded/<provider>/<example> -e esp32dev)
+pio run -d pio/build_test -e esp32dev
+```
 
 See [Embedded Guide](https://github.com/ForestHubAI/fh-sdk/blob/main/docs/embedded.md) for detailed setup.
 
-## Testing
+### Testing
 
 ```bash
-cmake -S . -B build -DBUILD_TESTING=ON
-cmake --build build -j4
 cd build && ctest --output-on-failure
 ```
 
-~436 tests across 8 executables:
+Run a specific test: `./build/bin/Debug/run_core_tests --gtest_filter="InputTest.*"`
 
-| Executable | Tests | Scope |
-|------------|-------|-------|
-| `run_core_tests` | 101 | Input, model, options, tools, types, json, client |
-| `run_agent_tests` | 42 | Agent construction, Runner execution loop, options |
-| `run_provider_tests` | ~149 | ForestHub + OpenAI + Gemini + Anthropic HTTP, retry, errors, schema strictification |
-| `run_platform_tests` | 44 | PC platform factory, subsystems, GPIO, ENABLE macros, timezone, console |
-| `run_rag_tests` | 15 | RemoteRetriever HTTP, retry, JSON, serialization, FormatContext |
-| `run_integration_tests` | 7 | Runner-Provider chain, Client routing |
-| `run_contract_tests` | 12 | ForestHub API JSON schema verification |
-| `run_util_tests` | 64 | Optional polyfill, Ticker, Schema normalization, StrPrintf |
-
-Hand-rolled mocks in `tests/mocks/` (no GMock -- incompatible with `-fno-rtti`).
-
-## Project Structure
-
-```
-include/foresthub/        Public API headers
-  agent/                  Agent framework (agent, runner, handoff)
-  config/                 Configuration structs
-  core/                   Core abstractions (provider, tools, types, input)
-  platform/               HAL interfaces (network, console, time, crypto)
-  provider/remote/        Provider implementations (Anthropic, ForestHub, Gemini, OpenAI)
-  rag/                    RAG module (retriever interface, types, remote retriever)
-  util/                   Utilities (Optional<T>, JSON wrapper, Ticker, Schema, StrPrintf)
-src/                      Implementation
-  provider/remote/        Provider implementations (anthropic/, foresthub/, gemini/, openai/)
-  rag/                    RAG module (serialization, remote/retriever)
-  platform/pc/            PC implementations (CPR, stdin/stdout, std::chrono)
-  platform/arduino/       Arduino implementations (WiFi, Serial, NTP)
-  platform/common/        Shared platform code (TLS certs)
-examples/
-  pc/                     PC examples (anthropic/, foresthub/, gemini/, openai/ -- chat + agent + websearch + structured_output + rag)
-  embedded/               Arduino examples (anthropic/, foresthub/, gemini/, openai/ -- PlatformIO projects per provider + rag)
-                          Standalone: blink/, http_test/, ticker/
-tests/                    GoogleTest suites (~436 tests)
-  core/                   Core tests (input, model, options, tools, types, json, client)
-  agent/                  Agent framework tests (agent, runner)
-  provider/               Provider tests (Anthropic + ForestHub + OpenAI + Gemini HTTP, retry, errors)
-  rag/                    RAG tests (RemoteRetriever HTTP, retry, JSON, serialization)
-  platform/               Platform tests (PC factory, subsystems)
-  integration/            Integration tests (Runner-Provider, Client routing)
-  contract/               Contract tests (ForestHub API JSON schema)
-  util/                   Utility tests (Optional polyfill, Ticker)
-  mocks/                  Hand-rolled mocks (HttpClient, Provider, LLMClient)
-docs/                     User guides (getting-started, providers, agents, rag, embedded)
-.github/                  Issue/PR templates, community docs (ARCHITECTURE, CONTRIBUTING, SECURITY)
-third_party/              Vendored dependencies (nlohmann/json, doxygen-awesome-css)
-scripts/                  Build and coverage scripts
-Doxyfile                  Doxygen configuration (generates docs/api/)
-library.json              PlatformIO library manifest
-pio/build_test/           PlatformIO build verification (ESP32, Portenta H7)
-```
-
-## Dependencies
-
-| Dependency | Version | Purpose | Source |
-|------------|---------|---------|--------|
-| nlohmann/json | 3.12.0 | JSON parsing and serialization | Vendored (`third_party/`), MIT license |
-| CPR | 1.9.9 | HTTP client for PC builds | CMake FetchContent |
-| GoogleTest | 1.17.0 | Unit testing framework | CMake FetchContent |
-| ArduinoHttpClient | >=0.6.1 | HTTP client for Arduino builds (auto-resolved, framework-gated) | PlatformIO (`library.json`) |
-
-See [THIRD_PARTY_NOTICES](https://github.com/ForestHubAI/fh-sdk/blob/main/THIRD_PARTY_NOTICES) for full license details of all third-party components.
+Hand-rolled mocks in `tests/mocks/` (no GMock -- incompatible with `-fno-rtti`). See [THIRD_PARTY_NOTICES](https://github.com/ForestHubAI/fh-sdk/blob/main/THIRD_PARTY_NOTICES) for dependency license details.
 
 ## License
 

@@ -20,7 +20,11 @@ static unsigned long MakeEpoch(int year, int month, int day, int hour, int minut
     t.tm_hour = hour;
     t.tm_min = minute;
     t.tm_sec = sec;
+#ifdef _WIN32
+    return static_cast<unsigned long>(_mkgmtime(&t));
+#else
     return static_cast<unsigned long>(timegm(&t));
+#endif
 }
 
 // =============================================================================

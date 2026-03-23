@@ -104,8 +104,10 @@ endforeach()
 # 1. Build the Core Library
 add_subdirectory(src)
 
-# 2. Build the PC Examples
-add_subdirectory(examples/pc)
+# 2. Build the PC Examples (only when building as top-level project, not when used as a dependency)
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+    add_subdirectory(examples/pc)
+endif()
 
 # 3. Build Tests
 if(BUILD_TESTING)

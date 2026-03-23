@@ -6,8 +6,14 @@
 
 #include "console.hpp"
 
+#ifdef _WIN32
+#include <conio.h>
+#include <io.h>
+#include <windows.h>
+#else
 #include <poll.h>
 #include <unistd.h>
+#endif
 
 #include <cstdarg>
 #include <cstdio>
@@ -23,13 +29,24 @@ void PcConsole::Begin() {
 }
 
 bool PcConsole::Available() const noexcept {
+#ifdef _WIN32
+    HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
+    DWORD events = 0;
+    return GetNumberOfConsoleInputEvents(hStdin, &events) && events > 0;
+#else
     struct pollfd pfd = {0, POLLIN, 0};  // fd 0 = stdin
     return poll(&pfd, 1, 0) > 0;
+#endif
 }
 
 char PcConsole::Read() {
     char c = 0;
+#ifdef _WIN32
+    DWORD bytesRead = 0;
+    ReadFile(GetStdHandle(STD_INPUT_HANDLE), &c, 1, &bytesRead, nullptr);
+#else
     ::read(0, &c, 1);  // POSIX unbuffered read on stdin
+#endif
     return c;
 }
 
@@ -37,8 +54,14 @@ Optional<std::string> PcConsole::TryReadLine(size_t max_length, bool /*echo*/) {
     // Echo parameter ignored — terminal handles echo in canonical mode.
     while (Available()) {
         char c = 0;
+#ifdef _WIN32
+        DWORD n = 0;
+        ReadFile(GetStdHandle(STD_INPUT_HANDLE), &c, 1, &n, nullptr);
+        if (n <= 0) {
+#else
         ssize_t n = ::read(0, &c, 1);
         if (n <= 0) {
+#endif
             return Optional<std::string>();
         }
         if (c == '\n') {

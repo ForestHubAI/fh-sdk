@@ -68,6 +68,7 @@ int main() {  // NOLINT(bugprone-exception-escape)
     // Print banner
     platform->console->Printf("=== Anthropic Agent (PC Platform) ===\n\n");
     platform->console->Flush();
+    platform->console->Flush();
 
     // --- Setup Client ---
     const char* api_key_env = std::getenv("ANTHROPIC_API_KEY");
