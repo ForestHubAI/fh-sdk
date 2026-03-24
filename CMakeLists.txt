@@ -114,3 +114,16 @@ if(BUILD_TESTING)
     enable_testing() # Required by CTest
     add_subdirectory(tests)
 endif()
+
+# ==============================================================================
+# Install (for find_package(foresthub) support)
+# ==============================================================================
+include(CMakePackageConfigHelpers)
+configure_package_config_file(
+    cmake/foresthubConfig.cmake.in
+    "${CMAKE_CURRENT_BINARY_DIR}/foresthubConfig.cmake"
+    INSTALL_DESTINATION lib/cmake/foresthub
+)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/foresthubConfig.cmake"
+    DESTINATION lib/cmake/foresthub
+)

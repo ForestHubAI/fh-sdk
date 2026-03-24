@@ -115,7 +115,7 @@ The same SDK, but with Arduino `setup()`/`loop()` and explicit WiFi + time sync:
 #include "foresthub/core/types.hpp"
 #include "foresthub/platform/platform.hpp"
 
-static std::shared_ptr<foresthub::platform::PlatformContext> platform;
+static std::shared_ptr<foresthub::platform::Platform> platform;
 
 void setup() {
     // 1. Create platform (WiFi, Serial, NTP, TLS)

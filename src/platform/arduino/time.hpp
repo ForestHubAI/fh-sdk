@@ -11,8 +11,8 @@ namespace foresthub {
 namespace platform {
 namespace arduino {
 
-/// TimeInterface implementation using NTP sync, millis() counter, and WDT-safe delay.
-class ArduinoTime : public TimeInterface {
+/// Time implementation using NTP sync, millis() counter, and WDT-safe delay.
+class ArduinoTime : public Time {
 public:
     ArduinoTime() = default;
 

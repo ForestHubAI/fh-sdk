@@ -18,13 +18,13 @@ using namespace foresthub::core;
 // ==========================================
 
 TEST(ModelCapabilityTest, ConstantsMatchExpectedValues) {
-    EXPECT_EQ(capability::kChat, "chat");
-    EXPECT_EQ(capability::kFunctionCall, "function_call");
-    EXPECT_EQ(capability::kVision, "vision");
-    EXPECT_EQ(capability::kFineTuning, "fine_tuning");
-    EXPECT_EQ(capability::kReasoning, "reasoning");
-    EXPECT_EQ(capability::kClassification, "classification");
-    EXPECT_EQ(capability::kCode, "code");
+    EXPECT_STREQ(capability::kChat, "chat");
+    EXPECT_STREQ(capability::kFunctionCall, "function_call");
+    EXPECT_STREQ(capability::kVision, "vision");
+    EXPECT_STREQ(capability::kFineTuning, "fine_tuning");
+    EXPECT_STREQ(capability::kReasoning, "reasoning");
+    EXPECT_STREQ(capability::kClassification, "classification");
+    EXPECT_STREQ(capability::kCode, "code");
 }
 
 // ==========================================

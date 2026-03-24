@@ -14,7 +14,7 @@ namespace platform {
 namespace pc {
 
 /// Time implementation for PC using std::chrono.
-class PcTime : public TimeInterface {
+class PcTime : public Time {
 public:
     /// Initialize with current steady clock baseline.
     PcTime();

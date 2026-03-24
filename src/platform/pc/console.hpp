@@ -14,7 +14,7 @@ namespace platform {
 namespace pc {
 
 /// PC console using stdin/stdout for development and testing.
-class PcConsole : public ConsoleInterface {
+class PcConsole : public Console {
 public:
     /// No-op; terminal needs no initialization.
     void Begin() override;

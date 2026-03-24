@@ -8,11 +8,23 @@
 /// @file
 /// Abstract HTTP client interface and response type.
 
+#include <cstdint>
 #include <map>
 #include <string>
 
 namespace foresthub {
 namespace core {
+
+/// Call-time configuration for HTTP client creation.
+///
+/// Passed to Platform::CreateHttpClient() to specify connection parameters.
+/// Host is required; all other fields have sensible defaults.
+struct HttpClientConfig {
+    const char* host = nullptr;        ///< Target hostname (required).
+    uint16_t port = 443;               ///< Target port number.
+    bool use_tls = true;               ///< Whether to use TLS encryption.
+    unsigned long timeout_ms = 30000;  ///< Request timeout in milliseconds.
+};
 
 /// Simple HTTP response container.
 struct HttpResponse {

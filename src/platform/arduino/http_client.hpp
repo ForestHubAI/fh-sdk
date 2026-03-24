@@ -19,17 +19,17 @@ namespace platform {
 namespace arduino {
 
 /// HTTP client implementation using ArduinoHttpClient with yield()-based WDT safety.
-class ArduinoHttpClientWrapper : public core::HttpClient {
+class ArduinoHttpClient : public core::HttpClient {
 public:
     /// Construct HTTP client for TLS connections.
-    ArduinoHttpClientWrapper(std::shared_ptr<TLSClientWrapper> tls_wrapper, const char* host, uint16_t port,
+    ArduinoHttpClient(std::shared_ptr<TLSClientWrapper> tls_wrapper, const char* host, uint16_t port,
                              unsigned long timeout_ms = 60000);
 
     /// Construct HTTP client for non-TLS connections.
-    ArduinoHttpClientWrapper(std::unique_ptr<Client> plain_client, const char* host, uint16_t port,
+    ArduinoHttpClient(std::unique_ptr<Client> plain_client, const char* host, uint16_t port,
                              unsigned long timeout_ms = 60000);
 
-    ~ArduinoHttpClientWrapper() override;
+    ~ArduinoHttpClient() override;
 
     /// Sends GET via ArduinoHttpClient with yield() in wait loops.
     core::HttpResponse Get(const std::string& url, const Headers& headers) override;

@@ -12,8 +12,8 @@ namespace foresthub {
 namespace platform {
 namespace arduino {
 
-/// ConsoleInterface implementation for Arduino with line editing, output chunking, and configurable Stream.
-class ArduinoConsole : public ConsoleInterface {
+/// Console implementation for Arduino with line editing, output chunking, and configurable Stream.
+class ArduinoConsole : public Console {
 public:
     /// Construct using the default Serial port with the given baud rate.
     explicit ArduinoConsole(unsigned long baud_rate = 115200);

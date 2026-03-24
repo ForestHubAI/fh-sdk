@@ -96,6 +96,25 @@ target_link_libraries(run_platform_tests
 
 gtest_discover_tests(run_platform_tests)
 
+# --- Debug Platform Tests -----------------------------------------------------
+# Only built when targeting the debug platform, since the library must be compiled
+# with FORESTHUB_PLATFORM_PC_DEBUG (platform macros are mutually exclusive).
+
+if(FORESTHUB_PLATFORM STREQUAL "pc_debug")
+    add_executable(run_debug_platform_tests
+        platform/debug_console_test.cpp
+        platform/debug_gpio_test.cpp
+    )
+
+    target_link_libraries(run_debug_platform_tests
+        PRIVATE
+        foresthub_core
+        GTest::gtest_main
+    )
+
+    gtest_discover_tests(run_debug_platform_tests)
+endif()
+
 # --- Integration Tests --------------------------------------------------------
 
 add_executable(run_integration_tests

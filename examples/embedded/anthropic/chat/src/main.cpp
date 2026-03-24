@@ -19,15 +19,16 @@
 #include "foresthub/core/input.hpp"
 #include "foresthub/core/types.hpp"
 #include "foresthub/platform/platform.hpp"
+#include "platform/arduino/platform.hpp"
 
-static std::shared_ptr<foresthub::platform::PlatformContext> platform;
+static std::shared_ptr<foresthub::platform::Platform> platform;
 
 void setup() {
     // 1. Create platform context (WiFi, Serial, NTP, TLS)
-    foresthub::platform::PlatformConfig config;
+    foresthub::platform::arduino::ArduinoConfig config;
     config.network.ssid = kWifiSsid;
     config.network.password = kWifiPassword;
-    platform = foresthub::platform::CreatePlatform(config);
+    platform = std::make_shared<foresthub::platform::arduino::ArduinoPlatform>(config);
     if (!platform) {
         while (true) {
         }
@@ -71,7 +72,7 @@ void setup() {
     platform->console->Printf("[OK] Time synced\n\n");
 
     // 5. Create HTTP client via HAL
-    foresthub::platform::HttpClientConfig http_cfg;
+    foresthub::core::HttpClientConfig http_cfg;
     http_cfg.host = "api.anthropic.com";
     auto http_client = platform->CreateHttpClient(http_cfg);
 

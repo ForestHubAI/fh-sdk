@@ -78,7 +78,7 @@ int main() {  // NOLINT(bugprone-exception-escape)
     }
 
     // Create HTTP client via HAL
-    foresthub::platform::HttpClientConfig http_cfg;
+    foresthub::core::HttpClientConfig http_cfg;
     http_cfg.host = "api.openai.com";
     auto http_client = platform->CreateHttpClient(http_cfg);
 

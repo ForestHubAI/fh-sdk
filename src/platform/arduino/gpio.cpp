@@ -16,7 +16,7 @@ namespace arduino {
 // ESP32 uses uint8_t for pin mode/value, while Portenta H7 Mbed uses typed enums
 // (::PinMode, ::PinStatus). Passing Arduino constants directly avoids type mismatches.
 
-void ArduinoGpio::SetPinMode(PinId pin, PinMode mode) {
+void ArduinoGpio::SetPinMode(PinID pin, PinMode mode) {
     uint8_t hw_pin = static_cast<uint8_t>(pin);
     switch (mode) {
         case PinMode::kInput:
@@ -31,15 +31,15 @@ void ArduinoGpio::SetPinMode(PinId pin, PinMode mode) {
     }
 }
 
-void ArduinoGpio::DigitalWrite(PinId pin, int value) {
+void ArduinoGpio::DigitalWrite(PinID pin, int value) {
     ::digitalWrite(static_cast<uint8_t>(pin), value ? HIGH : LOW);
 }
 
-int ArduinoGpio::DigitalRead(PinId pin) const {
+int ArduinoGpio::DigitalRead(PinID pin) const {
     return (::digitalRead(static_cast<uint8_t>(pin)) == HIGH) ? 1 : 0;
 }
 
-int ArduinoGpio::AnalogRead(PinId pin) const {
+int ArduinoGpio::AnalogRead(PinID pin) const {
     return ::analogRead(static_cast<uint8_t>(pin));
 }
 
@@ -48,7 +48,7 @@ int ArduinoGpio::AnalogRead(PinId pin) const {
 // ESP32: LEDC peripheral for hardware PWM (Arduino Core v2.x API).
 // Each pin requires a dedicated LEDC channel (0-15).
 
-std::string ArduinoGpio::ConfigurePwm(PinId pin, const PwmConfig& config) {
+std::string ArduinoGpio::ConfigurePwm(PinID pin, const PwmConfig& config) {
     if (pwm_count_ >= kMaxPwmChannels) {
         return "No free LEDC channels available";
     }
@@ -64,7 +64,7 @@ std::string ArduinoGpio::ConfigurePwm(PinId pin, const PwmConfig& config) {
     return "";
 }
 
-void ArduinoGpio::PwmWrite(PinId pin, int duty) {
+void ArduinoGpio::PwmWrite(PinID pin, int duty) {
     // Linear scan for pin-to-channel mapping (typically < 4 PWM pins)
     for (uint8_t i = 0; i < pwm_count_; ++i) {
         if (pwm_entries_[i].pin == pin) {
@@ -79,12 +79,12 @@ void ArduinoGpio::PwmWrite(PinId pin, int duty) {
 // Portenta H7: analogWrite with configurable resolution.
 // Frequency is best-effort (hardware-determined).
 
-std::string ArduinoGpio::ConfigurePwm(PinId pin, const PwmConfig& config) {
+std::string ArduinoGpio::ConfigurePwm(PinID pin, const PwmConfig& config) {
     analogWriteResolution(config.resolution_bits);
     return "";
 }
 
-void ArduinoGpio::PwmWrite(PinId pin, int duty) {
+void ArduinoGpio::PwmWrite(PinID pin, int duty) {
     ::analogWrite(static_cast<uint8_t>(pin), duty);
 }
 

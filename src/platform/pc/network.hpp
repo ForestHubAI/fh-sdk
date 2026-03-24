@@ -12,7 +12,7 @@ namespace platform {
 namespace pc {
 
 /// Mock network for PC. The OS handles networking; connect/disconnect are no-ops.
-class PcNetwork : public NetworkInterface {
+class PcNetwork : public Network {
 public:
     /// No-op; OS networking is always available.
     std::string Connect(unsigned long timeout_ms = 10000) override;

@@ -73,7 +73,7 @@ C++14 LLM SDK with unified interface for multiple providers (ForestHub, OpenAI, 
 - `Input` (`foresthub/core/input.hpp`): Polymorphic — `InputString` (text) or `InputItems` (conversation history)
 - `ChatRequest`/`ChatResponse` (`foresthub/core/types.hpp`): Fluent API with `WithSystemPrompt()`, `AddTool()`, etc.
 - `Retriever` (`foresthub/rag/`): `Retriever` interface — `RemoteRetriever` (POST /rag/query). Types: `QueryRequest`, `QueryResult`, `QueryResponse`. Helper: `FormatContext()` (XML)
-- `HAL` (`foresthub/platform/`): `PlatformContext` factory — Network, Console, Time, Crypto, GPIO interfaces
+- `HAL` (`foresthub/platform/`): `Platform` factory — Network, Console, Time, Crypto, GPIO interfaces
 - `Schema` (`foresthub/util/schema.hpp`): `NormalizeSchema()` wraps minimal property maps into full JSON Schema. Provider-specific pipelines in `src/provider/remote/schema_utils.{hpp,cpp}`
 - Provider impls: `src/provider/remote/{anthropic,foresthub,gemini,openai}/` (each has `provider.cpp` + `mapping.{hpp,cpp}`)
 

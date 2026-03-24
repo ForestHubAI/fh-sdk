@@ -1,17 +1,18 @@
 // PlatformIO build verification + memory measurement.
-// Calls CreatePlatform() and touches each subsystem so the linker
+// Constructs the Arduino platform and touches each subsystem so the linker
 // keeps the code and memory measurements are realistic.
 
 #include <Arduino.h>
 
 #include "foresthub/platform/platform.hpp"
+#include "platform/arduino/platform.hpp"
 
 void setup() {
     using namespace foresthub::platform;
 
-    PlatformConfig config;
+    arduino::ArduinoConfig config;
     config.baud_rate = 115200;
-    auto platform = CreatePlatform(config);
+    auto platform = std::make_shared<arduino::ArduinoPlatform>(config);
 
     // Console + Time (always available)
     platform->console->Begin();
@@ -37,7 +38,7 @@ void setup() {
 #endif
 
 #if defined(FORESTHUB_ENABLE_NETWORK) && defined(FORESTHUB_ENABLE_CRYPTO)
-    HttpClientConfig http_cfg;
+    foresthub::core::HttpClientConfig http_cfg;
     http_cfg.host = "example.com";
     auto http = platform->CreateHttpClient(http_cfg);
     platform->console->Printf("HTTP client: %s\n", http ? "ok" : "null");

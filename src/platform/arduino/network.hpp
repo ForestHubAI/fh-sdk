@@ -16,7 +16,7 @@ namespace platform {
 namespace arduino {
 
 /// WiFi network implementation for Arduino using station mode.
-class ArduinoNetwork : public NetworkInterface {
+class ArduinoNetwork : public Network {
 public:
     /// Construct with network configuration for station mode.
     explicit ArduinoNetwork(const NetworkConfig& config);

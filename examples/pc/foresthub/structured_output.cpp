@@ -44,7 +44,7 @@ int main() {  // NOLINT(bugprone-exception-escape)
         return 1;
     }
 
-    foresthub::platform::HttpClientConfig http_cfg;
+    foresthub::core::HttpClientConfig http_cfg;
     http_cfg.host = "fh-backend-368736749905.europe-west1.run.app";
     auto http_client = platform->CreateHttpClient(http_cfg);
 

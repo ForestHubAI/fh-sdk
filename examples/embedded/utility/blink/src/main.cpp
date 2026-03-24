@@ -15,15 +15,16 @@
 #include <Arduino.h>
 
 #include "foresthub/platform/platform.hpp"
+#include "platform/arduino/platform.hpp"
 
 // -- Board-specific LED configuration ----------------------------------------
 // ESP32:      GPIO2 = built-in blue LED (active HIGH)
 // Portenta:   LEDB  = built-in blue LED (active LOW, accent LED on RGB)
 #if defined(ARDUINO_PORTENTA_H7_M7)
-static constexpr foresthub::platform::PinId kLedPin = LEDB;
+static constexpr foresthub::platform::PinID kLedPin = LEDB;
 static constexpr bool kLedActiveLow = true;
 #else
-static constexpr foresthub::platform::PinId kLedPin = 2;
+static constexpr foresthub::platform::PinID kLedPin = 2;
 static constexpr bool kLedActiveLow = false;
 #endif
 
@@ -37,12 +38,12 @@ static int LedOff() {
 }
 
 // -- Platform context (file-scope so loop() can access it) --------------------
-static std::shared_ptr<foresthub::platform::PlatformContext> platform;
+static std::shared_ptr<foresthub::platform::Platform> platform;
 
 void setup() {
     // 1. Create platform (no WiFi needed — leave network config empty)
-    foresthub::platform::PlatformConfig config;
-    platform = foresthub::platform::CreatePlatform(config);
+    foresthub::platform::arduino::ArduinoConfig config;
+    platform = std::make_shared<foresthub::platform::arduino::ArduinoPlatform>(config);
 
     // 2. Initialize console
     platform->console->Begin();

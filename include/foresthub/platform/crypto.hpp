@@ -25,9 +25,9 @@ public:
 };
 
 /// Abstract interface for TLS/crypto operations.
-class CryptoInterface {
+class Crypto {
 public:
-    virtual ~CryptoInterface() = default;
+    virtual ~Crypto() = default;
 
     /// Create a TLS-enabled client with optional root CA certificate.
     /// @param root_ca PEM-encoded root CA certificate, or nullptr for platform default.

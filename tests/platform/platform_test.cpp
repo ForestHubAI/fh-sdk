@@ -3,6 +3,7 @@
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
 #include "foresthub/platform/platform.hpp"
+#include "platform/pc/platform.hpp"
 
 #include <gtest/gtest.h>
 
@@ -14,16 +15,15 @@ namespace foresthub {
 namespace platform {
 namespace {
 
-// --- DOC-06/07: CreatePlatform factory ---
+// --- PcPlatform construction ---
 
 TEST(PlatformTest, CreatePlatformReturnsValidContext) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    auto ctx = std::make_shared<pc::PcPlatform>();
     ASSERT_NE(ctx, nullptr);
 }
 
 TEST(PlatformTest, AllSubsystemsNonNull) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
-    ASSERT_NE(ctx, nullptr);
+    auto ctx = std::make_shared<pc::PcPlatform>();
     EXPECT_NE(ctx->network, nullptr);
     EXPECT_NE(ctx->console, nullptr);
     EXPECT_NE(ctx->time, nullptr);
@@ -34,13 +34,13 @@ TEST(PlatformTest, AllSubsystemsNonNull) {
 // --- DOC-08: Console subsystem ---
 
 TEST(PlatformTest, ConsoleBegin) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
-    // Begin should not crash. ConsoleInterface::Begin returns void.
+    auto ctx = std::make_shared<pc::PcPlatform>();
+    // Begin should not crash. Console::Begin returns void.
     ctx->console->Begin();
 }
 
 TEST(PlatformTest, ConsoleWriteAndFlush) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    auto ctx = std::make_shared<pc::PcPlatform>();
     ctx->console->Begin();
     ctx->console->Write("test output");
     ctx->console->Flush();
@@ -49,14 +49,14 @@ TEST(PlatformTest, ConsoleWriteAndFlush) {
 // --- DOC-09: Network mock ---
 
 TEST(PlatformTest, NetworkMockConnected) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    auto ctx = std::make_shared<pc::PcPlatform>();
     std::string err = ctx->network->Connect();
     EXPECT_TRUE(err.empty()) << "Connect() failed: " << err;
     EXPECT_EQ(ctx->network->GetStatus(), NetworkStatus::kConnected);
 }
 
 TEST(PlatformTest, NetworkGetLocalIp) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    auto ctx = std::make_shared<pc::PcPlatform>();
     ctx->network->Connect();
     std::string ip = ctx->network->GetLocalIp();
     EXPECT_FALSE(ip.empty());
@@ -65,7 +65,7 @@ TEST(PlatformTest, NetworkGetLocalIp) {
 // --- Time subsystem ---
 
 TEST(PlatformTest, TimeGetMillis) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    auto ctx = std::make_shared<pc::PcPlatform>();
     // GetMillis() returns elapsed since construction. A brief delay ensures non-zero.
     ctx->time->Delay(1);
     unsigned long ms = ctx->time->GetMillis();
@@ -73,14 +73,14 @@ TEST(PlatformTest, TimeGetMillis) {
 }
 
 TEST(PlatformTest, TimeMonotonicity) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    auto ctx = std::make_shared<pc::PcPlatform>();
     unsigned long first = ctx->time->GetMillis();
     unsigned long second = ctx->time->GetMillis();
     EXPECT_GE(second, first);
 }
 
 TEST(PlatformTest, TimeDelay) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    auto ctx = std::make_shared<pc::PcPlatform>();
     // Delay(10) should not crash.
     ctx->time->Delay(10);
 }
@@ -88,12 +88,12 @@ TEST(PlatformTest, TimeDelay) {
 // --- Crypto subsystem ---
 
 TEST(PlatformTest, CryptoIsAvailable) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    auto ctx = std::make_shared<pc::PcPlatform>();
     EXPECT_TRUE(ctx->crypto->IsAvailable());
 }
 
 TEST(PlatformTest, CryptoGetGtsRootCerts) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    auto ctx = std::make_shared<pc::PcPlatform>();
     // PC returns nullptr (uses system cert store). Arduino returns embedded GTS certs.
     // Just verify the call doesn't crash.
     ctx->crypto->GetGtsRootCerts();
@@ -102,8 +102,8 @@ TEST(PlatformTest, CryptoGetGtsRootCerts) {
 // --- HttpClient creation ---
 
 TEST(PlatformTest, CreateHttpClient) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
-    HttpClientConfig http_cfg;
+    auto ctx = std::make_shared<pc::PcPlatform>();
+    core::HttpClientConfig http_cfg;
     http_cfg.host = "example.com";
     http_cfg.timeout_ms = 5000;
     std::shared_ptr<core::HttpClient> http = ctx->CreateHttpClient(http_cfg);
@@ -113,33 +113,33 @@ TEST(PlatformTest, CreateHttpClient) {
 // --- Additional Time subsystem tests ---
 
 TEST(PlatformTest, TimeSyncTime) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    auto ctx = std::make_shared<pc::PcPlatform>();
     std::string err = ctx->time->SyncTime();
     EXPECT_TRUE(err.empty()) << "SyncTime() failed: " << err;
 }
 
 TEST(PlatformTest, TimeGetEpochTime) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    auto ctx = std::make_shared<pc::PcPlatform>();
     unsigned long epoch = ctx->time->GetEpochTime();
     EXPECT_GT(epoch, 0u);
 }
 
 TEST(PlatformTest, TimeIsSynced) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    auto ctx = std::make_shared<pc::PcPlatform>();
     EXPECT_TRUE(ctx->time->IsSynced(0));
 }
 
 // --- Additional Network tests ---
 
 TEST(PlatformTest, NetworkDisconnect) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    auto ctx = std::make_shared<pc::PcPlatform>();
     ctx->network->Connect();
     ctx->network->Disconnect();
     // No crash expected. Status may still be kConnected (mock).
 }
 
 TEST(PlatformTest, NetworkSignalStrength) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    auto ctx = std::make_shared<pc::PcPlatform>();
     int strength = ctx->network->GetSignalStrength();
     EXPECT_EQ(strength, 0);  // PC mock returns 0.
 }
@@ -147,25 +147,10 @@ TEST(PlatformTest, NetworkSignalStrength) {
 // --- Additional Crypto test ---
 
 TEST(PlatformTest, CryptoCreateTlsClient) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    auto ctx = std::make_shared<pc::PcPlatform>();
     // PC returns nullptr (TLS handled by CPR/libcurl).
     std::shared_ptr<TLSClientWrapper> tls = ctx->crypto->CreateTlsClient(nullptr, 5000);
     EXPECT_EQ(tls, nullptr);
-}
-
-// --- CreatePlatform with config values ---
-
-TEST(PlatformTest, CreatePlatformWithConfig) {
-    PlatformConfig config;
-    config.network.ssid = "TestSSID";
-    config.network.password = "TestPassword";
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform(config);
-    ASSERT_NE(ctx, nullptr);
-    EXPECT_NE(ctx->network, nullptr);
-    EXPECT_NE(ctx->console, nullptr);
-    EXPECT_NE(ctx->time, nullptr);
-    EXPECT_NE(ctx->crypto, nullptr);
-    EXPECT_NE(ctx->gpio, nullptr);
 }
 
 // --- ENABLE macros ---
@@ -189,8 +174,8 @@ TEST(PlatformTest, EnableMacrosDefinedOnPC) {
 }
 
 TEST(PlatformTest, CreateHttpClientWithAllSubsystems) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
-    HttpClientConfig http_cfg;
+    auto ctx = std::make_shared<pc::PcPlatform>();
+    core::HttpClientConfig http_cfg;
     http_cfg.host = "example.com";
     std::shared_ptr<core::HttpClient> http = ctx->CreateHttpClient(http_cfg);
     EXPECT_NE(http, nullptr);
@@ -201,24 +186,24 @@ TEST(PlatformTest, CreateHttpClientWithAllSubsystems) {
 // --- Timezone support ---
 
 TEST(PlatformTest, DefaultOffsetIsZero) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    auto ctx = std::make_shared<pc::PcPlatform>();
     EXPECT_EQ(ctx->time->utc_offset_sec(), 0);
 }
 
 TEST(PlatformTest, SetOffsetGmtOnly) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    auto ctx = std::make_shared<pc::PcPlatform>();
     ctx->time->SetOffset(3600, 0);
     EXPECT_EQ(ctx->time->utc_offset_sec(), 3600);
 }
 
 TEST(PlatformTest, SetOffsetGmtPlusDaylight) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    auto ctx = std::make_shared<pc::PcPlatform>();
     ctx->time->SetOffset(3600, 3600);
     EXPECT_EQ(ctx->time->utc_offset_sec(), 7200);
 }
 
 TEST(PlatformTest, SyncTimeStoresOffset) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    auto ctx = std::make_shared<pc::PcPlatform>();
     TimeConfig config;
     config.std_offset_sec = 7200;
     config.dst_offset_sec = 3600;
@@ -227,7 +212,7 @@ TEST(PlatformTest, SyncTimeStoresOffset) {
 }
 
 TEST(PlatformTest, GetLocalTimeAppliesOffset) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    auto ctx = std::make_shared<pc::PcPlatform>();
     ctx->time->SetOffset(3600, 0);  // CET: UTC+1
 
     struct tm local = {};
@@ -244,7 +229,7 @@ TEST(PlatformTest, GetLocalTimeAppliesOffset) {
 }
 
 TEST(PlatformTest, GetLocalTimeUtcMatchesGmtime) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    auto ctx = std::make_shared<pc::PcPlatform>();
     // No offset set (default 0) — local time should match UTC.
     struct tm local = {};
     ctx->time->GetLocalTime(local);
@@ -258,7 +243,7 @@ TEST(PlatformTest, GetLocalTimeUtcMatchesGmtime) {
 }
 
 TEST(PlatformTest, GetLocalTimeIsDstWhenActive) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    auto ctx = std::make_shared<pc::PcPlatform>();
     ctx->time->SetOffset(3600, 3600);  // CEST: UTC+2, DST active
 
     struct tm local = {};
@@ -267,7 +252,7 @@ TEST(PlatformTest, GetLocalTimeIsDstWhenActive) {
 }
 
 TEST(PlatformTest, GetLocalTimeIsDstWhenInactive) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    auto ctx = std::make_shared<pc::PcPlatform>();
     ctx->time->SetOffset(3600, 0);  // CET: UTC+1, no DST
 
     struct tm local = {};
@@ -276,7 +261,7 @@ TEST(PlatformTest, GetLocalTimeIsDstWhenInactive) {
 }
 
 TEST(PlatformTest, GetLocalEpochMatchesManualCalc) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    auto ctx = std::make_shared<pc::PcPlatform>();
     ctx->time->SetOffset(3600, 3600);  // CEST: UTC+2
 
     unsigned long expected = ctx->time->GetEpochTime() + ctx->time->utc_offset_sec();
@@ -284,19 +269,9 @@ TEST(PlatformTest, GetLocalEpochMatchesManualCalc) {
 }
 
 TEST(PlatformTest, GetLocalEpochDefaultNoOffset) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    auto ctx = std::make_shared<pc::PcPlatform>();
     // No offset — GetLocalEpoch should equal GetEpochTime.
     EXPECT_EQ(ctx->time->GetLocalEpoch(), ctx->time->GetEpochTime());
-}
-
-TEST(PlatformTest, PlatformConfigNoEnableGpioField) {
-    PlatformConfig config;
-    config.network.ssid = "test";
-    config.baud_rate = 9600;
-    // If this compiles, enable_gpio field does not exist.
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform(config);
-    ASSERT_NE(ctx, nullptr);
-    EXPECT_NE(ctx->gpio, nullptr);
 }
 
 }  // namespace

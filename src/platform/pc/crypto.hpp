@@ -12,7 +12,7 @@ namespace platform {
 namespace pc {
 
 /// Crypto implementation for PC. TLS is handled by CPR/libcurl using system certs.
-class PcCrypto : public CryptoInterface {
+class PcCrypto : public Crypto {
 public:
     /// Always returns nullptr; TLS is handled by CPR/libcurl.
     std::shared_ptr<TLSClientWrapper> CreateTlsClient(const char* root_ca = nullptr,

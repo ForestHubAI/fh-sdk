@@ -18,24 +18,24 @@ The compile flag is set by the build system: CMake defines `FORESTHUB_PLATFORM_P
 Platform activation has two layers:
 
 1. **Which platform** -- `FORESTHUB_PLATFORM_PC` or `FORESTHUB_PLATFORM_ARDUINO` selects which implementation of `CreatePlatform()` compiles. This is mandatory.
-2. **Which subsystems** -- on Arduino, individual subsystems are opt-in via additional macros (`FORESTHUB_ENABLE_NETWORK`, `FORESTHUB_ENABLE_CRYPTO`, `FORESTHUB_ENABLE_GPIO`). If a macro is not defined, that subsystem's field in `PlatformContext` is `nullptr`. Console and Time are always included.
+2. **Which subsystems** -- on Arduino, individual subsystems are opt-in via additional macros (`FORESTHUB_ENABLE_NETWORK`, `FORESTHUB_ENABLE_CRYPTO`, `FORESTHUB_ENABLE_GPIO`). If a macro is not defined, that subsystem's field in `Platform` is `nullptr`. Console and Time are always included.
 
 On PC, all subsystems are always enabled.
 
 ### Interfaces enforce full implementation, subsystems are optional
 
-Each subsystem is defined as an abstract interface with pure virtual methods (`= 0`). If a platform provides a subsystem, it **must implement every method** in that interface -- the compiler enforces this. For example, any class implementing `NetworkInterface` must provide `Connect()`, `Disconnect()`, `GetStatus()`, `GetLocalIp()`, and `GetSignalStrength()`.
+Each subsystem is defined as an abstract interface with pure virtual methods (`= 0`). If a platform provides a subsystem, it **must implement every method** in that interface -- the compiler enforces this. For example, any class implementing `Network` must provide `Connect()`, `Disconnect()`, `GetStatus()`, `GetLocalIp()`, and `GetSignalStrength()`.
 
-However, whether a platform *provides* a subsystem at all is optional. `PlatformContext` holds subsystems as `shared_ptr` fields -- any of them can be `nullptr`:
+However, whether a platform *provides* a subsystem at all is optional. `Platform` holds subsystems as `shared_ptr` fields -- any of them can be `nullptr`:
 
 ```cpp
-class PlatformContext {
+class Platform {
 public:
-    std::shared_ptr<NetworkInterface> network;   // nullptr if FORESTHUB_ENABLE_NETWORK not defined
-    std::shared_ptr<ConsoleInterface> console;   // always set
-    std::shared_ptr<TimeInterface> time;         // always set
-    std::shared_ptr<CryptoInterface> crypto;     // nullptr if FORESTHUB_ENABLE_CRYPTO not defined
-    std::shared_ptr<GpioInterface> gpio;         // nullptr if FORESTHUB_ENABLE_GPIO not defined
+    std::shared_ptr<Network> network;   // nullptr if FORESTHUB_ENABLE_NETWORK not defined
+    std::shared_ptr<Console> console;   // always set
+    std::shared_ptr<Time> time;         // always set
+    std::shared_ptr<Crypto> crypto;     // nullptr if FORESTHUB_ENABLE_CRYPTO not defined
+    std::shared_ptr<Gpio> gpio;         // nullptr if FORESTHUB_ENABLE_GPIO not defined
 
     virtual std::shared_ptr<core::HttpClient> CreateHttpClient(const HttpClientConfig& config) = 0;
 };
@@ -47,30 +47,30 @@ In summary: **within an interface, all methods are mandatory; but which interfac
 
 ```
 include/foresthub/platform/     Abstract interfaces (the contract)
-    platform.hpp                PlatformContext + CreatePlatform() factory
-    network.hpp                 NetworkInterface
-    console.hpp                 ConsoleInterface
-    time.hpp                    TimeInterface
-    crypto.hpp                  CryptoInterface
-    gpio.hpp                    GpioInterface
+    platform.hpp                Platform + CreatePlatform() factory
+    network.hpp                 Network
+    console.hpp                 Console
+    time.hpp                    Time
+    crypto.hpp                  Crypto
+    gpio.hpp                    Gpio
 
 src/platform/
     pc/                         PC implementations (CPR, stdin/stdout, std::chrono)
-        platform.cpp            PcPlatformContext + CreatePlatform()
-        network.cpp             PcNetwork : NetworkInterface
-        console.cpp             PcConsole : ConsoleInterface
-        time.cpp                PcTime : TimeInterface
-        crypto.cpp              PcCrypto : CryptoInterface
-        gpio.cpp                PcGpio : GpioInterface
+        platform.cpp            PcPlatform + CreatePlatform()
+        network.cpp             PcNetwork : Network
+        console.cpp             PcConsole : Console
+        time.cpp                PcTime : Time
+        crypto.cpp              PcCrypto : Crypto
+        gpio.cpp                PcGpio : Gpio
         http_client.cpp         PcHttpClient : HttpClient (uses CPR/libcurl)
     arduino/                    Arduino implementations (WiFi, Serial, NTP)
-        platform.cpp            ArduinoPlatformContext + CreatePlatform()
-        network.cpp             ArduinoNetwork : NetworkInterface
-        console.cpp             ArduinoConsole : ConsoleInterface
-        time.cpp                ArduinoTime : TimeInterface
-        crypto.cpp              ArduinoCrypto : CryptoInterface
-        gpio.cpp                ArduinoGpio : GpioInterface
-        http_client.cpp         ArduinoHttpClientWrapper : HttpClient
+        platform.cpp            ArduinoPlatform + CreatePlatform()
+        network.cpp             ArduinoNetwork : Network
+        console.cpp             ArduinoConsole : Console
+        time.cpp                ArduinoTime : Time
+        crypto.cpp              ArduinoCrypto : Crypto
+        gpio.cpp                ArduinoGpio : Gpio
+        http_client.cpp         ArduinoHttpClient : HttpClient
     common/                     Shared data (not an abstraction layer)
         tls_certificates.hpp    Root CA certs (used by Arduino crypto)
 ```
@@ -80,10 +80,10 @@ src/platform/
 Both `pc/platform.cpp` and `arduino/platform.cpp` define the same free function:
 
 ```cpp
-std::shared_ptr<PlatformContext> CreatePlatform(const PlatformConfig& config);
+std::shared_ptr<Platform> CreatePlatform(const PlatformConfig& config);
 ```
 
-On PC it returns a `PcPlatformContext` with all subsystems wired up. On Arduino it returns an `ArduinoPlatformContext` with subsystems conditionally wired based on `FORESTHUB_ENABLE_*` macros. Application code calls `CreatePlatform()` without knowing which implementation it gets.
+On PC it returns a `PcPlatform` with all subsystems wired up. On Arduino it returns an `ArduinoPlatform` with subsystems conditionally wired based on `FORESTHUB_ENABLE_*` macros. Application code calls `CreatePlatform()` without knowing which implementation it gets.
 
 ## The `common/` folder
 

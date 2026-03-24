@@ -37,9 +37,9 @@ struct NetworkConfig {
 /// Transport-specific configuration (credentials, etc.) belongs in the concrete
 /// class constructor via NetworkConfig. This interface only handles
 /// activation/deactivation and status.
-class NetworkInterface {
+class Network {
 public:
-    virtual ~NetworkInterface() = default;
+    virtual ~Network() = default;
 
     /// Activate the network connection.
     /// Transport-specific parameters (SSID, APN, etc.) are set at construction time.

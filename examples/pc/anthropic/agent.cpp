@@ -68,7 +68,6 @@ int main() {  // NOLINT(bugprone-exception-escape)
     // Print banner
     platform->console->Printf("=== Anthropic Agent (PC Platform) ===\n\n");
     platform->console->Flush();
-    platform->console->Flush();
 
     // --- Setup Client ---
     const char* api_key_env = std::getenv("ANTHROPIC_API_KEY");
@@ -79,7 +78,7 @@ int main() {  // NOLINT(bugprone-exception-escape)
     }
 
     // Create HTTP client via HAL
-    foresthub::platform::HttpClientConfig http_cfg;
+    foresthub::core::HttpClientConfig http_cfg;
     http_cfg.host = "api.anthropic.com";
     auto http_client = platform->CreateHttpClient(http_cfg);
 

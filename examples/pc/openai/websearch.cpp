@@ -28,7 +28,7 @@
 using json = nlohmann::json;
 
 // Helper to run an agent and print the result.
-static void RunAndPrint(std::shared_ptr<foresthub::platform::PlatformContext>& platform,
+static void RunAndPrint(std::shared_ptr<foresthub::platform::Platform>& platform,
                         std::shared_ptr<foresthub::agent::Runner>& runner,
                         std::shared_ptr<foresthub::agent::Agent>& agent, const std::string& prompt) {
     platform->console->Printf("\n[USER] %s\n", prompt.c_str());
@@ -65,7 +65,7 @@ int main() {  // NOLINT(bugprone-exception-escape)
         return 1;
     }
 
-    foresthub::platform::HttpClientConfig http_cfg;
+    foresthub::core::HttpClientConfig http_cfg;
     http_cfg.host = "api.openai.com";
     auto http_client = platform->CreateHttpClient(http_cfg);
 

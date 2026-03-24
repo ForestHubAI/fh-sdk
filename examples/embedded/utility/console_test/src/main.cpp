@@ -21,25 +21,26 @@
 #include <Arduino.h>
 
 #include "foresthub/platform/platform.hpp"
+#include "platform/arduino/platform.hpp"
 
 // -- Board-specific LED configuration ----------------------------------------
 #if defined(ARDUINO_PORTENTA_H7_M7)
-static constexpr foresthub::platform::PinId kLedPin = LEDB;
+static constexpr foresthub::platform::PinID kLedPin = LEDB;
 static constexpr bool kLedActiveLow = true;
 #else
-static constexpr foresthub::platform::PinId kLedPin = 2;
+static constexpr foresthub::platform::PinID kLedPin = 2;
 static constexpr bool kLedActiveLow = false;
 #endif
 
-static std::shared_ptr<foresthub::platform::PlatformContext> platform;
+static std::shared_ptr<foresthub::platform::Platform> platform;
 static bool running = true;
 static unsigned long last_blink_ms = 0;
 static unsigned long loops = 0;
 static bool led_on = false;
 
 void setup() {
-    foresthub::platform::PlatformConfig config;
-    platform = foresthub::platform::CreatePlatform(config);
+    foresthub::platform::arduino::ArduinoConfig config;
+    platform = std::make_shared<foresthub::platform::arduino::ArduinoPlatform>(config);
     if (!platform) {
         while (true) {
         }

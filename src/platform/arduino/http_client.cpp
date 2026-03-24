@@ -18,7 +18,7 @@ static constexpr int kMaxStallIterations = 200;  // ~1s at 5ms delay per stall c
 // Constructors
 // ----------------------------------------------------------------------------
 
-ArduinoHttpClientWrapper::ArduinoHttpClientWrapper(std::shared_ptr<TLSClientWrapper> tls_wrapper, const char* host,
+ArduinoHttpClient::ArduinoHttpClient(std::shared_ptr<TLSClientWrapper> tls_wrapper, const char* host,
                                                    uint16_t port, unsigned long timeout_ms)
     : client_(static_cast<Client*>(tls_wrapper->GetNativeClient())),
       tls_wrapper_(std::move(tls_wrapper)),
@@ -27,7 +27,7 @@ ArduinoHttpClientWrapper::ArduinoHttpClientWrapper(std::shared_ptr<TLSClientWrap
       port_(port),
       timeout_ms_(timeout_ms) {}
 
-ArduinoHttpClientWrapper::ArduinoHttpClientWrapper(std::unique_ptr<Client> plain_client, const char* host,
+ArduinoHttpClient::ArduinoHttpClient(std::unique_ptr<Client> plain_client, const char* host,
                                                    uint16_t port, unsigned long timeout_ms)
     : client_(plain_client.get()),
       tls_wrapper_(nullptr),
@@ -36,22 +36,22 @@ ArduinoHttpClientWrapper::ArduinoHttpClientWrapper(std::unique_ptr<Client> plain
       port_(port),
       timeout_ms_(timeout_ms) {}
 
-ArduinoHttpClientWrapper::~ArduinoHttpClientWrapper() = default;
+ArduinoHttpClient::~ArduinoHttpClient() = default;
 
 // ----------------------------------------------------------------------------
 // Public Interface
 // ----------------------------------------------------------------------------
 
-core::HttpResponse ArduinoHttpClientWrapper::Get(const std::string& url, const Headers& headers) {
+core::HttpResponse ArduinoHttpClient::Get(const std::string& url, const Headers& headers) {
     return SendRequest("GET", url, headers);
 }
 
-core::HttpResponse ArduinoHttpClientWrapper::Post(const std::string& url, const Headers& headers,
+core::HttpResponse ArduinoHttpClient::Post(const std::string& url, const Headers& headers,
                                                   const std::string& body) {
     return SendRequest("POST", url, headers, &body);
 }
 
-void ArduinoHttpClientWrapper::Delay(unsigned long ms) {
+void ArduinoHttpClient::Delay(unsigned long ms) {
     yield();  // Allow background tasks before blocking
     ::delay(ms);
 }
@@ -60,7 +60,7 @@ void ArduinoHttpClientWrapper::Delay(unsigned long ms) {
 // Request Implementation
 // ----------------------------------------------------------------------------
 
-core::HttpResponse ArduinoHttpClientWrapper::SendRequest(const char* method, const std::string& url,
+core::HttpResponse ArduinoHttpClient::SendRequest(const char* method, const std::string& url,
                                                          const Headers& headers, const std::string* body) {
     // Extract path from URL (ArduinoHttpClient expects path only, not full URL)
     String path = String(url.c_str());

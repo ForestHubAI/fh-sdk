@@ -19,12 +19,10 @@
 #include <string>
 
 #include "foresthub/platform/platform.hpp"
+#include "platform/pc/platform.hpp"
 
 int main() {
-    auto platform = foresthub::platform::CreatePlatform();
-    if (!platform) {
-        return 1;
-    }
+    auto platform = std::make_shared<foresthub::platform::pc::PcPlatform>();
     platform->console->Begin();
 
     platform->console->Printf("=== ForestHub Console Demo (PC) ===\n\n");

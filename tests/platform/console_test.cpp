@@ -8,15 +8,16 @@
 #include <string>
 
 #include "foresthub/platform/platform.hpp"
+#include "platform/pc/platform.hpp"
 
 namespace foresthub {
 namespace platform {
 namespace {
 
 // Helper to get a console instance for testing.
-std::shared_ptr<ConsoleInterface> MakeConsole() {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
-    return std::shared_ptr<ConsoleInterface>(ctx, ctx->console.get());
+std::shared_ptr<Console> MakeConsole() {
+    auto ctx = std::make_shared<pc::PcPlatform>();
+    return std::shared_ptr<Console>(ctx, ctx->console.get());
 }
 
 // --- TryReadLine ---

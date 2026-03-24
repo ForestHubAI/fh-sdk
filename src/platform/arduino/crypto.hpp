@@ -31,8 +31,8 @@ private:
     std::unique_ptr<SecureClient> client_;
 };
 
-/// CryptoInterface implementation providing TLS client creation with bundled GTS root certificates.
-class ArduinoCrypto : public CryptoInterface {
+/// Crypto implementation providing TLS client creation with bundled GTS root certificates.
+class ArduinoCrypto : public Crypto {
 public:
     ArduinoCrypto() = default;
 

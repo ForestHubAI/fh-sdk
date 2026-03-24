@@ -16,25 +16,25 @@ namespace platform {
 namespace arduino {
 
 /// Arduino GPIO using platform-specific digital, analog, and PWM peripherals.
-class ArduinoGpio : public GpioInterface {
+class ArduinoGpio : public Gpio {
 public:
     /// Maps PinMode enum to Arduino constant and applies it.
-    void SetPinMode(PinId pin, PinMode mode) override;
+    void SetPinMode(PinID pin, PinMode mode) override;
     /// Drives pin to the given logic level.
-    void DigitalWrite(PinId pin, int value) override;
+    void DigitalWrite(PinID pin, int value) override;
     /// Reads logic level from pin (0 = low, 1 = high).
-    int DigitalRead(PinId pin) const override;
+    int DigitalRead(PinID pin) const override;
     /// Reads raw ADC value from analog pin.
-    int AnalogRead(PinId pin) const override;
+    int AnalogRead(PinID pin) const override;
     /// Configures PWM peripheral (LEDC on ESP32, analogWrite on Portenta H7).
-    std::string ConfigurePwm(PinId pin, const PwmConfig& config) override;
+    std::string ConfigurePwm(PinID pin, const PwmConfig& config) override;
     /// Writes duty cycle to a configured PWM pin.
-    void PwmWrite(PinId pin, int duty) override;
+    void PwmWrite(PinID pin, int duty) override;
 
 private:
     static constexpr int kMaxPwmChannels = 16;
     struct PwmEntry {
-        PinId pin;
+        PinID pin;
         uint8_t channel;
     };
     std::array<PwmEntry, kMaxPwmChannels> pwm_entries_{};

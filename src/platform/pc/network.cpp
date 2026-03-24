@@ -2,8 +2,6 @@
 // Copyright (c) 2026 ForestHub. All rights reserved.
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
-#ifdef FORESTHUB_PLATFORM_PC  // Translation Unit Guard: Only compile on PC
-
 #include "network.hpp"
 
 namespace foresthub {
@@ -34,5 +32,3 @@ int PcNetwork::GetSignalStrength() const {
 }  // namespace pc
 }  // namespace platform
 }  // namespace foresthub
-
-#endif  // FORESTHUB_PLATFORM_PC

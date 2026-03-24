@@ -11,14 +11,17 @@ namespace foresthub {
 namespace platform {
 namespace pc {
 
+/// Construction-time configuration for the PC platform.
+struct PcConfig {};
+
 /// PC platform context. Creates all HAL subsystems in the constructor.
-class PcPlatformContext : public PlatformContext {
+class PcPlatform : public Platform {
 public:
     /// Initialize PC platform with all subsystems.
-    explicit PcPlatformContext(const PlatformConfig& config = {});
+    explicit PcPlatform(const PcConfig& config = {});
 
     /// Ignores host/port/use_tls; CPR handles routing per request.
-    std::shared_ptr<core::HttpClient> CreateHttpClient(const HttpClientConfig& config) override;
+    std::shared_ptr<core::HttpClient> CreateHttpClient(const core::HttpClientConfig& config) override;
 };
 
 }  // namespace pc

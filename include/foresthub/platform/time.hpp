@@ -26,9 +26,9 @@ struct TimeConfig {
 };
 
 /// Abstract interface for time operations.
-class TimeInterface {
+class Time {
 public:
-    virtual ~TimeInterface() = default;
+    virtual ~Time() = default;
 
     /// Synchronize system time with an external source.
     /// @param config Time synchronization parameters (server, offsets, timeout).

@@ -20,12 +20,12 @@ namespace platform {
 ///
 /// Provides character and line-based input/output for user interaction.
 /// Platform implementations handle the underlying I/O transport.
-class ConsoleInterface {
+class Console {
 public:
-    virtual ~ConsoleInterface() = default;
+    virtual ~Console() = default;
 
     /// Initialize the console for I/O operations.
-    /// Communication speed is configured at construction time via PlatformConfig.
+    /// Communication speed is configured at construction time via the platform config.
     virtual void Begin() = 0;
 
     /// Check if input data is available for reading.

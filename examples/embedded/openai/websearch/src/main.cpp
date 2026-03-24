@@ -22,12 +22,13 @@
 #include "foresthub/core/input.hpp"
 #include "foresthub/core/tools.hpp"
 #include "foresthub/platform/platform.hpp"
+#include "platform/arduino/platform.hpp"
 #include "foresthub/util/json.hpp"
 
 using json = nlohmann::json;
 
 // Helper to run an agent and print the result.
-static void RunAndPrint(std::shared_ptr<foresthub::platform::PlatformContext>& platform,
+static void RunAndPrint(std::shared_ptr<foresthub::platform::Platform>& platform,
                         std::shared_ptr<foresthub::agent::Runner>& runner,
                         std::shared_ptr<foresthub::agent::Agent>& agent, const std::string& prompt) {
     platform->console->Printf("\n[USER] %s\n", prompt.c_str());
@@ -53,14 +54,14 @@ static void RunAndPrint(std::shared_ptr<foresthub::platform::PlatformContext>& p
 // Arduino Entry Points
 // -----------------------------------------------------------------------------
 
-static std::shared_ptr<foresthub::platform::PlatformContext> platform;
+static std::shared_ptr<foresthub::platform::Platform> platform;
 
 void setup() {
     // 1. Create platform context (WiFi, Serial, NTP, TLS)
-    foresthub::platform::PlatformConfig config;
+    foresthub::platform::arduino::ArduinoConfig config;
     config.network.ssid = kWifiSsid;
     config.network.password = kWifiPassword;
-    platform = foresthub::platform::CreatePlatform(config);
+    platform = std::make_shared<foresthub::platform::arduino::ArduinoPlatform>(config);
     if (!platform) {
         while (true) {
         }
@@ -104,7 +105,7 @@ void setup() {
     platform->console->Printf("[OK] Time synced\n\n");
 
     // 5. Create HTTP client via HAL
-    foresthub::platform::HttpClientConfig http_cfg;
+    foresthub::core::HttpClientConfig http_cfg;
     http_cfg.host = "api.openai.com";
     auto http_client = platform->CreateHttpClient(http_cfg);
 

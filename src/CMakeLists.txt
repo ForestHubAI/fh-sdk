@@ -22,18 +22,39 @@ set(FORESTHUB_SOURCES
     util/schema.cpp
 )
 
-# 2. Add PC Platform Sources
-# Embedded builds use PlatformIO (see pio/build_test/platformio.ini)
-message(STATUS "Configuring foresthub_core for: PC / LINUX")
-list(APPEND FORESTHUB_SOURCES
-    platform/pc/platform.cpp
-    platform/pc/network.cpp
-    platform/pc/console.cpp
-    platform/pc/time.cpp
-    platform/pc/crypto.cpp
-    platform/pc/gpio.cpp
-    platform/pc/http_client.cpp
-)
+# 2. Platform Selection
+# Embedded builds use PlatformIO (see pio/build_test/platformio.ini).
+# CMake builds target one of the platforms below.
+set(FORESTHUB_PLATFORM "pc" CACHE STRING "Target platform (pc, pc_debug)")
+set_property(CACHE FORESTHUB_PLATFORM PROPERTY STRINGS pc pc_debug)
+
+if(FORESTHUB_PLATFORM STREQUAL "pc_debug")
+    message(STATUS "Configuring foresthub_core for: PC / DEBUG")
+    list(APPEND FORESTHUB_SOURCES
+        # Reuse PC implementations for network, time, crypto, http
+        platform/pc/network.cpp
+        platform/pc/time.cpp
+        platform/pc/crypto.cpp
+        platform/pc/http_client.cpp
+        # Debug-specific implementations (override console, gpio, platform)
+        platform/pc/debug/platform.cpp
+        platform/pc/debug/console.cpp
+        platform/pc/debug/gpio.cpp
+    )
+elseif(FORESTHUB_PLATFORM STREQUAL "pc")
+    message(STATUS "Configuring foresthub_core for: PC / LINUX")
+    list(APPEND FORESTHUB_SOURCES
+        platform/pc/platform.cpp
+        platform/pc/network.cpp
+        platform/pc/console.cpp
+        platform/pc/time.cpp
+        platform/pc/crypto.cpp
+        platform/pc/gpio.cpp
+        platform/pc/http_client.cpp
+    )
+else()
+    message(FATAL_ERROR "Unknown FORESTHUB_PLATFORM: '${FORESTHUB_PLATFORM}'. Valid values: pc, pc_debug")
+endif()
 
 # 3. Create the Static Library
 # This compiles all .cpp files into a single library file (libforesthub_core.a).
@@ -50,14 +71,18 @@ target_include_directories(foresthub_core PUBLIC
 
     # Allow internal source files to include headers from 'src/' directly.
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+
+    # Install-time include path
+    $<INSTALL_INTERFACE:include>
 )
 
 # 5. Platform Compile Definitions
-# Define FORESTHUB_PLATFORM_PC for Translation Unit Guards in platform-specific .cpp files.
+# Exactly one FORESTHUB_PLATFORM_* macro is defined, matching FORESTHUB_PLATFORM.
 # JSON_HAS_CPP_14 prevents nlohmann/json from auto-detecting C++17 and including
 # headers like <string_view> or <optional> that may be missing on embedded toolchains.
+string(TOUPPER "${FORESTHUB_PLATFORM}" _PLAT_UPPER)
 target_compile_definitions(foresthub_core PUBLIC
-    FORESTHUB_PLATFORM_PC JSON_HAS_CPP_14
+    FORESTHUB_PLATFORM_${_PLAT_UPPER} JSON_HAS_CPP_14
     FORESTHUB_ENABLE_NETWORK FORESTHUB_ENABLE_CRYPTO FORESTHUB_ENABLE_GPIO
 )
 
@@ -69,3 +94,35 @@ find_package(Threads REQUIRED)
 # "PRIVATE": These are implementation details. The 'app' using the library
 # does not need to know that CPR is used internally.
 target_link_libraries(foresthub_core PRIVATE cpr::cpr Threads::Threads)
+
+# ==============================================================================
+# Install Targets (for find_package(foresthub) support)
+# ==============================================================================
+# Export name: installed as foresthub::platform
+set_target_properties(foresthub_core PROPERTIES EXPORT_NAME platform)
+
+install(TARGETS foresthub_core
+    EXPORT foresthubTargets
+    ARCHIVE DESTINATION lib
+)
+
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/
+    DESTINATION include
+)
+
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/third_party/nlohmann/
+    DESTINATION include/nlohmann
+)
+
+# Install debug platform header so generated workflow code can #include it
+if(FORESTHUB_PLATFORM STREQUAL "pc_debug")
+    install(FILES
+        ${CMAKE_CURRENT_SOURCE_DIR}/platform/pc/debug/platform.hpp
+        DESTINATION include/foresthub/platform/debug
+    )
+endif()
+
+install(EXPORT foresthubTargets
+    NAMESPACE foresthub::
+    DESTINATION lib/cmake/foresthub
+)

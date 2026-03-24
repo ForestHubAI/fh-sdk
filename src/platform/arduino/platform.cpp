@@ -26,7 +26,7 @@ namespace foresthub {
 namespace platform {
 namespace arduino {
 
-ArduinoPlatformContext::ArduinoPlatformContext(const PlatformConfig& config) {
+ArduinoPlatform::ArduinoPlatform(const ArduinoConfig& config) {
     console = std::make_shared<ArduinoConsole>(config.baud_rate);
     time = std::make_shared<ArduinoTime>();
 
@@ -43,14 +43,14 @@ ArduinoPlatformContext::ArduinoPlatformContext(const PlatformConfig& config) {
 #endif
 }
 
-std::shared_ptr<core::HttpClient> ArduinoPlatformContext::CreateHttpClient(const HttpClientConfig& config) {
+std::shared_ptr<core::HttpClient> ArduinoPlatform::CreateHttpClient(const core::HttpClientConfig& config) {
 #ifdef FORESTHUB_ENABLE_NETWORK
     if (config.use_tls) {
 #ifdef FORESTHUB_ENABLE_CRYPTO
         // TLS requires crypto subsystem for certificate management
         auto* arduino_crypto = static_cast<ArduinoCrypto*>(crypto.get());
         std::shared_ptr<TLSClientWrapper> tls_wrapper = arduino_crypto->CreateTlsClient(nullptr, config.timeout_ms);
-        return std::make_shared<ArduinoHttpClientWrapper>(std::move(tls_wrapper), config.host, config.port,
+        return std::make_shared<ArduinoHttpClient>(std::move(tls_wrapper), config.host, config.port,
                                                           config.timeout_ms);
 #else
         // TLS requested but FORESTHUB_ENABLE_CRYPTO not defined
@@ -61,7 +61,7 @@ std::shared_ptr<core::HttpClient> ArduinoPlatformContext::CreateHttpClient(const
     // Plain HTTP — WiFiClient needs only NETWORK, not CRYPTO
     auto plain_client = std::make_unique<WiFiClient>();
     plain_client->setTimeout(config.timeout_ms / 1000);
-    return std::make_shared<ArduinoHttpClientWrapper>(std::move(plain_client), config.host, config.port,
+    return std::make_shared<ArduinoHttpClient>(std::move(plain_client), config.host, config.port,
                                                       config.timeout_ms);
 #else
     (void)config;
@@ -70,17 +70,6 @@ std::shared_ptr<core::HttpClient> ArduinoPlatformContext::CreateHttpClient(const
 }
 
 }  // namespace arduino
-}  // namespace platform
-}  // namespace foresthub
-
-// Factory function (called by application layer)
-namespace foresthub {
-namespace platform {
-
-std::shared_ptr<PlatformContext> CreatePlatform(const PlatformConfig& config) {
-    return std::make_shared<arduino::ArduinoPlatformContext>(config);
-}
-
 }  // namespace platform
 }  // namespace foresthub
 

@@ -7,6 +7,7 @@
 #include <memory>
 
 #include "foresthub/platform/platform.hpp"
+#include "platform/pc/platform.hpp"
 
 namespace foresthub {
 namespace platform {
@@ -15,7 +16,7 @@ namespace {
 // --- Platform integration ---
 
 TEST(GpioTest, GpioSubsystemNonNullByDefault) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    std::shared_ptr<Platform> ctx = std::make_shared<pc::PcPlatform>();
     ASSERT_NE(ctx, nullptr);
     EXPECT_NE(ctx->gpio, nullptr);
 }
@@ -23,7 +24,7 @@ TEST(GpioTest, GpioSubsystemNonNullByDefault) {
 // --- SetPinMode ---
 
 TEST(GpioTest, SetPinModeDoesNotCrash) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    std::shared_ptr<Platform> ctx = std::make_shared<pc::PcPlatform>();
     ctx->gpio->SetPinMode(0, PinMode::kInput);
     ctx->gpio->SetPinMode(1, PinMode::kOutput);
     ctx->gpio->SetPinMode(2, PinMode::kInputPullup);
@@ -32,7 +33,7 @@ TEST(GpioTest, SetPinModeDoesNotCrash) {
 // --- Digital I/O ---
 
 TEST(GpioTest, DigitalWriteReadRoundTrip) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    std::shared_ptr<Platform> ctx = std::make_shared<pc::PcPlatform>();
     ctx->gpio->SetPinMode(13, PinMode::kOutput);
 
     ctx->gpio->DigitalWrite(13, 1);
@@ -43,19 +44,19 @@ TEST(GpioTest, DigitalWriteReadRoundTrip) {
 }
 
 TEST(GpioTest, DigitalReadDefaultIsLow) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    std::shared_ptr<Platform> ctx = std::make_shared<pc::PcPlatform>();
     EXPECT_EQ(ctx->gpio->DigitalRead(99), 0);
 }
 
 // --- Analog read ---
 
 TEST(GpioTest, AnalogReadDefaultIsZero) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    std::shared_ptr<Platform> ctx = std::make_shared<pc::PcPlatform>();
     EXPECT_EQ(ctx->gpio->AnalogRead(42), 0);
 }
 
 TEST(GpioTest, AnalogReadAfterDigitalWrite) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    std::shared_ptr<Platform> ctx = std::make_shared<pc::PcPlatform>();
     ctx->gpio->DigitalWrite(10, 512);
     EXPECT_EQ(ctx->gpio->AnalogRead(10), 512);
 }
@@ -63,14 +64,14 @@ TEST(GpioTest, AnalogReadAfterDigitalWrite) {
 // --- PWM ---
 
 TEST(GpioTest, ConfigurePwmSuccess) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    std::shared_ptr<Platform> ctx = std::make_shared<pc::PcPlatform>();
     PwmConfig config;
     std::string err = ctx->gpio->ConfigurePwm(5, config);
     EXPECT_TRUE(err.empty());
 }
 
 TEST(GpioTest, ConfigurePwmCustomConfig) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    std::shared_ptr<Platform> ctx = std::make_shared<pc::PcPlatform>();
     PwmConfig config;
     config.frequency_hz = 50000;
     config.resolution_bits = 10;
@@ -79,7 +80,7 @@ TEST(GpioTest, ConfigurePwmCustomConfig) {
 }
 
 TEST(GpioTest, PwmWriteDoesNotCrash) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    std::shared_ptr<Platform> ctx = std::make_shared<pc::PcPlatform>();
     PwmConfig config;
     ctx->gpio->ConfigurePwm(5, config);
     ctx->gpio->PwmWrite(5, 128);
@@ -88,7 +89,7 @@ TEST(GpioTest, PwmWriteDoesNotCrash) {
 // --- Edge cases ---
 
 TEST(GpioTest, MultiplePinsIndependent) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
+    std::shared_ptr<Platform> ctx = std::make_shared<pc::PcPlatform>();
     ctx->gpio->DigitalWrite(1, 1);
     ctx->gpio->DigitalWrite(2, 0);
 
@@ -96,9 +97,9 @@ TEST(GpioTest, MultiplePinsIndependent) {
     EXPECT_EQ(ctx->gpio->DigitalRead(2), 0);
 }
 
-TEST(GpioTest, LargePinIdWorks) {
-    std::shared_ptr<PlatformContext> ctx = CreatePlatform();
-    PinId large_pin = 0xFFFF0001;
+TEST(GpioTest, LargePinIDWorks) {
+    std::shared_ptr<Platform> ctx = std::make_shared<pc::PcPlatform>();
+    PinID large_pin = 0xFFFF0001;
 
     ctx->gpio->SetPinMode(large_pin, PinMode::kOutput);
     ctx->gpio->DigitalWrite(large_pin, 1);

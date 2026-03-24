@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `Ticker::WithTimezoneOffset()` builder and `SetTimezoneOffset()` for timezone-aware calendar scheduling (Daily/Weekly/Hourly) -- pass raw UTC epoch to Start()/Check(), Ticker applies offset internally
 - `Ticker::tz_offset_sec()` getter for reading configured timezone offset
-- `TimeInterface::GetLocalEpoch()` non-virtual convenience method returning `GetEpochTime() + utc_offset_sec()`
+- `Time::GetLocalEpoch()` non-virtual convenience method returning `GetEpochTime() + utc_offset_sec()`
 
 ### Changed
 
