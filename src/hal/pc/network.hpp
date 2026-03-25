@@ -5,10 +5,10 @@
 #ifndef FORESTHUB_PLATFORM_PC_NETWORK_HPP
 #define FORESTHUB_PLATFORM_PC_NETWORK_HPP
 
-#include "foresthub/platform/network.hpp"
+#include "foresthub/hal/network.hpp"
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace pc {
 
 /// Mock network for PC. The OS handles networking; connect/disconnect are no-ops.
@@ -28,7 +28,7 @@ public:
 };
 
 }  // namespace pc
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub
 
 #endif  // FORESTHUB_PLATFORM_PC_NETWORK_HPP

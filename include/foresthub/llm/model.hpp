@@ -2,8 +2,8 @@
 // Copyright (c) 2026 ForestHub. All rights reserved.
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
-#ifndef FORESTHUB_CORE_MODEL_HPP
-#define FORESTHUB_CORE_MODEL_HPP
+#ifndef FORESTHUB_LLM_MODEL_HPP
+#define FORESTHUB_LLM_MODEL_HPP
 
 /// @file
 /// Model metadata and capability identifiers.
@@ -40,11 +40,11 @@ static constexpr const char* kCode = "code";                      ///< Code gene
 struct ModelInfo {
     ModelID id;                                 ///< Unique model identifier (e.g., "gpt-4o").
     ProviderID provider;                        ///< Provider that hosts this model.
-    foresthub::Optional<int> max_tokens;        ///< Maximum context length, if known.
+    util::Optional<int> max_tokens;        ///< Maximum context length, if known.
     std::vector<ModelCapability> capabilities;  ///< Supported capabilities (chat, vision, etc.).
 };
 
 }  // namespace llm
 }  // namespace foresthub
 
-#endif  // FORESTHUB_CORE_MODEL_HPP
+#endif  // FORESTHUB_LLM_MODEL_HPP

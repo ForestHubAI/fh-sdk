@@ -125,9 +125,9 @@ Arduino sketches use `setup()` and `loop()` instead of `main()`. The typical pat
 #include "env.hpp"
 #include "foresthub/client.hpp"
 #include "foresthub/config/config.hpp"
-#include "foresthub/core/input.hpp"
-#include "foresthub/core/types.hpp"
-#include "foresthub/platform/platform.hpp"
+#include "foresthub/llm/input.hpp"
+#include "foresthub/llm/types.hpp"
+#include "foresthub/hal/platform.hpp"
 
 static std::shared_ptr<foresthub::platform::Platform> platform;
 

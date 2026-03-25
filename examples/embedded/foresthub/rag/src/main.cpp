@@ -16,23 +16,23 @@
 #include <Arduino.h>
 
 #include "env.hpp"
-#include "foresthub/client.hpp"
-#include "foresthub/config/config.hpp"
-#include "foresthub/core/input.hpp"
-#include "foresthub/core/types.hpp"
-#include "foresthub/platform/platform.hpp"
-#include "platform/arduino/platform.hpp"
-#include "foresthub/rag/remote/retriever.hpp"
-#include "foresthub/rag/types.hpp"
+#include "foresthub/llm/client.hpp"
+#include "foresthub/llm/config.hpp"
+#include "foresthub/llm/input.hpp"
+#include "foresthub/llm/types.hpp"
+#include "foresthub/hal/platform.hpp"
+#include "hal/arduino/platform.hpp"
+#include "llm/rag/remote/retriever.hpp"
+#include "foresthub/llm/rag/types.hpp"
 
-static std::shared_ptr<foresthub::platform::Platform> platform;
+static std::shared_ptr<foresthub::hal::Platform> platform;
 
 void setup() {
     // 1. Create platform context (WiFi, Serial, NTP, TLS)
-    foresthub::platform::arduino::ArduinoConfig config;
+    foresthub::hal::arduino::ArduinoConfig config;
     config.network.ssid = kWifiSsid;
     config.network.password = kWifiPassword;
-    platform = std::make_shared<foresthub::platform::arduino::ArduinoPlatform>(config);
+    platform = std::make_shared<foresthub::hal::arduino::ArduinoPlatform>(config);
     if (!platform) {
         while (true) {
         }
@@ -76,20 +76,20 @@ void setup() {
     platform->console->Printf("[OK] Time synced\n\n");
 
     // 5. Create HTTP client via HAL
-    foresthub::core::HttpClientConfig http_cfg;
+    foresthub::hal::HttpClientConfig http_cfg;
     http_cfg.host = "fh-backend-368736749905.europe-west1.run.app";
     auto http_client = platform->CreateHttpClient(http_cfg);
 
     // 6. Configure provider
-    foresthub::config::ProviderConfig fh_cfg;
+    foresthub::llm::ProviderConfig fh_cfg;
     fh_cfg.base_url = "https://fh-backend-368736749905.europe-west1.run.app";
     fh_cfg.api_key = kForesthubApiKey;
     fh_cfg.supported_models = {"gpt-4.1", "gpt-4.1-mini", "gpt-4o", "gpt-4o-mini"};
 
     // 7. Create Retriever and Client (share HTTP client)
-    foresthub::rag::remote::RemoteRetriever retriever(fh_cfg, http_client);
+    foresthub::llm::rag::remote::RemoteRetriever retriever(fh_cfg, http_client);
 
-    foresthub::config::ClientConfig client_cfg;
+    foresthub::llm::ClientConfig client_cfg;
     client_cfg.remote.foresthub = fh_cfg;
     std::unique_ptr<foresthub::Client> client = foresthub::Client::Create(client_cfg, http_client);
 
@@ -99,12 +99,12 @@ void setup() {
     platform->console->Printf("[INFO] Querying collection '%s'...\n", kRagCollectionId);
     platform->console->Printf("       Query: %s\n", question.c_str());
 
-    foresthub::rag::QueryRequest rag_req;
+    foresthub::llm::rag::QueryRequest rag_req;
     rag_req.collection_id = kRagCollectionId;
     rag_req.query = question;
     rag_req.top_k = 3;
 
-    std::shared_ptr<foresthub::rag::QueryResponse> rag_resp = retriever.Query(rag_req);
+    std::shared_ptr<foresthub::llm::rag::QueryResponse> rag_resp = retriever.Query(rag_req);
     if (!rag_resp) {
         platform->console->Printf("[ERROR] RAG query failed.\n");
         platform->console->Flush();
@@ -116,22 +116,22 @@ void setup() {
     platform->console->Printf("[OK] Retrieved %d chunks\n\n", static_cast<int>(rag_resp->results.size()));
 
     // 9. Format context and send chat request
-    std::string context = foresthub::rag::FormatContext(rag_resp->results);
+    std::string context = foresthub::llm::rag::FormatContext(rag_resp->results);
 
     std::string system_prompt =
         "Beantworte die Frage basierend auf dem bereitgestellten Kontext.\n"
         "Wenn der Kontext keine Antwort enthaelt, sage das ehrlich.\n\n" +
         context;
 
-    auto input = std::make_shared<foresthub::core::InputString>(question);
+    auto input = std::make_shared<foresthub::llm::InputString>(question);
 
-    foresthub::core::ChatRequest chat_req;
+    foresthub::llm::ChatRequest chat_req;
     chat_req.model = "gpt-4.1-mini";
     chat_req.input = input;
     chat_req.WithSystemPrompt(system_prompt);
 
     platform->console->Printf("[INFO] Sending chat request with RAG context...\n");
-    std::shared_ptr<foresthub::core::ChatResponse> chat_resp = client->Chat(chat_req);
+    std::shared_ptr<foresthub::llm::ChatResponse> chat_resp = client->Chat(chat_req);
 
     // 10. Print result
     if (chat_resp) {

@@ -2,8 +2,8 @@
 // Copyright (c) 2026 ForestHub. All rights reserved.
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
-#include "foresthub/platform/platform.hpp"
-#include "platform/pc/platform.hpp"
+#include "foresthub/hal/platform.hpp"
+#include "hal/pc/platform.hpp"
 
 #include <gtest/gtest.h>
 
@@ -12,7 +12,7 @@
 #include <string>
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace {
 
 // --- PcPlatform construction ---
@@ -103,10 +103,10 @@ TEST(PlatformTest, CryptoGetGtsRootCerts) {
 
 TEST(PlatformTest, CreateHttpClient) {
     auto ctx = std::make_shared<pc::PcPlatform>();
-    core::HttpClientConfig http_cfg;
+    hal::HttpClientConfig http_cfg;
     http_cfg.host = "example.com";
     http_cfg.timeout_ms = 5000;
-    std::shared_ptr<core::HttpClient> http = ctx->CreateHttpClient(http_cfg);
+    std::shared_ptr<hal::HttpClient> http = ctx->CreateHttpClient(http_cfg);
     EXPECT_NE(http, nullptr);
 }
 
@@ -175,9 +175,9 @@ TEST(PlatformTest, EnableMacrosDefinedOnPC) {
 
 TEST(PlatformTest, CreateHttpClientWithAllSubsystems) {
     auto ctx = std::make_shared<pc::PcPlatform>();
-    core::HttpClientConfig http_cfg;
+    hal::HttpClientConfig http_cfg;
     http_cfg.host = "example.com";
-    std::shared_ptr<core::HttpClient> http = ctx->CreateHttpClient(http_cfg);
+    std::shared_ptr<hal::HttpClient> http = ctx->CreateHttpClient(http_cfg);
     EXPECT_NE(http, nullptr);
     EXPECT_NE(ctx->network, nullptr);
     EXPECT_NE(ctx->crypto, nullptr);
@@ -275,5 +275,5 @@ TEST(PlatformTest, GetLocalEpochDefaultNoOffset) {
 }
 
 }  // namespace
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub

@@ -2,7 +2,7 @@
 // Copyright (c) 2026 ForestHub. All rights reserved.
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
-#include "provider/remote/schema_utils.hpp"
+#include "llm/provider/remote/schema_utils.hpp"
 
 #include <gtest/gtest.h>
 

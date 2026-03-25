@@ -38,15 +38,15 @@
 #include <cstdarg>
 
 #include "env.hpp"
-#include "foresthub/platform/platform.hpp"
-#include "platform/arduino/platform.hpp"
+#include "foresthub/hal/platform.hpp"
+#include "hal/arduino/platform.hpp"
 #include "foresthub/util/ticker.hpp"
 
 using foresthub::util::Ticker;
 
 // -- Global state -------------------------------------------------------------
 
-static std::shared_ptr<foresthub::platform::Platform> platform;
+static std::shared_ptr<foresthub::hal::Platform> platform;
 static int tests_passed = 0;
 static int tests_failed = 0;
 static int tests_run = 0;
@@ -770,8 +770,8 @@ static bool TestRealAbsoluteShortPeriod() {
 // =============================================================================
 
 void setup() {
-    foresthub::platform::arduino::ArduinoConfig config;
-    platform = std::make_shared<foresthub::platform::arduino::ArduinoPlatform>(config);
+    foresthub::hal::arduino::ArduinoConfig config;
+    platform = std::make_shared<foresthub::hal::arduino::ArduinoPlatform>(config);
     if (!platform) {
         while (true) {
         }

@@ -157,7 +157,7 @@ TEST(AgentTest, FindExternalTool_EmptyTools) {
 // ==========================================================================
 
 TEST(AgentTest, AsTool_Creation) {
-    auto mock_client = std::make_shared<foresthub::tests::MockLLMClient>();
+    auto mock_client = std::make_shared<foresthub::tests::MockChatClient>();
     auto runner = std::make_shared<Runner>(mock_client, "test-model");
 
     Agent agent("helper");
@@ -175,7 +175,7 @@ TEST(AgentTest, AsTool_Creation) {
 }
 
 TEST(AgentTest, AsTool_Execution) {
-    auto mock_client = std::make_shared<foresthub::tests::MockLLMClient>();
+    auto mock_client = std::make_shared<foresthub::tests::MockChatClient>();
 
     // Mock returns a text response.
     auto response = std::make_shared<ChatResponse>();
@@ -195,7 +195,7 @@ TEST(AgentTest, AsTool_Execution) {
 }
 
 TEST(AgentTest, AsTool_Error) {
-    auto mock_client = std::make_shared<foresthub::tests::MockLLMClient>();
+    auto mock_client = std::make_shared<foresthub::tests::MockChatClient>();
     // No responses queued — Chat() returns nullptr → network error.
 
     auto runner = std::make_shared<Runner>(mock_client, "test-model");

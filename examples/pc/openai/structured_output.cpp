@@ -17,12 +17,12 @@
 #include "foresthub/util/json.hpp"
 
 // Core & Agent Headers
-#include "foresthub/agent/agent.hpp"
-#include "foresthub/agent/runner.hpp"
-#include "foresthub/client.hpp"
-#include "foresthub/config/config.hpp"
-#include "foresthub/core/input.hpp"
-#include "foresthub/core/types.hpp"
+#include "foresthub/llm/agent/agent.hpp"
+#include "foresthub/llm/agent/runner.hpp"
+#include "foresthub/llm/client.hpp"
+#include "foresthub/llm/config.hpp"
+#include "foresthub/llm/input.hpp"
+#include "foresthub/llm/types.hpp"
 
 // Application Shared Helper
 #include "../platform_setup.hpp"
@@ -44,12 +44,12 @@ int main() {  // NOLINT(bugprone-exception-escape)
         return 1;
     }
 
-    foresthub::core::HttpClientConfig http_cfg;
+    foresthub::hal::HttpClientConfig http_cfg;
     http_cfg.host = "api.openai.com";
     auto http_client = platform->CreateHttpClient(http_cfg);
 
-    foresthub::config::ClientConfig cfg;
-    foresthub::config::ProviderConfig oai_cfg;
+    foresthub::llm::ClientConfig cfg;
+    foresthub::llm::ProviderConfig oai_cfg;
     std::string api_key = api_key_env;
     oai_cfg.api_key = api_key;
     oai_cfg.supported_models = {"gpt-4.1", "gpt-4.1-mini", "gpt-4o", "gpt-4o-mini"};
@@ -70,13 +70,13 @@ int main() {  // NOLINT(bugprone-exception-escape)
     })",
                                    nullptr, false);
 
-    foresthub::core::ResponseFormat format;
+    foresthub::llm::ResponseFormat format;
     format.name = "city_info";
     format.schema = city_schema;
     format.description = "Structured information about a city.";
 
     // --- Setup Agent with ResponseFormat ---
-    auto agent = std::make_shared<foresthub::agent::Agent>("GeoBot");
+    auto agent = std::make_shared<foresthub::llm::agent::Agent>("GeoBot");
     agent->WithInstructions("You are a geography expert. Answer with accurate data about the requested city.")
         .WithResponseFormat(format);
 
@@ -89,15 +89,15 @@ int main() {  // NOLINT(bugprone-exception-escape)
         return 1;
     }
 
-    auto runner = std::make_shared<foresthub::agent::Runner>(client, model_name);
+    auto runner = std::make_shared<foresthub::llm::agent::Runner>(client, model_name);
 
     // --- Execute ---
     std::string prompt = "Tell me about Paris.";
     platform->console->Printf("[USER] %s\n", prompt.c_str());
     platform->console->Printf("[INFO] Running agent with structured output...\n");
 
-    auto input = std::make_shared<foresthub::core::InputString>(prompt);
-    foresthub::agent::RunResultOrError result = runner->Run(agent, input);
+    auto input = std::make_shared<foresthub::llm::InputString>(prompt);
+    foresthub::llm::agent::RunResultOrError result = runner->Run(agent, input);
 
     if (result.HasError()) {
         platform->console->Printf("[ERROR] Agent failed: %s\n", result.error.c_str());

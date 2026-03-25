@@ -2,14 +2,14 @@
 // Copyright (c) 2026 ForestHub. All rights reserved.
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
-#ifndef FORESTHUB_PLATFORM_PLATFORM_HPP
-#define FORESTHUB_PLATFORM_PLATFORM_HPP
+#ifndef FORESTHUB_HAL_PLATFORM_HPP
+#define FORESTHUB_HAL_PLATFORM_HPP
 
 /// @file
 /// Platform base class and subsystem aggregation.
 
 #include <memory>
-#include "foresthub/llm/http_client.hpp"
+#include "foresthub/hal/http_client.hpp"
 #include "foresthub/hal/console.hpp"
 #include "foresthub/hal/crypto.hpp"
 #include "foresthub/hal/gpio.hpp"
@@ -32,12 +32,12 @@ public:
     std::shared_ptr<Console> console;  ///< Console I/O subsystem.
     std::shared_ptr<Time> time;        ///< Time and delay subsystem.
     std::shared_ptr<Crypto> crypto;    ///< TLS/crypto subsystem.
-    std::shared_ptr<Gpio> gpio;  ///< GPIO pin I/O subsystem (nullptr if FORESTHUB_ENABLE_GPIO not defined).
+    std::shared_ptr<Gpio> gpio;        ///< GPIO pin I/O subsystem (nullptr if FORESTHUB_ENABLE_GPIO not defined).
 
     /// Create a platform-specific HTTP client.
     /// @param config Connection parameters (host, port, TLS, timeout).
     /// @return HTTP client configured for the given parameters.
-    virtual std::shared_ptr<llm::HttpClient> CreateHttpClient(const llm::HttpClientConfig& config) = 0;
+    virtual std::shared_ptr<hal::HttpClient> CreateHttpClient(const hal::HttpClientConfig& config) = 0;
 
     virtual ~Platform() = default;
 };
@@ -51,4 +51,4 @@ public:
 #error "Exactly one FORESTHUB_PLATFORM_* must be defined (PC, PC_DEBUG, or ARDUINO)"
 #endif
 
-#endif  // FORESTHUB_PLATFORM_PLATFORM_HPP
+#endif  // FORESTHUB_HAL_PLATFORM_HPP

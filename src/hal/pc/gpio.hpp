@@ -7,10 +7,10 @@
 
 #include <map>
 
-#include "foresthub/platform/gpio.hpp"
+#include "foresthub/hal/gpio.hpp"
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace pc {
 
 /// In-memory GPIO mock for PC. Stores pin state in maps for host-based testing.
@@ -37,7 +37,7 @@ private:
 };
 
 }  // namespace pc
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub
 
 #endif  // FORESTHUB_PLATFORM_PC_GPIO_HPP

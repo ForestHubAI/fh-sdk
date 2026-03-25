@@ -6,7 +6,7 @@
 #define FORESTHUB_PLATFORM_COMMON_TLS_CERTIFICATES_HPP
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace common {
 
 /// PEM-encoded GTS root certificates (R1-R4). Source: pki.goog/repository -- Valid until: 2036-06-22
@@ -102,7 +102,7 @@ p/SgguMh1YQdc4acLa/KNJvxn7kjNuK8YAOdgLOaVsjh4rsUecrNIdSUtUlD
 )EOF";
 
 }  // namespace common
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub
 
 #endif  // FORESTHUB_PLATFORM_COMMON_TLS_CERTIFICATES_HPP

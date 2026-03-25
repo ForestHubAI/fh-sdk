@@ -2,8 +2,8 @@
 // Copyright (c) 2026 ForestHub. All rights reserved.
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
-#ifndef FORESTHUB_CLIENT_HPP
-#define FORESTHUB_CLIENT_HPP
+#ifndef FORESTHUB_LLM_CLIENT_HPP
+#define FORESTHUB_LLM_CLIENT_HPP
 
 /// @file
 /// Multi-provider Client that routes chat requests by model ID.
@@ -12,18 +12,19 @@
 #include <memory>
 #include <string>
 
-#include "foresthub/llm/config/config.hpp"
-#include "foresthub/llm/http_client.hpp"
+#include "foresthub/llm/config.hpp"
+#include "foresthub/hal/http_client.hpp"
 #include "foresthub/llm/model.hpp"
 #include "foresthub/llm/provider.hpp"
 #include "foresthub/llm/types.hpp"
 
 namespace foresthub {
+namespace llm {
 
 /// Main entry point for interacting with multiple LLM providers.
 ///
 /// Routes chat requests to the appropriate provider based on model ID.
-class Client : public llm::LLMClient {
+class Client : public llm::ChatClient {
 public:
     /// Default constructor. Prefer Client::Create() for initialization.
     Client();
@@ -32,8 +33,8 @@ public:
     /// @param cfg Client configuration with provider settings.
     /// @param http_client HTTP implementation to inject into providers.
     /// @return Configured client ready for use.
-    static std::unique_ptr<Client> Create(const config::ClientConfig& cfg,
-                                          const std::shared_ptr<llm::HttpClient>& http_client = nullptr);
+    static std::unique_ptr<Client> Create(const llm::ClientConfig& cfg,
+                                          const std::shared_ptr<hal::HttpClient>& http_client = nullptr);
 
     /// Register a provider instance manually.
     /// @param provider Provider to add to the routing table; nullptr is silently ignored.
@@ -63,6 +64,7 @@ private:
     std::shared_ptr<llm::Provider> InferProvider(const llm::ModelID& model) const;
 };
 
+}  // namespace llm
 }  // namespace foresthub
 
-#endif  // FORESTHUB_CLIENT_HPP
+#endif  // FORESTHUB_LLM_CLIENT_HPP

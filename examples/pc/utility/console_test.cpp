@@ -18,11 +18,11 @@
 
 #include <string>
 
-#include "foresthub/platform/platform.hpp"
-#include "platform/pc/platform.hpp"
+#include "foresthub/hal/platform.hpp"
+#include "hal/pc/platform.hpp"
 
 int main() {
-    auto platform = std::make_shared<foresthub::platform::pc::PcPlatform>();
+    auto platform = std::make_shared<foresthub::hal::pc::PcPlatform>();
     platform->console->Begin();
 
     platform->console->Printf("=== ForestHub Console Demo (PC) ===\n\n");
@@ -40,7 +40,7 @@ int main() {
     while (running) {
         ++loops;
 
-        foresthub::Optional<std::string> line = platform->console->TryReadLine();
+        foresthub::util::Optional<std::string> line = platform->console->TryReadLine();
 
         if (line.HasValue()) {
             const auto& input = *line;

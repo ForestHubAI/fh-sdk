@@ -15,12 +15,12 @@
 #include <string>
 
 // Core & Agent Headers
-#include "foresthub/agent/agent.hpp"
-#include "foresthub/agent/runner.hpp"
-#include "foresthub/client.hpp"
-#include "foresthub/config/config.hpp"
-#include "foresthub/core/input.hpp"
-#include "foresthub/core/tools.hpp"
+#include "foresthub/llm/agent/agent.hpp"
+#include "foresthub/llm/agent/runner.hpp"
+#include "foresthub/llm/client.hpp"
+#include "foresthub/llm/config.hpp"
+#include "foresthub/llm/input.hpp"
+#include "foresthub/llm/tools.hpp"
 
 // Application Shared Helper
 #include "../platform_setup.hpp"
@@ -28,14 +28,14 @@
 using json = nlohmann::json;
 
 // Helper to run an agent and print the result.
-static void RunAndPrint(std::shared_ptr<foresthub::platform::Platform>& platform,
-                        std::shared_ptr<foresthub::agent::Runner>& runner,
-                        std::shared_ptr<foresthub::agent::Agent>& agent, const std::string& prompt) {
+static void RunAndPrint(std::shared_ptr<foresthub::hal::Platform>& platform,
+                        std::shared_ptr<foresthub::llm::agent::Runner>& runner,
+                        std::shared_ptr<foresthub::llm::agent::Agent>& agent, const std::string& prompt) {
     platform->console->Printf("\n[USER] %s\n", prompt.c_str());
 
-    auto input = std::make_shared<foresthub::core::InputString>(prompt);
+    auto input = std::make_shared<foresthub::llm::InputString>(prompt);
     platform->console->Printf("[INFO] Running agent...\n");
-    foresthub::agent::RunResultOrError result = runner->Run(agent, input);
+    foresthub::llm::agent::RunResultOrError result = runner->Run(agent, input);
 
     if (result.HasError()) {
         platform->console->Printf("[ERROR] Agent failed: %s\n", result.error.c_str());
@@ -65,12 +65,12 @@ int main() {  // NOLINT(bugprone-exception-escape)
         return 1;
     }
 
-    foresthub::core::HttpClientConfig http_cfg;
+    foresthub::hal::HttpClientConfig http_cfg;
     http_cfg.host = "api.anthropic.com";
     auto http_client = platform->CreateHttpClient(http_cfg);
 
-    foresthub::config::ClientConfig cfg;
-    foresthub::config::ProviderConfig anthropic_cfg;
+    foresthub::llm::ClientConfig cfg;
+    foresthub::llm::ProviderConfig anthropic_cfg;
     std::string api_key = api_key_env;
     anthropic_cfg.api_key = api_key;
     anthropic_cfg.supported_models = {"claude-sonnet-4-6", "claude-haiku-4-5", "claude-opus-4-6"};
@@ -92,9 +92,9 @@ int main() {  // NOLINT(bugprone-exception-escape)
     // --- Run 1: Without WebSearch ---
     platform->console->Printf("--- Run 1: WITHOUT WebSearch ---\n");
 
-    auto agent_no_search = std::make_shared<foresthub::agent::Agent>("NewsBot");
+    auto agent_no_search = std::make_shared<foresthub::llm::agent::Agent>("NewsBot");
 
-    auto runner = std::make_shared<foresthub::agent::Runner>(client, model_name);
+    auto runner = std::make_shared<foresthub::llm::agent::Runner>(client, model_name);
 
     RunAndPrint(platform, runner, agent_no_search, prompt);
 
@@ -103,12 +103,12 @@ int main() {  // NOLINT(bugprone-exception-escape)
     platform->console->Printf("[WARN] Anthropic does not support WebSearch — the tool will be silently filtered.\n");
     platform->console->Printf("[WARN] Both runs will produce similar results using only training data.\n");
 
-    auto web_search = std::make_shared<foresthub::core::WebSearch>();
+    auto web_search = std::make_shared<foresthub::llm::WebSearch>();
 
-    auto agent_with_search = std::make_shared<foresthub::agent::Agent>("NewsBot");
+    auto agent_with_search = std::make_shared<foresthub::llm::agent::Agent>("NewsBot");
     agent_with_search->AddTool(web_search);
 
-    auto runner2 = std::make_shared<foresthub::agent::Runner>(client, model_name);
+    auto runner2 = std::make_shared<foresthub::llm::agent::Runner>(client, model_name);
     runner2->WithMaxTurns(3);
 
     RunAndPrint(platform, runner2, agent_with_search, prompt);

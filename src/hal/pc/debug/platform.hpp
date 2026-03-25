@@ -10,10 +10,10 @@
 #include <string>
 #include <vector>
 
-#include "foresthub/platform/platform.hpp"
+#include "foresthub/hal/platform.hpp"
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace debug {
 
 /// Construction-time configuration for the debug platform.
@@ -34,11 +34,11 @@ public:
     explicit DebugPlatform(const DebugConfig& config = {});
 
     /// Returns PcHttpClient (real HTTP via CPR — agent/RAG calls hit the real backend).
-    std::shared_ptr<core::HttpClient> CreateHttpClient(const core::HttpClientConfig& config) override;
+    std::shared_ptr<HttpClient> CreateHttpClient(const HttpClientConfig& config) override;
 };
 
 }  // namespace debug
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub
 
 #endif  // FORESTHUB_PLATFORM_DEBUG_PLATFORM_HPP

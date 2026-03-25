@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <utility>
 
-#include "foresthub/llm/provider/remote/gemini.hpp"
+#include "provider.hpp"
 #include "mapping.hpp"
 
 namespace foresthub {
@@ -16,7 +16,7 @@ using json = nlohmann::json;
 
 static const char* const kDefaultBaseUrl = "https://generativelanguage.googleapis.com";
 
-GeminiProvider::GeminiProvider(const config::ProviderConfig& cfg, std::shared_ptr<llm::HttpClient> http_client)
+GeminiProvider::GeminiProvider(const llm::ProviderConfig& cfg, std::shared_ptr<hal::HttpClient> http_client)
     : http_(std::move(http_client)),
       api_key_(cfg.api_key),
       base_url_(cfg.base_url.empty() ? kDefaultBaseUrl : cfg.base_url),
@@ -42,7 +42,7 @@ bool GeminiProvider::SupportsModel(const llm::ModelID& model) const {
 
 std::string GeminiProvider::Health() const {
     std::string url = base_url_ + "/v1beta/models";
-    llm::HttpResponse resp = http_->Get(url, cached_headers_);
+    hal::HttpResponse resp = http_->Get(url, cached_headers_);
     if (resp.status_code >= 200 && resp.status_code < 300) {
         return "";
     }
@@ -57,7 +57,7 @@ std::shared_ptr<llm::ChatResponse> GeminiProvider::Chat(const llm::ChatRequest& 
     std::string body = j_req.dump();
 
     // Retry with linear backoff (500ms * attempt)
-    llm::HttpResponse resp;
+    hal::HttpResponse resp;
     unsigned long attempts = 0;
     const unsigned long max_attempts = 2;
 

@@ -2,8 +2,8 @@
 // Copyright (c) 2026 ForestHub. All rights reserved.
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
-#ifndef FORESTHUB_CORE_SERIALIZATION_HPP
-#define FORESTHUB_CORE_SERIALIZATION_HPP
+#ifndef FORESTHUB_LLM_SERIALIZATION_HPP
+#define FORESTHUB_LLM_SERIALIZATION_HPP
 
 /// @file
 /// JSON serialization and deserialization for core types.
@@ -52,4 +52,4 @@ void from_json(const json& j, ChatResponse& resp);
 }  // namespace llm
 }  // namespace foresthub
 
-#endif  // FORESTHUB_CORE_SERIALIZATION_HPP
+#endif  // FORESTHUB_LLM_SERIALIZATION_HPP

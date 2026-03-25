@@ -6,11 +6,11 @@
 
 #include <memory>
 
-#include "foresthub/platform/platform.hpp"
-#include "platform/pc/platform.hpp"
+#include "foresthub/hal/platform.hpp"
+#include "hal/pc/platform.hpp"
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace {
 
 // --- Platform integration ---
@@ -107,5 +107,5 @@ TEST(GpioTest, LargePinIDWorks) {
 }
 
 }  // namespace
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub

@@ -9,7 +9,7 @@
 #include <Arduino.h>
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace arduino {
 
 // Enum mapping is inlined in each method rather than via helper functions because
@@ -91,7 +91,7 @@ void ArduinoGpio::PwmWrite(PinID pin, int duty) {
 #endif
 
 }  // namespace arduino
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub
 
 #endif  // FORESTHUB_PLATFORM_ARDUINO && FORESTHUB_ENABLE_GPIO

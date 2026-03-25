@@ -5,7 +5,7 @@
 #include "network.hpp"
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace pc {
 
 std::string PcNetwork::Connect(unsigned long /*timeout_ms*/) {
@@ -30,5 +30,5 @@ int PcNetwork::GetSignalStrength() const {
 }
 
 }  // namespace pc
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub

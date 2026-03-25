@@ -37,7 +37,7 @@ public:
     std::shared_ptr<Crypto> crypto;     // nullptr if FORESTHUB_ENABLE_CRYPTO not defined
     std::shared_ptr<Gpio> gpio;         // nullptr if FORESTHUB_ENABLE_GPIO not defined
 
-    virtual std::shared_ptr<core::HttpClient> CreateHttpClient(const HttpClientConfig& config) = 0;
+    virtual std::shared_ptr<llm::HttpClient> CreateHttpClient(const llm::HttpClientConfig& config) = 0;
 };
 ```
 
@@ -46,7 +46,7 @@ In summary: **within an interface, all methods are mandatory; but which interfac
 ## File Layout
 
 ```
-include/foresthub/platform/     Abstract interfaces (the contract)
+include/foresthub/hal/     Abstract interfaces (the contract)
     platform.hpp                Platform + CreatePlatform() factory
     network.hpp                 Network
     console.hpp                 Console

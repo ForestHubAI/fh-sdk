@@ -99,7 +99,7 @@ TEST(ModelInfoTest, AggregateInitializationNullTokens) {
     ModelInfo info = {
         "text-embedding-3",
         "OpenAI",
-        foresthub::Optional<int>{},  // No max tokens info
+        util::Optional<int>{},  // No max tokens info
         {}                           // Empty capabilities
     };
 

@@ -13,10 +13,10 @@
 #include <string>
 
 // Public Library Headers
-#include "foresthub/client.hpp"
-#include "foresthub/config/config.hpp"
-#include "foresthub/core/input.hpp"
-#include "foresthub/core/types.hpp"
+#include "foresthub/llm/client.hpp"
+#include "foresthub/llm/config.hpp"
+#include "foresthub/llm/input.hpp"
+#include "foresthub/llm/types.hpp"
 
 // Application Shared Helper
 #include "../platform_setup.hpp"
@@ -41,15 +41,15 @@ int main() {  // NOLINT(bugprone-exception-escape)
     std::string api_key = api_key_env;
 
     // 3. Create HTTP Client via HAL
-    foresthub::core::HttpClientConfig http_cfg;
+    foresthub::hal::HttpClientConfig http_cfg;
     http_cfg.host = "fh-backend-368736749905.europe-west1.run.app";
     auto http_client = platform->CreateHttpClient(http_cfg);
 
     // 4. Configure the Client
-    foresthub::config::ClientConfig cfg;
+    foresthub::llm::ClientConfig cfg;
 
     // Configure the Remote Provider (ForestHub)
-    foresthub::config::ProviderConfig fh_cfg;
+    foresthub::llm::ProviderConfig fh_cfg;
     fh_cfg.base_url = "https://fh-backend-368736749905.europe-west1.run.app";
     fh_cfg.api_key = api_key;
 
@@ -82,9 +82,9 @@ int main() {  // NOLINT(bugprone-exception-escape)
     platform->console->Printf("[INFO] Sending request...\n");
     platform->console->Printf("       Model: %s\n", model_name.c_str());
     platform->console->Printf("       Input: %s\n", prompt.c_str());
-    auto input = std::make_shared<foresthub::core::InputString>(prompt);
+    auto input = std::make_shared<foresthub::llm::InputString>(prompt);
 
-    foresthub::core::ChatRequest req;
+    foresthub::llm::ChatRequest req;
     req.model = model_name;
     req.input = input;
     // Optional: Add a system prompt to steer behavior
@@ -92,7 +92,7 @@ int main() {  // NOLINT(bugprone-exception-escape)
 
     // 8. Execute Request
     // This blocks until the HTTP response returns (via cpr).
-    std::shared_ptr<foresthub::core::ChatResponse> response = client->Chat(req);
+    std::shared_ptr<foresthub::llm::ChatResponse> response = client->Chat(req);
 
     // 9. Output Result
     if (response) {

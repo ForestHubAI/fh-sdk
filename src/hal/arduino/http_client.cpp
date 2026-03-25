@@ -9,7 +9,7 @@
 #include <ArduinoHttpClient.h>
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace arduino {
 
 static constexpr int kMaxStallIterations = 200;  // ~1s at 5ms delay per stall cycle
@@ -42,12 +42,12 @@ ArduinoHttpClient::~ArduinoHttpClient() = default;
 // Public Interface
 // ----------------------------------------------------------------------------
 
-core::HttpResponse ArduinoHttpClient::Get(const std::string& url, const Headers& headers) {
+HttpResponse ArduinoHttpClient::Get(const std::string& url, const Headers& headers) {
     return SendRequest("GET", url, headers);
 }
 
-core::HttpResponse ArduinoHttpClient::Post(const std::string& url, const Headers& headers,
-                                                  const std::string& body) {
+HttpResponse ArduinoHttpClient::Post(const std::string& url, const Headers& headers,
+                                          const std::string& body) {
     return SendRequest("POST", url, headers, &body);
 }
 
@@ -60,8 +60,8 @@ void ArduinoHttpClient::Delay(unsigned long ms) {
 // Request Implementation
 // ----------------------------------------------------------------------------
 
-core::HttpResponse ArduinoHttpClient::SendRequest(const char* method, const std::string& url,
-                                                         const Headers& headers, const std::string* body) {
+HttpResponse ArduinoHttpClient::SendRequest(const char* method, const std::string& url,
+                                                 const Headers& headers, const std::string* body) {
     // Extract path from URL (ArduinoHttpClient expects path only, not full URL)
     String path = String(url.c_str());
     if (path.startsWith("http")) {
@@ -171,7 +171,7 @@ core::HttpResponse ArduinoHttpClient::SendRequest(const char* method, const std:
     client_->stop();
 
     // Build response
-    core::HttpResponse response;
+    HttpResponse response;
     response.status_code = status;
     response.body = std::move(resp_body);
 
@@ -185,7 +185,7 @@ core::HttpResponse ArduinoHttpClient::SendRequest(const char* method, const std:
 }
 
 }  // namespace arduino
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub
 
 #endif  // FORESTHUB_PLATFORM_ARDUINO && FORESTHUB_ENABLE_NETWORK

@@ -45,7 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Non-blocking console read (`TryReadLine`) with poll-based PC and non-blocking Arduino implementations
 - Composable JSON Schema normalization with provider-specific strictification pipelines
 - Fluent builder API for `ChatRequest`, `Agent`, and configuration structs
-- `foresthub::Optional<T>` polyfill for C++14 environments without `<optional>`
+- `foresthub::util::Optional<T>` polyfill for C++14 environments without `<optional>`
 - PlatformIO library support (`lib_deps = ForestHubAI/fh-sdk`)
 - Comprehensive test suite (422 tests across 8 executables)
 - Doxygen API reference generation

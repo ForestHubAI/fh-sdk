@@ -8,34 +8,34 @@
 #include <deque>
 #include <string>
 
-#include "foresthub/core/http_client.hpp"
+#include "foresthub/hal/http_client.hpp"
 
 namespace foresthub {
 namespace tests {
 
-class MockHttpClient : public core::HttpClient {
+class MockHttpClient : public hal::HttpClient {
 public:
-    std::deque<core::HttpResponse> get_responses;
-    std::deque<core::HttpResponse> post_responses;
+    std::deque<hal::HttpResponse> get_responses;
+    std::deque<hal::HttpResponse> post_responses;
     int get_call_count = 0;
     int post_call_count = 0;
     std::string last_url;
     std::string last_body;
     Headers last_headers;
 
-    core::HttpResponse Get(const std::string& url, const Headers& headers) override {
+    hal::HttpResponse Get(const std::string& url, const Headers& headers) override {
         ++get_call_count;
         last_url = url;
         last_headers = headers;
         if (get_responses.empty()) {
             return {500, "no mock response", {}};
         }
-        core::HttpResponse resp = get_responses.front();
+        hal::HttpResponse resp = get_responses.front();
         get_responses.pop_front();
         return resp;
     }
 
-    core::HttpResponse Post(const std::string& url, const Headers& headers, const std::string& body) override {
+    hal::HttpResponse Post(const std::string& url, const Headers& headers, const std::string& body) override {
         ++post_call_count;
         last_url = url;
         last_headers = headers;
@@ -43,7 +43,7 @@ public:
         if (post_responses.empty()) {
             return {500, "no mock response", {}};
         }
-        core::HttpResponse resp = post_responses.front();
+        hal::HttpResponse resp = post_responses.front();
         post_responses.pop_front();
         return resp;
     }

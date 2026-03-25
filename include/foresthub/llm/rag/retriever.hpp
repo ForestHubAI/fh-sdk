@@ -2,8 +2,8 @@
 // Copyright (c) 2026 ForestHub. All rights reserved.
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
-#ifndef FORESTHUB_RAG_RETRIEVER_HPP
-#define FORESTHUB_RAG_RETRIEVER_HPP
+#ifndef FORESTHUB_LLM_RAG_RETRIEVER_HPP
+#define FORESTHUB_LLM_RAG_RETRIEVER_HPP
 
 /// @file
 /// Abstract Retriever interface for document retrieval.
@@ -31,4 +31,4 @@ public:
 }  // namespace rag
 }  // namespace foresthub
 
-#endif  // FORESTHUB_RAG_RETRIEVER_HPP
+#endif  // FORESTHUB_LLM_RAG_RETRIEVER_HPP

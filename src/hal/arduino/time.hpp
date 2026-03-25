@@ -5,10 +5,10 @@
 #ifndef FORESTHUB_PLATFORM_ARDUINO_TIME_HPP
 #define FORESTHUB_PLATFORM_ARDUINO_TIME_HPP
 
-#include "foresthub/platform/time.hpp"
+#include "foresthub/hal/time.hpp"
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace arduino {
 
 /// Time implementation using NTP sync, millis() counter, and WDT-safe delay.
@@ -47,7 +47,7 @@ private:
 };
 
 }  // namespace arduino
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub
 
 #endif  // FORESTHUB_PLATFORM_ARDUINO_TIME_HPP

@@ -15,7 +15,7 @@ Use the fluent builder API to configure an agent:
 
 ```cpp
 #include "foresthub/agent/agent.hpp"
-#include "foresthub/core/options.hpp"
+#include "foresthub/llm/options.hpp"
 
 auto agent = std::make_shared<foresthub::agent::Agent>("MyAssistant");
 agent->WithInstructions("You are a helpful assistant. Use tools when appropriate.")
@@ -42,7 +42,7 @@ A C++ callback that the LLM can invoke. This is the most common tool type.
 The pattern is: define an argument struct, write a `from_json` function, write a handler, and use `NewFunctionTool` to wire them together.
 
 ```cpp
-#include "foresthub/core/tools.hpp"
+#include "foresthub/llm/tools.hpp"
 #include "foresthub/util/json.hpp"
 
 using json = nlohmann::json;

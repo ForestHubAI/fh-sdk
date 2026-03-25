@@ -2,11 +2,11 @@
 // Copyright (c) 2026 ForestHub. All rights reserved.
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
-#ifndef FORESTHUB_CORE_PROVIDER_HPP
-#define FORESTHUB_CORE_PROVIDER_HPP
+#ifndef FORESTHUB_LLM_PROVIDER_HPP
+#define FORESTHUB_LLM_PROVIDER_HPP
 
 /// @file
-/// LLMClient and Provider interfaces for chat operations.
+/// ChatClient and Provider interfaces for chat operations.
 
 #include <memory>
 #include <string>
@@ -18,9 +18,9 @@ namespace foresthub {
 namespace llm {
 
 /// Abstract interface for LLM chat operations.
-class LLMClient {
+class ChatClient {
 public:
-    virtual ~LLMClient() = default;
+    virtual ~ChatClient() = default;
 
     /// Perform a chat completion request.
     /// @param req Chat request containing model, input, and generation options.
@@ -29,7 +29,7 @@ public:
 };
 
 /// Extended LLM interface with health checks and model discovery.
-class Provider : public LLMClient {
+class Provider : public ChatClient {
 public:
     virtual ~Provider() = default;
 
@@ -49,4 +49,4 @@ public:
 }  // namespace llm
 }  // namespace foresthub
 
-#endif  // FORESTHUB_CORE_PROVIDER_HPP
+#endif  // FORESTHUB_LLM_PROVIDER_HPP

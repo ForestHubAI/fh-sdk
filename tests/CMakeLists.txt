@@ -7,13 +7,13 @@ include(GoogleTest)
 # --- Core Tests ---------------------------------------------------------------
 
 add_executable(run_core_tests
-    core/input_test.cpp
-    core/model_test.cpp
-    core/options_test.cpp
-    core/tools_test.cpp
-    core/types_test.cpp
-    core/json_test.cpp
-    core/client_test.cpp
+    llm/input_test.cpp
+    llm/model_test.cpp
+    llm/options_test.cpp
+    llm/tools_test.cpp
+    llm/types_test.cpp
+    llm/json_test.cpp
+    llm/client_test.cpp
 )
 
 target_link_libraries(run_core_tests
@@ -29,8 +29,8 @@ gtest_discover_tests(run_core_tests)
 # --- Agent Tests --------------------------------------------------------------
 
 add_executable(run_agent_tests
-    agent/agent_test.cpp
-    agent/runner_test.cpp
+    llm/agent/agent_test.cpp
+    llm/agent/runner_test.cpp
 )
 
 target_link_libraries(run_agent_tests
@@ -63,11 +63,11 @@ gtest_discover_tests(run_util_tests)
 # --- Provider Tests -----------------------------------------------------------
 
 add_executable(run_provider_tests
-    provider/anthropic_test.cpp
-    provider/foresthub_test.cpp
-    provider/gemini_test.cpp
-    provider/openai_test.cpp
-    provider/schema_utils_test.cpp
+    llm/provider/anthropic_test.cpp
+    llm/provider/foresthub_test.cpp
+    llm/provider/gemini_test.cpp
+    llm/provider/openai_test.cpp
+    llm/provider/schema_utils_test.cpp
 )
 
 target_link_libraries(run_provider_tests
@@ -83,9 +83,9 @@ gtest_discover_tests(run_provider_tests)
 # --- Platform Tests -----------------------------------------------------------
 
 add_executable(run_platform_tests
-    platform/platform_test.cpp
-    platform/console_test.cpp
-    platform/gpio_test.cpp
+    hal/platform_test.cpp
+    hal/console_test.cpp
+    hal/gpio_test.cpp
 )
 
 target_link_libraries(run_platform_tests
@@ -102,8 +102,8 @@ gtest_discover_tests(run_platform_tests)
 
 if(FORESTHUB_PLATFORM STREQUAL "pc_debug")
     add_executable(run_debug_platform_tests
-        platform/debug_console_test.cpp
-        platform/debug_gpio_test.cpp
+        hal/debug_console_test.cpp
+        hal/debug_gpio_test.cpp
     )
 
     target_link_libraries(run_debug_platform_tests
@@ -118,8 +118,8 @@ endif()
 # --- Integration Tests --------------------------------------------------------
 
 add_executable(run_integration_tests
-    integration/runner_provider_test.cpp
-    integration/client_routing_test.cpp
+    llm/integration/runner_provider_test.cpp
+    llm/integration/client_routing_test.cpp
 )
 
 target_link_libraries(run_integration_tests
@@ -135,7 +135,7 @@ gtest_discover_tests(run_integration_tests)
 # --- RAG Tests ----------------------------------------------------------------
 
 add_executable(run_rag_tests
-    rag/retriever_test.cpp
+    llm/rag/retriever_test.cpp
 )
 
 target_link_libraries(run_rag_tests
@@ -151,7 +151,7 @@ gtest_discover_tests(run_rag_tests)
 # --- Contract Tests -----------------------------------------------------------
 
 add_executable(run_contract_tests
-    contract/foresthub_api_test.cpp
+    llm/contract/foresthub_api_test.cpp
 )
 
 target_link_libraries(run_contract_tests

@@ -9,7 +9,7 @@
 #include <thread>
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace pc {
 
 PcTime::PcTime() : start_time_(std::chrono::steady_clock::now()) {}
@@ -63,5 +63,5 @@ void PcTime::GetLocalTime(struct tm& result) const {
 }
 
 }  // namespace pc
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub

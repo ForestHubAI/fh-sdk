@@ -15,14 +15,14 @@
 #include <Arduino.h>
 
 #include "env.hpp"
-#include "foresthub/agent/agent.hpp"
-#include "foresthub/agent/runner.hpp"
-#include "foresthub/client.hpp"
-#include "foresthub/config/config.hpp"
-#include "foresthub/core/input.hpp"
-#include "foresthub/core/types.hpp"
-#include "foresthub/platform/platform.hpp"
-#include "platform/arduino/platform.hpp"
+#include "foresthub/llm/agent/agent.hpp"
+#include "foresthub/llm/agent/runner.hpp"
+#include "foresthub/llm/client.hpp"
+#include "foresthub/llm/config.hpp"
+#include "foresthub/llm/input.hpp"
+#include "foresthub/llm/types.hpp"
+#include "foresthub/hal/platform.hpp"
+#include "hal/arduino/platform.hpp"
 #include "foresthub/util/json.hpp"
 
 using json = nlohmann::json;
@@ -31,14 +31,14 @@ using json = nlohmann::json;
 // Arduino Entry Points
 // -----------------------------------------------------------------------------
 
-static std::shared_ptr<foresthub::platform::Platform> platform;
+static std::shared_ptr<foresthub::hal::Platform> platform;
 
 void setup() {
     // 1. Create platform context (WiFi, Serial, NTP, TLS)
-    foresthub::platform::arduino::ArduinoConfig config;
+    foresthub::hal::arduino::ArduinoConfig config;
     config.network.ssid = kWifiSsid;
     config.network.password = kWifiPassword;
-    platform = std::make_shared<foresthub::platform::arduino::ArduinoPlatform>(config);
+    platform = std::make_shared<foresthub::hal::arduino::ArduinoPlatform>(config);
     if (!platform) {
         while (true) {
         }
@@ -82,13 +82,13 @@ void setup() {
     platform->console->Printf("[OK] Time synced\n\n");
 
     // 5. Create HTTP client via HAL
-    foresthub::core::HttpClientConfig http_cfg;
+    foresthub::hal::HttpClientConfig http_cfg;
     http_cfg.host = "generativelanguage.googleapis.com";
     auto http_client = platform->CreateHttpClient(http_cfg);
 
     // 6. Configure Gemini provider
-    foresthub::config::ClientConfig cfg;
-    foresthub::config::ProviderConfig gemini_cfg;
+    foresthub::llm::ClientConfig cfg;
+    foresthub::llm::ProviderConfig gemini_cfg;
     gemini_cfg.api_key = kGeminiApiKey;
     gemini_cfg.supported_models = {"gemini-2.5-pro", "gemini-2.5-flash", "gemini-2.5-flash-lite"};
     cfg.remote.gemini = gemini_cfg;
@@ -120,13 +120,13 @@ void setup() {
     })",
                                    nullptr, false);
 
-    foresthub::core::ResponseFormat format;
+    foresthub::llm::ResponseFormat format;
     format.name = "city_info";
     format.schema = city_schema;
     format.description = "Structured information about a city.";
 
     // 9. Setup agent with ResponseFormat
-    auto agent = std::make_shared<foresthub::agent::Agent>("GeoBot");
+    auto agent = std::make_shared<foresthub::llm::agent::Agent>("GeoBot");
     agent->WithInstructions("You are a geography expert. Answer with accurate data about the requested city.")
         .WithResponseFormat(format);
 
@@ -140,15 +140,15 @@ void setup() {
         }
     }
 
-    auto runner = std::make_shared<foresthub::agent::Runner>(client, model_name);
+    auto runner = std::make_shared<foresthub::llm::agent::Runner>(client, model_name);
 
     // 11. Execute
     std::string prompt = "Tell me about Paris.";
     platform->console->Printf("[USER] %s\n", prompt.c_str());
     platform->console->Printf("[INFO] Running agent with structured output...\n");
 
-    auto input = std::make_shared<foresthub::core::InputString>(prompt);
-    foresthub::agent::RunResultOrError result = runner->Run(agent, input);
+    auto input = std::make_shared<foresthub::llm::InputString>(prompt);
+    foresthub::llm::agent::RunResultOrError result = runner->Run(agent, input);
 
     if (result.HasError()) {
         platform->console->Printf("[ERROR] Agent failed: %s\n", result.error.c_str());

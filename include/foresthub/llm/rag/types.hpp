@@ -2,8 +2,8 @@
 // Copyright (c) 2026 ForestHub. All rights reserved.
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
-#ifndef FORESTHUB_RAG_TYPES_HPP
-#define FORESTHUB_RAG_TYPES_HPP
+#ifndef FORESTHUB_LLM_RAG_TYPES_HPP
+#define FORESTHUB_LLM_RAG_TYPES_HPP
 
 /// @file
 /// RAG query and response types.
@@ -61,4 +61,4 @@ inline std::string FormatContext(const std::vector<QueryResult>& results) {
 }  // namespace rag
 }  // namespace foresthub
 
-#endif  // FORESTHUB_RAG_TYPES_HPP
+#endif  // FORESTHUB_LLM_RAG_TYPES_HPP

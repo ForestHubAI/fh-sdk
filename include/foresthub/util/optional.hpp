@@ -11,6 +11,7 @@
 #include <utility>
 
 namespace foresthub {
+namespace util {
 
 /// Minimal Optional<T> polyfill for C++14 compatibility.
 ///
@@ -61,6 +62,7 @@ struct Optional {
     }
 };
 
+}  // namespace util
 }  // namespace foresthub
 
 #endif  // FORESTHUB_UTIL_OPTIONAL_HPP

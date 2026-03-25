@@ -7,22 +7,22 @@
 
 #include <string>
 
-#include "foresthub/llm/http_client.hpp"
+#include "foresthub/hal/http_client.hpp"
 
 namespace foresthub {
 namespace hal {
 namespace pc {
 
 /// HTTP client implementation for PC using CPR/libcurl.
-class PcHttpClient : public llm::HttpClient {
+class PcHttpClient : public HttpClient {
 public:
     /// Construct with configurable request timeout.
     explicit PcHttpClient(int timeout_ms = 30000);
 
     /// Delegates to cpr::Get with timeout.
-    llm::HttpResponse Get(const std::string& url, const Headers& headers) override;
+    HttpResponse Get(const std::string& url, const Headers& headers) override;
     /// Delegates to cpr::Post with timeout.
-    llm::HttpResponse Post(const std::string& url, const Headers& headers, const std::string& body) override;
+    HttpResponse Post(const std::string& url, const Headers& headers, const std::string& body) override;
     /// Sleeps via std::this_thread::sleep_for.
     void Delay(unsigned long ms) override;
 

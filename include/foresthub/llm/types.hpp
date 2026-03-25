@@ -2,8 +2,8 @@
 // Copyright (c) 2026 ForestHub. All rights reserved.
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
-#ifndef FORESTHUB_CORE_TYPES_HPP
-#define FORESTHUB_CORE_TYPES_HPP
+#ifndef FORESTHUB_LLM_TYPES_HPP
+#define FORESTHUB_LLM_TYPES_HPP
 
 /// @file
 /// ChatRequest and ChatResponse types with fluent builder API.
@@ -41,7 +41,7 @@ struct ChatRequest {
     std::shared_ptr<Input> input;                         ///< Polymorphic input (InputString or InputItems).
     std::string system_prompt;                            ///< System-level instructions.
     std::string previous_response_id;                     ///< Previous response ID for multi-turn context.
-    foresthub::Optional<ResponseFormat> response_format;  ///< Optional structured output format.
+    util::Optional<ResponseFormat> response_format;       ///< Optional structured output format.
     std::vector<std::shared_ptr<Tool>> tools;             ///< Tools available to the model.
     std::vector<FileID> file_ids;                         ///< Attached file identifiers.
     std::vector<FileID> image_ids;                        ///< Attached image identifiers.
@@ -156,4 +156,4 @@ struct ChatResponse {
 }  // namespace llm
 }  // namespace foresthub
 
-#endif  // FORESTHUB_CORE_TYPES_HPP
+#endif  // FORESTHUB_LLM_TYPES_HPP

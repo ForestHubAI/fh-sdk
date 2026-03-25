@@ -9,24 +9,24 @@
 #include <memory>
 #include <vector>
 
-#include "foresthub/core/provider.hpp"
+#include "foresthub/llm/provider.hpp"
 
 namespace foresthub {
 namespace tests {
 
-class MockLLMClient : public core::LLMClient {
+class MockChatClient : public llm::ChatClient {
 public:
-    std::deque<std::shared_ptr<core::ChatResponse>> responses;
+    std::deque<std::shared_ptr<llm::ChatResponse>> responses;
     int call_count = 0;
-    std::vector<core::ChatRequest> captured_requests;
+    std::vector<llm::ChatRequest> captured_requests;
 
-    std::shared_ptr<core::ChatResponse> Chat(const core::ChatRequest& req) override {
+    std::shared_ptr<llm::ChatResponse> Chat(const llm::ChatRequest& req) override {
         ++call_count;
         captured_requests.push_back(req);
         if (responses.empty()) {
             return nullptr;
         }
-        std::shared_ptr<core::ChatResponse> resp = responses.front();
+        std::shared_ptr<llm::ChatResponse> resp = responses.front();
         responses.pop_front();
         return resp;
     }

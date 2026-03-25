@@ -9,10 +9,10 @@
 #include <cstring>
 
 #include "board_wifi.hpp"
-#include "platform/common/tls_certificates.hpp"
+#include "hal/common/tls_certificates.hpp"
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace arduino {
 
 // ----------------------------------------------------------------------------
@@ -60,7 +60,7 @@ bool ArduinoCrypto::IsAvailable() const {
 }
 
 }  // namespace arduino
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub
 
 #endif  // FORESTHUB_PLATFORM_ARDUINO && FORESTHUB_ENABLE_CRYPTO

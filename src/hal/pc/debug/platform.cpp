@@ -6,13 +6,13 @@
 
 #include "console.hpp"
 #include "gpio.hpp"
-#include "platform/pc/crypto.hpp"
-#include "platform/pc/http_client.hpp"
-#include "platform/pc/network.hpp"
-#include "platform/pc/time.hpp"
+#include "hal/pc/crypto.hpp"
+#include "hal/pc/http_client.hpp"
+#include "hal/pc/network.hpp"
+#include "hal/pc/time.hpp"
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace debug {
 
 DebugPlatform::DebugPlatform(const DebugConfig& config) {
@@ -23,10 +23,10 @@ DebugPlatform::DebugPlatform(const DebugConfig& config) {
     gpio = std::make_shared<DebugGpio>(config.gpio_values);
 }
 
-std::shared_ptr<core::HttpClient> DebugPlatform::CreateHttpClient(const core::HttpClientConfig& config) {
+std::shared_ptr<HttpClient> DebugPlatform::CreateHttpClient(const HttpClientConfig& config) {
     return std::make_shared<pc::PcHttpClient>(static_cast<int>(config.timeout_ms));
 }
 
 }  // namespace debug
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub

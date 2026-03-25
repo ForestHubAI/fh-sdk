@@ -11,15 +11,15 @@
 #include <string>
 
 #include "board_wifi.hpp"
-#include "foresthub/core/http_client.hpp"
-#include "foresthub/platform/crypto.hpp"
+#include "foresthub/hal/http_client.hpp"
+#include "foresthub/hal/crypto.hpp"
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace arduino {
 
 /// HTTP client implementation using ArduinoHttpClient with yield()-based WDT safety.
-class ArduinoHttpClient : public core::HttpClient {
+class ArduinoHttpClient : public HttpClient {
 public:
     /// Construct HTTP client for TLS connections.
     ArduinoHttpClient(std::shared_ptr<TLSClientWrapper> tls_wrapper, const char* host, uint16_t port,
@@ -32,9 +32,9 @@ public:
     ~ArduinoHttpClient() override;
 
     /// Sends GET via ArduinoHttpClient with yield() in wait loops.
-    core::HttpResponse Get(const std::string& url, const Headers& headers) override;
+    HttpResponse Get(const std::string& url, const Headers& headers) override;
     /// Sends POST via ArduinoHttpClient with yield() in wait loops.
-    core::HttpResponse Post(const std::string& url, const Headers& headers, const std::string& body) override;
+    HttpResponse Post(const std::string& url, const Headers& headers, const std::string& body) override;
     /// Calls yield() before sleeping to prevent WDT resets.
     void Delay(unsigned long ms) override;
 
@@ -48,12 +48,12 @@ private:
     unsigned long timeout_ms_;  ///< HTTP request timeout in milliseconds.
 
     /// Sends request with yield() calls to prevent WDT resets.
-    core::HttpResponse SendRequest(const char* method, const std::string& url, const Headers& headers,
-                                   const std::string* body = nullptr);
+    HttpResponse SendRequest(const char* method, const std::string& url, const Headers& headers,
+                                  const std::string* body = nullptr);
 };
 
 }  // namespace arduino
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub
 
 #endif  // FORESTHUB_ENABLE_NETWORK

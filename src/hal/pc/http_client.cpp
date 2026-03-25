@@ -10,16 +10,16 @@
 #include <thread>
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace pc {
 
 PcHttpClient::PcHttpClient(int timeout_ms) : timeout_ms_(timeout_ms) {}
 
 // --- Helper Functions ---
 
-// Converts the library-agnostic 'core::HttpClient::Headers' (std::map)
+// Converts the library-agnostic 'HttpClient::Headers' (std::map)
 // into the specific 'cpr::Header' format required by the CPR library.
-static cpr::Header ToCprHeader(const core::HttpClient::Headers& headers) {
+static cpr::Header ToCprHeader(const HttpClient::Headers& headers) {
     cpr::Header cpr_headers;
     for (const auto& entry : headers) {
         cpr_headers.insert({entry.first, entry.second});
@@ -27,9 +27,9 @@ static cpr::Header ToCprHeader(const core::HttpClient::Headers& headers) {
     return cpr_headers;
 }
 
-// Converts the specific CPR response back into the generic 'core::HttpResponse'.
-static core::HttpResponse FromCprResponse(const cpr::Response& cpr_response) {
-    core::HttpResponse resp;
+// Converts the specific CPR response back into the generic 'HttpResponse'.
+static HttpResponse FromCprResponse(const cpr::Response& cpr_response) {
+    HttpResponse resp;
 
     // Explicitly cast to int to match the domain struct
     resp.status_code = static_cast<int>(cpr_response.status_code);
@@ -54,12 +54,12 @@ static core::HttpResponse FromCprResponse(const cpr::Response& cpr_response) {
 
 // --- Interface Implementation ---
 
-core::HttpResponse PcHttpClient::Get(const std::string& url, const Headers& headers) {
+HttpResponse PcHttpClient::Get(const std::string& url, const Headers& headers) {
     cpr::Response response = cpr::Get(cpr::Url{url}, ToCprHeader(headers), cpr::Timeout{timeout_ms_});
     return FromCprResponse(response);
 }
 
-core::HttpResponse PcHttpClient::Post(const std::string& url, const Headers& headers, const std::string& body) {
+HttpResponse PcHttpClient::Post(const std::string& url, const Headers& headers, const std::string& body) {
     cpr::Response response = cpr::Post(cpr::Url{url}, ToCprHeader(headers), cpr::Body{body}, cpr::Timeout{timeout_ms_});
     return FromCprResponse(response);
 }
@@ -69,5 +69,5 @@ void PcHttpClient::Delay(unsigned long ms) {
 }
 
 }  // namespace pc
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub

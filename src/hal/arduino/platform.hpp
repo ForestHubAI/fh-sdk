@@ -5,11 +5,11 @@
 #ifndef FORESTHUB_PLATFORM_ARDUINO_PLATFORM_HPP
 #define FORESTHUB_PLATFORM_ARDUINO_PLATFORM_HPP
 
-#include "foresthub/platform/network.hpp"
-#include "foresthub/platform/platform.hpp"
+#include "foresthub/hal/network.hpp"
+#include "foresthub/hal/platform.hpp"
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace arduino {
 
 /// Construction-time configuration for the Arduino platform.
@@ -25,11 +25,11 @@ public:
     explicit ArduinoPlatform(const ArduinoConfig& config);
 
     /// Configures TLS or plain connections based on config.use_tls flag.
-    std::shared_ptr<core::HttpClient> CreateHttpClient(const core::HttpClientConfig& config) override;
+    std::shared_ptr<HttpClient> CreateHttpClient(const HttpClientConfig& config) override;
 };
 
 }  // namespace arduino
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub
 
 #endif  // FORESTHUB_PLATFORM_ARDUINO_PLATFORM_HPP

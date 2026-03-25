@@ -14,21 +14,21 @@
 #include <Arduino.h>
 
 #include "env.hpp"
-#include "foresthub/client.hpp"
-#include "foresthub/config/config.hpp"
-#include "foresthub/core/input.hpp"
-#include "foresthub/core/types.hpp"
-#include "foresthub/platform/platform.hpp"
-#include "platform/arduino/platform.hpp"
+#include "foresthub/llm/client.hpp"
+#include "foresthub/llm/config.hpp"
+#include "foresthub/llm/input.hpp"
+#include "foresthub/llm/types.hpp"
+#include "foresthub/hal/platform.hpp"
+#include "hal/arduino/platform.hpp"
 
-static std::shared_ptr<foresthub::platform::Platform> platform;
+static std::shared_ptr<foresthub::hal::Platform> platform;
 
 void setup() {
     // 1. Create platform context (WiFi, Serial, NTP, TLS)
-    foresthub::platform::arduino::ArduinoConfig config;
+    foresthub::hal::arduino::ArduinoConfig config;
     config.network.ssid = kWifiSsid;
     config.network.password = kWifiPassword;
-    platform = std::make_shared<foresthub::platform::arduino::ArduinoPlatform>(config);
+    platform = std::make_shared<foresthub::hal::arduino::ArduinoPlatform>(config);
     if (!platform) {
         while (true) {
         }
@@ -72,13 +72,13 @@ void setup() {
     platform->console->Printf("[OK] Time synced\n\n");
 
     // 5. Create HTTP client via HAL
-    foresthub::core::HttpClientConfig http_cfg;
+    foresthub::hal::HttpClientConfig http_cfg;
     http_cfg.host = "api.anthropic.com";
     auto http_client = platform->CreateHttpClient(http_cfg);
 
     // 6. Configure Anthropic provider
-    foresthub::config::ClientConfig cfg;
-    foresthub::config::ProviderConfig anthropic_cfg;
+    foresthub::llm::ClientConfig cfg;
+    foresthub::llm::ProviderConfig anthropic_cfg;
     anthropic_cfg.api_key = kAnthropicApiKey;
     anthropic_cfg.supported_models = {"claude-sonnet-4-6", "claude-haiku-4-5", "claude-opus-4-6"};
     cfg.remote.anthropic = anthropic_cfg;
@@ -105,14 +105,14 @@ void setup() {
     platform->console->Printf("       Model: %s\n", model_name.c_str());
     platform->console->Printf("       Input: %s\n", prompt.c_str());
 
-    auto input = std::make_shared<foresthub::core::InputString>(prompt);
+    auto input = std::make_shared<foresthub::llm::InputString>(prompt);
 
-    foresthub::core::ChatRequest req;
+    foresthub::llm::ChatRequest req;
     req.model = model_name;
     req.input = input;
     req.WithSystemPrompt("You are a helpful geography assistant.");
 
-    std::shared_ptr<foresthub::core::ChatResponse> response = client->Chat(req);
+    std::shared_ptr<foresthub::llm::ChatResponse> response = client->Chat(req);
 
     // 9. Print result
     if (response) {

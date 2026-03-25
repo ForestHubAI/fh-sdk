@@ -2,14 +2,14 @@
 // Copyright (c) 2026 ForestHub. All rights reserved.
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
-#include "platform/pc/debug/gpio.hpp"
+#include "hal/pc/debug/gpio.hpp"
 
 #include <gtest/gtest.h>
 
 #include <map>
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace debug {
 namespace {
 
@@ -67,5 +67,5 @@ TEST(DebugGpioTest, PwmWriteDoesNotCrash) {
 
 }  // namespace
 }  // namespace debug
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub

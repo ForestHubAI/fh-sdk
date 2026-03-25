@@ -2,20 +2,19 @@
 // Copyright (c) 2026 ForestHub. All rights reserved.
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
-#include "foresthub/llm/rag/remote/retriever.hpp"
+#include "llm/rag/remote/retriever.hpp"
 
 #include <utility>
 
 #include "foresthub/util/json.hpp"
-#include "rag/serialization.hpp"
+#include "llm/rag/serialization.hpp"
 
 namespace foresthub {
 namespace rag {
-namespace remote {
 
 using json = nlohmann::json;
 
-RemoteRetriever::RemoteRetriever(const config::ProviderConfig& cfg, std::shared_ptr<llm::HttpClient> http_client)
+RemoteRetriever::RemoteRetriever(const llm::ProviderConfig& cfg, std::shared_ptr<hal::HttpClient> http_client)
     : http_(std::move(http_client)), api_key_(cfg.api_key), base_url_(cfg.base_url) {
     // Strip trailing slash to avoid double slashes when appending paths.
     if (!base_url_.empty() && base_url_.back() == '/') {
@@ -31,7 +30,7 @@ std::shared_ptr<QueryResponse> RemoteRetriever::Query(const QueryRequest& req) {
     std::string body = j_req.dump();
 
     // Retry with linear backoff (500ms * attempt).
-    llm::HttpResponse resp;
+    hal::HttpResponse resp;
     unsigned long attempts = 0;
     const unsigned long max_attempts = 2;
 
@@ -76,6 +75,5 @@ std::shared_ptr<QueryResponse> RemoteRetriever::Query(const QueryRequest& req) {
     return response;
 }
 
-}  // namespace remote
 }  // namespace rag
 }  // namespace foresthub

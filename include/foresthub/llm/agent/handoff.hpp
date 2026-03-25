@@ -2,8 +2,8 @@
 // Copyright (c) 2026 ForestHub. All rights reserved.
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
-#ifndef FORESTHUB_AGENT_HANDOFF_HPP
-#define FORESTHUB_AGENT_HANDOFF_HPP
+#ifndef FORESTHUB_LLM_AGENT_HANDOFF_HPP
+#define FORESTHUB_LLM_AGENT_HANDOFF_HPP
 
 /// @file
 /// Handoff tool that transfers control between agents.
@@ -60,4 +60,4 @@ inline std::shared_ptr<Handoff> NewHandoff(std::string name, std::string descrip
 }  // namespace agent
 }  // namespace foresthub
 
-#endif  // FORESTHUB_AGENT_HANDOFF_HPP
+#endif  // FORESTHUB_LLM_AGENT_HANDOFF_HPP

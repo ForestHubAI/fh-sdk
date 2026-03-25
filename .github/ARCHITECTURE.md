@@ -7,7 +7,7 @@ C++14 LLM SDK with unified interface for multiple providers (ForestHub, OpenAI, 
 ## Strict Architectural Rules
 
 1. **No Exceptions** — Library targets embedded (Arduino).
-   - Return `std::string` for errors (empty = success). Use `foresthub::Optional<T>` for optional fields.
+   - Return `std::string` for errors (empty = success). Use `foresthub::util::Optional<T>` for optional fields.
    - JSON: Always `nlohmann::json::parse(raw, nullptr, false)` + check `.is_discarded()`.
    - Always include via `#include "foresthub/util/json.hpp"`, never `<nlohmann/json.hpp>` directly.
 
@@ -29,7 +29,7 @@ C++14 LLM SDK with unified interface for multiple providers (ForestHub, OpenAI, 
 
 ## Code Style
 
-**ALL code MUST follow [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.html) and be strictly C++14 compliant.** No C++17 features (`<optional>`, `<string_view>`, `<any>`, `if constexpr`, structured bindings, `std::variant`). Use `foresthub::Optional<T>` instead of `std::optional`.
+**ALL code MUST follow [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.html) and be strictly C++14 compliant.** No C++17 features (`<optional>`, `<string_view>`, `<any>`, `if constexpr`, structured bindings, `std::variant`). Use `foresthub::util::Optional<T>` instead of `std::optional`.
 
 4-space indent, 120-char line limit. See `.clang-format` and `.clang-tidy`.
 
@@ -59,7 +59,7 @@ C++14 LLM SDK with unified interface for multiple providers (ForestHub, OpenAI, 
 
 - Use `///` (not `/** */`), `@param`/`@return` (not `\param`). No `@brief`.
 - Omit `@param`/`@return` when obvious. Builder methods (`With*`/`Add*`) omit `@return`.
-- Platform interfaces (`include/foresthub/platform/`): Hardware-neutral — never mention specific hardware platforms.
+- Platform interfaces (`include/foresthub/hal/`): Hardware-neutral — never mention specific hardware platforms.
 
 ## Architecture
 
@@ -73,7 +73,7 @@ C++14 LLM SDK with unified interface for multiple providers (ForestHub, OpenAI, 
 - `Input` (`foresthub/core/input.hpp`): Polymorphic — `InputString` (text) or `InputItems` (conversation history)
 - `ChatRequest`/`ChatResponse` (`foresthub/core/types.hpp`): Fluent API with `WithSystemPrompt()`, `AddTool()`, etc.
 - `Retriever` (`foresthub/rag/`): `Retriever` interface — `RemoteRetriever` (POST /rag/query). Types: `QueryRequest`, `QueryResult`, `QueryResponse`. Helper: `FormatContext()` (XML)
-- `HAL` (`foresthub/platform/`): `Platform` factory — Network, Console, Time, Crypto, GPIO interfaces
+- `HAL` (`foresthub/hal/`): `Platform` factory — Network, Console, Time, Crypto, GPIO interfaces
 - `Schema` (`foresthub/util/schema.hpp`): `NormalizeSchema()` wraps minimal property maps into full JSON Schema. Provider-specific pipelines in `src/provider/remote/schema_utils.{hpp,cpp}`
 - Provider impls: `src/provider/remote/{anthropic,foresthub,gemini,openai}/` (each has `provider.cpp` + `mapping.{hpp,cpp}`)
 

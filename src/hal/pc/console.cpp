@@ -19,7 +19,7 @@
 #include <string>
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace pc {
 
 void PcConsole::Begin() {
@@ -110,5 +110,5 @@ void PcConsole::Flush() noexcept {
 }
 
 }  // namespace pc
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub

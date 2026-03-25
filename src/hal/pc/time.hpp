@@ -7,10 +7,10 @@
 
 #include <chrono>
 
-#include "foresthub/platform/time.hpp"
+#include "foresthub/hal/time.hpp"
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace pc {
 
 /// Time implementation for PC using std::chrono.
@@ -45,7 +45,7 @@ private:
 };
 
 }  // namespace pc
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub
 
 #endif  // FORESTHUB_PLATFORM_PC_TIME_HPP

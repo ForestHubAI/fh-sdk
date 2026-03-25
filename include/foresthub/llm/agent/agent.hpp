@@ -2,8 +2,8 @@
 // Copyright (c) 2026 ForestHub. All rights reserved.
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
-#ifndef FORESTHUB_AGENT_AGENT_HPP
-#define FORESTHUB_AGENT_AGENT_HPP
+#ifndef FORESTHUB_LLM_AGENT_AGENT_HPP
+#define FORESTHUB_LLM_AGENT_AGENT_HPP
 
 /// @file
 /// Agent with instructions, tools, and optional response format.
@@ -25,6 +25,7 @@ class Runner;
 
 /// LLM agent with instructions, tools, and optional response format.
 class Agent {
+
 public:
     /// Construct an agent with the given display name.
     explicit Agent(std::string name);
@@ -63,7 +64,7 @@ public:
     /// @return System prompt sent to the model.
     const std::string& instructions() const { return instructions_; }
     /// @return Optional structured output format.
-    const foresthub::Optional<llm::ResponseFormat>& response_format() const { return response_format_; }
+    const util::Optional<llm::ResponseFormat>& response_format() const { return response_format_; }
     /// @return Generation parameters for this agent.
     const llm::Options& options() const { return options_; }
     /// @return Tools available to this agent.
@@ -72,7 +73,7 @@ public:
 private:
     std::string name_;                                           ///< Display name for identification.
     std::string instructions_;                                   ///< System prompt sent to the model.
-    foresthub::Optional<llm::ResponseFormat> response_format_;  ///< Optional structured output format.
+    util::Optional<llm::ResponseFormat> response_format_;  ///< Optional structured output format.
     llm::Options options_;                                      ///< Generation parameters.
     std::vector<std::shared_ptr<llm::Tool>> tools_;             ///< Tools available to this agent.
 };
@@ -80,4 +81,4 @@ private:
 }  // namespace agent
 }  // namespace foresthub
 
-#endif  // FORESTHUB_AGENT_AGENT_HPP
+#endif  // FORESTHUB_LLM_AGENT_AGENT_HPP

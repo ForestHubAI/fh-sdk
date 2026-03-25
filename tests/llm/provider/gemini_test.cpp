@@ -2,14 +2,14 @@
 // Copyright (c) 2026 ForestHub. All rights reserved.
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
-#include "foresthub/llm/provider/remote/gemini.hpp"
+#include "llm/provider/remote/gemini/provider.hpp"
 
 #include <gtest/gtest.h>
 
 #include <memory>
 #include <string>
 
-#include "foresthub/llm/config/config.hpp"
+#include "foresthub/llm/config.hpp"
 #include "mocks/mock_http_client.hpp"
 
 namespace foresthub {
@@ -17,7 +17,7 @@ namespace provider {
 namespace remote {
 namespace {
 
-using llm::HttpResponse;
+using hal::HttpResponse;
 using json = nlohmann::json;
 
 // Helper: create a GeminiProvider with the given MockHttpClient and config.

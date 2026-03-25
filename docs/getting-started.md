@@ -37,8 +37,8 @@ The simplest use case is sending a single prompt to an LLM and printing the resp
 ```cpp
 #include "foresthub/client.hpp"
 #include "foresthub/config/config.hpp"
-#include "foresthub/core/input.hpp"
-#include "foresthub/core/types.hpp"
+#include "foresthub/llm/input.hpp"
+#include "foresthub/llm/types.hpp"
 
 int main() {
     // Configure the ForestHub provider
@@ -75,7 +75,7 @@ An agent combines instructions, tools, and generation options into a reusable un
 ```cpp
 #include "foresthub/agent/agent.hpp"
 #include "foresthub/agent/runner.hpp"
-#include "foresthub/core/tools.hpp"
+#include "foresthub/llm/tools.hpp"
 #include "foresthub/util/json.hpp"
 
 using json = nlohmann::json;
@@ -128,7 +128,7 @@ cfg.remote.gemini = gemini_cfg;   // Direct Google Gemini
 cfg.remote.anthropic = anth_cfg;  // Direct Anthropic Claude
 ```
 
-Each field in `cfg.remote` is a `foresthub::Optional<ProviderConfig>`. A provider is only created when its config has a value.
+Each field in `cfg.remote` is a `foresthub::util::Optional<ProviderConfig>`. A provider is only created when its config has a value.
 
 ### ProviderConfig
 

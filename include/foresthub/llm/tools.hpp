@@ -2,8 +2,8 @@
 // Copyright (c) 2026 ForestHub. All rights reserved.
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
-#ifndef FORESTHUB_CORE_TOOLS_HPP
-#define FORESTHUB_CORE_TOOLS_HPP
+#ifndef FORESTHUB_LLM_TOOLS_HPP
+#define FORESTHUB_LLM_TOOLS_HPP
 
 /// @file
 /// Tool system: ExternalTool, FunctionTool, WebSearch, and tool call types.
@@ -218,4 +218,4 @@ public:
 }  // namespace llm
 }  // namespace foresthub
 
-#endif  // FORESTHUB_CORE_TOOLS_HPP
+#endif  // FORESTHUB_LLM_TOOLS_HPP

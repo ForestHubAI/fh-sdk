@@ -19,7 +19,7 @@
 #endif
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace arduino {
 
 // =============================================================================
@@ -280,7 +280,7 @@ void ArduinoTime::GetLocalTime(struct tm& result) const {
 }
 
 }  // namespace arduino
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub
 
 #endif  // FORESTHUB_PLATFORM_ARDUINO

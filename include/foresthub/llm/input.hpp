@@ -2,8 +2,8 @@
 // Copyright (c) 2026 ForestHub. All rights reserved.
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
-#ifndef FORESTHUB_CORE_INPUT_HPP
-#define FORESTHUB_CORE_INPUT_HPP
+#ifndef FORESTHUB_LLM_INPUT_HPP
+#define FORESTHUB_LLM_INPUT_HPP
 
 /// @file
 /// Polymorphic input types for chat requests.
@@ -162,4 +162,4 @@ inline std::shared_ptr<InputItems> AsInputItems(const std::shared_ptr<Input>& in
 }  // namespace llm
 }  // namespace foresthub
 
-#endif  // FORESTHUB_CORE_INPUT_HPP
+#endif  // FORESTHUB_LLM_INPUT_HPP

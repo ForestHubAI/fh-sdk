@@ -10,7 +10,7 @@
 namespace foresthub {
 namespace agent {
 
-Runner::Runner(std::shared_ptr<foresthub::llm::LLMClient> client, llm::ModelID model)
+Runner::Runner(std::shared_ptr<foresthub::llm::ChatClient> client, llm::ModelID model)
     : client_(std::move(client)), default_model_(std::move(model)) {}
 
 Runner& Runner::WithMaxTurns(int max_turns) {

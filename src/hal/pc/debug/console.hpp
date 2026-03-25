@@ -9,10 +9,10 @@
 #include <string>
 #include <vector>
 
-#include "foresthub/platform/console.hpp"
+#include "foresthub/hal/console.hpp"
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace debug {
 
 /// Debug console backed by a pre-loaded input queue.
@@ -37,7 +37,7 @@ private:
 };
 
 }  // namespace debug
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub
 
 #endif  // FORESTHUB_PLATFORM_DEBUG_CONSOLE_HPP

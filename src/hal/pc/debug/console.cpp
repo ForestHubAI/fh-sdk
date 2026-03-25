@@ -12,7 +12,7 @@
 #include "foresthub/util/strprintf.hpp"
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace debug {
 
 DebugConsole::DebugConsole(const std::vector<std::string>& initial_lines) {
@@ -97,5 +97,5 @@ void DebugConsole::Flush() noexcept {
 }
 
 }  // namespace debug
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub

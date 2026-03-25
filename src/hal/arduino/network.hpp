@@ -9,10 +9,10 @@
 
 #include <string>
 
-#include "foresthub/platform/network.hpp"
+#include "foresthub/hal/network.hpp"
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace arduino {
 
 /// WiFi network implementation for Arduino using station mode.
@@ -39,7 +39,7 @@ private:
 };
 
 }  // namespace arduino
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub
 
 #endif  // FORESTHUB_ENABLE_NETWORK

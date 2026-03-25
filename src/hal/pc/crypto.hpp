@@ -5,10 +5,10 @@
 #ifndef FORESTHUB_PLATFORM_PC_CRYPTO_HPP
 #define FORESTHUB_PLATFORM_PC_CRYPTO_HPP
 
-#include "foresthub/platform/crypto.hpp"
+#include "foresthub/hal/crypto.hpp"
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace pc {
 
 /// Crypto implementation for PC. TLS is handled by CPR/libcurl using system certs.
@@ -25,7 +25,7 @@ public:
 };
 
 }  // namespace pc
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub
 
 #endif  // FORESTHUB_PLATFORM_PC_CRYPTO_HPP

@@ -2,8 +2,8 @@
 // Copyright (c) 2026 ForestHub. All rights reserved.
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
-#ifndef FORESTHUB_AGENT_RUNNER_HPP
-#define FORESTHUB_AGENT_RUNNER_HPP
+#ifndef FORESTHUB_LLM_AGENT_RUNNER_HPP
+#define FORESTHUB_LLM_AGENT_RUNNER_HPP
 
 /// @file
 /// Runner that executes agent loops with LLM calls, tool dispatch, and handoffs.
@@ -32,7 +32,7 @@ struct RunResult {
 
 /// Result wrapper that holds either a RunResult or an error message.
 struct RunResultOrError {
-    foresthub::Optional<RunResult> result;  ///< Present on success.
+    util::Optional<RunResult> result;  ///< Present on success.
     std::string error;                      ///< Non-empty on failure.
 
     /// Check if an error occurred.
@@ -47,7 +47,7 @@ struct RunResultOrError {
     /// @param error_message Description of what went wrong.
     /// @return RunResultOrError with the error message.
     static RunResultOrError Failure(std::string error_message) {
-        return {foresthub::Optional<RunResult>{}, std::move(error_message)};
+        return {util::Optional<RunResult>{}, std::move(error_message)};
     }
 };
 
@@ -57,7 +57,7 @@ public:
     /// Construct a runner with an LLM client and default model.
     /// @param client LLM client for chat requests.
     /// @param model Default model identifier.
-    Runner(std::shared_ptr<foresthub::llm::LLMClient> client, foresthub::llm::ModelID model);
+    Runner(std::shared_ptr<foresthub::llm::ChatClient> client, foresthub::llm::ModelID model);
 
     /// Set the turn limit for agent execution.
     Runner& WithMaxTurns(int max_turns);
@@ -69,16 +69,16 @@ public:
     RunResultOrError Run(const std::shared_ptr<Agent>& starting_agent, const std::shared_ptr<llm::Input>& input);
 
     /// @return LLM client for chat requests.
-    const std::shared_ptr<foresthub::llm::LLMClient>& client() const { return client_; }
+    const std::shared_ptr<foresthub::llm::ChatClient>& client() const { return client_; }
     /// @return Model used when agents don't specify one.
     const llm::ModelID& default_model() const { return default_model_; }
     /// @return Turn limit (empty = unlimited).
-    const foresthub::Optional<int>& max_turns() const { return max_turns_; }
+    const util::Optional<int>& max_turns() const { return max_turns_; }
 
 private:
-    std::shared_ptr<foresthub::llm::LLMClient> client_;  ///< LLM client for chat requests.
+    std::shared_ptr<foresthub::llm::ChatClient> client_;  ///< LLM client for chat requests.
     llm::ModelID default_model_;                         ///< Model used when agents don't specify one.
-    foresthub::Optional<int> max_turns_;                  ///< Turn limit (empty = unlimited).
+    util::Optional<int> max_turns_;                  ///< Turn limit (empty = unlimited).
 
     /// Internal result from a single tool execution phase.
     struct ExecResult {
@@ -99,4 +99,4 @@ private:
 }  // namespace agent
 }  // namespace foresthub
 
-#endif  // FORESTHUB_AGENT_RUNNER_HPP
+#endif  // FORESTHUB_LLM_AGENT_RUNNER_HPP

@@ -2,8 +2,8 @@
 // Copyright (c) 2026 ForestHub. All rights reserved.
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
-#ifndef FORESTHUB_CORE_OPTIONS_HPP
-#define FORESTHUB_CORE_OPTIONS_HPP
+#ifndef FORESTHUB_LLM_OPTIONS_HPP
+#define FORESTHUB_LLM_OPTIONS_HPP
 
 /// @file
 /// Model-specific generation options (temperature, max_tokens, etc.).
@@ -15,13 +15,13 @@ namespace llm {
 
 /// Model-specific generation options.
 struct Options {
-    foresthub::Optional<int> max_tokens;           ///< Maximum tokens to generate.
-    foresthub::Optional<float> temperature;        ///< Randomness (0.0 to 1.0).
-    foresthub::Optional<int> top_k;                ///< Maximum tokens to consider.
-    foresthub::Optional<float> top_p;              ///< Nucleus sampling cutoff.
-    foresthub::Optional<float> frequency_penalty;  ///< Reduces repetition.
-    foresthub::Optional<float> presence_penalty;   ///< Encourages new concepts.
-    foresthub::Optional<int> seed;                 ///< Seed for deterministic generation.
+    util::Optional<int> max_tokens;           ///< Maximum tokens to generate.
+    util::Optional<float> temperature;        ///< Randomness (0.0 to 1.0).
+    util::Optional<int> top_k;                ///< Maximum tokens to consider.
+    util::Optional<float> top_p;              ///< Nucleus sampling cutoff.
+    util::Optional<float> frequency_penalty;  ///< Reduces repetition.
+    util::Optional<float> presence_penalty;   ///< Encourages new concepts.
+    util::Optional<int> seed;                 ///< Seed for deterministic generation.
 
     /// Set the maximum number of tokens to generate.
     Options& WithMaxTokens(int max_tokens) {
@@ -69,4 +69,4 @@ struct Options {
 }  // namespace llm
 }  // namespace foresthub
 
-#endif  // FORESTHUB_CORE_OPTIONS_HPP
+#endif  // FORESTHUB_LLM_OPTIONS_HPP

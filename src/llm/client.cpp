@@ -4,16 +4,16 @@
 
 #include "foresthub/llm/client.hpp"
 
-#include "foresthub/llm/provider/remote/anthropic.hpp"
-#include "foresthub/llm/provider/remote/foresthub.hpp"
-#include "foresthub/llm/provider/remote/gemini.hpp"
-#include "foresthub/llm/provider/remote/openai.hpp"
+#include "llm/provider/remote/anthropic/provider.hpp"
+#include "llm/provider/remote/foresthub/provider.hpp"
+#include "llm/provider/remote/gemini/provider.hpp"
+#include "llm/provider/remote/openai/provider.hpp"
 
 namespace foresthub {
 using std::shared_ptr;
 
-std::unique_ptr<Client> Client::Create(const config::ClientConfig& cfg,
-                                       const std::shared_ptr<llm::HttpClient>& http_client) {
+std::unique_ptr<Client> Client::Create(const llm::ClientConfig& cfg,
+                                       const std::shared_ptr<hal::HttpClient>& http_client) {
     auto client = std::make_unique<Client>();
 
     if (cfg.remote.anthropic.HasValue()) {

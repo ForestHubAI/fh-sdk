@@ -15,13 +15,13 @@
 #include "foresthub/util/json.hpp"
 
 // Core & Agent Headers
-#include "foresthub/agent/agent.hpp"
-#include "foresthub/agent/runner.hpp"
-#include "foresthub/client.hpp"
-#include "foresthub/config/config.hpp"
-#include "foresthub/core/input.hpp"
-#include "foresthub/core/options.hpp"
-#include "foresthub/core/tools.hpp"
+#include "foresthub/llm/agent/agent.hpp"
+#include "foresthub/llm/agent/runner.hpp"
+#include "foresthub/llm/client.hpp"
+#include "foresthub/llm/config.hpp"
+#include "foresthub/llm/input.hpp"
+#include "foresthub/llm/options.hpp"
+#include "foresthub/llm/tools.hpp"
 
 // Application Shared Helper
 #include "../platform_setup.hpp"
@@ -78,12 +78,12 @@ int main() {  // NOLINT(bugprone-exception-escape)
     }
 
     // Create HTTP client via HAL
-    foresthub::core::HttpClientConfig http_cfg;
+    foresthub::hal::HttpClientConfig http_cfg;
     http_cfg.host = "api.openai.com";
     auto http_client = platform->CreateHttpClient(http_cfg);
 
-    foresthub::config::ClientConfig cfg;
-    foresthub::config::ProviderConfig oai_cfg;
+    foresthub::llm::ClientConfig cfg;
+    foresthub::llm::ProviderConfig oai_cfg;
     std::string api_key = api_key_env;
     oai_cfg.api_key = api_key;
     // Ensure selected models support tool calling
@@ -101,7 +101,7 @@ int main() {  // NOLINT(bugprone-exception-escape)
 
     // Create FunctionTool via Factory
     auto weather_tool =
-        foresthub::core::NewFunctionTool<WeatherArgs, json>("get_weather",                              // Tool Name
+        foresthub::llm::NewFunctionTool<WeatherArgs, json>("get_weather",                              // Tool Name
                                                             "Returns the current weather for a city.",  // Description
                                                             weather_tool_schema,  // Schema as json
                                                             GetWeather            // C++ Function
@@ -109,9 +109,9 @@ int main() {  // NOLINT(bugprone-exception-escape)
 
     // --- Setup Agent ---
 
-    auto agent = std::make_shared<foresthub::agent::Agent>("WeatherBot");
+    auto agent = std::make_shared<foresthub::llm::agent::Agent>("WeatherBot");
     agent->WithInstructions("You are a helpful assistant. If asked about weather, use the provided tool.")
-        .WithOptions(foresthub::core::Options().WithTemperature(0.7f).WithMaxTokens(1024))
+        .WithOptions(foresthub::llm::Options().WithTemperature(0.7f).WithMaxTokens(1024))
         .AddTool(weather_tool);
 
     // --- Setup Runner ---
@@ -126,7 +126,7 @@ int main() {  // NOLINT(bugprone-exception-escape)
         return 1;
     }
 
-    auto runner = std::make_shared<foresthub::agent::Runner>(client, model_name);
+    auto runner = std::make_shared<foresthub::llm::agent::Runner>(client, model_name);
     runner->WithMaxTurns(5);  // Limit turns to avoid infinite loops
 
     // --- Interaction 1: Question about weather (Tool usage expected) ---
@@ -134,10 +134,10 @@ int main() {  // NOLINT(bugprone-exception-escape)
     std::string prompt = "How is the weather in Madrid and how does it look in Berlin?";
     platform->console->Printf("\n[USER] %s\n", prompt.c_str());
 
-    auto input = std::make_shared<foresthub::core::InputString>(prompt);
+    auto input = std::make_shared<foresthub::llm::InputString>(prompt);
 
     platform->console->Printf("[INFO] Running agent... (calling tools if necessary)\n");
-    foresthub::agent::RunResultOrError result = runner->Run(agent, input);
+    foresthub::llm::agent::RunResultOrError result = runner->Run(agent, input);
 
     if (result.HasError()) {
         platform->console->Printf("[ERROR] Agent execution failed: %s\n", result.error.c_str());

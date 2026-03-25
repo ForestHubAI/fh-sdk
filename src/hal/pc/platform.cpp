@@ -12,7 +12,7 @@
 #include "time.hpp"
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace pc {
 
 PcPlatform::PcPlatform(const PcConfig& /*config*/) {
@@ -23,12 +23,12 @@ PcPlatform::PcPlatform(const PcConfig& /*config*/) {
     gpio = std::make_shared<PcGpio>();
 }
 
-std::shared_ptr<core::HttpClient> PcPlatform::CreateHttpClient(const core::HttpClientConfig& config) {
+std::shared_ptr<HttpClient> PcPlatform::CreateHttpClient(const HttpClientConfig& config) {
     // PcHttpClient uses CPR/libcurl which handles host, port, and TLS internally per-request.
     // Only timeout is relevant at construction time.
     return std::make_shared<PcHttpClient>(static_cast<int>(config.timeout_ms));
 }
 
 }  // namespace pc
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub

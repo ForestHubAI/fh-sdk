@@ -2,8 +2,8 @@
 // Copyright (c) 2026 ForestHub. All rights reserved.
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
-#ifndef FORESTHUB_PLATFORM_CRYPTO_HPP
-#define FORESTHUB_PLATFORM_CRYPTO_HPP
+#ifndef FORESTHUB_HAL_CRYPTO_HPP
+#define FORESTHUB_HAL_CRYPTO_HPP
 
 /// @file
 /// Abstract interfaces for TLS/crypto operations.
@@ -47,4 +47,4 @@ public:
 }  // namespace hal
 }  // namespace foresthub
 
-#endif  // FORESTHUB_PLATFORM_CRYPTO_HPP
+#endif  // FORESTHUB_HAL_CRYPTO_HPP

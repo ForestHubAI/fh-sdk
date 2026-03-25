@@ -27,12 +27,12 @@
 #include <WiFiClientSecure.h>
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace arduino {
 /// Board-specific TLS-capable client type alias.
 using SecureClient = WiFiClientSecure;
 }  // namespace arduino
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub
 
 #elif defined(ARDUINO_PORTENTA_H7_M7) || defined(ARDUINO_PORTENTA_H7_M4)
@@ -47,12 +47,12 @@ using arduino::Client;
 using arduino::WiFiClient;
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace arduino {
 /// Board-specific TLS-capable client type alias.
 using SecureClient = WiFiSSLClient;
 }  // namespace arduino
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub
 
 #else

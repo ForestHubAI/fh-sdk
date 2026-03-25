@@ -92,14 +92,14 @@ TEST(RunResultOrErrorTest, Failure) {
 // ==========================================================================
 
 TEST(RunnerTest, Construction) {
-    auto mock = std::make_shared<foresthub::tests::MockLLMClient>();
+    auto mock = std::make_shared<foresthub::tests::MockChatClient>();
     auto runner = std::make_shared<Runner>(mock, "gpt-4o");
     EXPECT_EQ(runner->default_model(), "gpt-4o");
     EXPECT_FALSE(runner->max_turns().HasValue());
 }
 
 TEST(RunnerTest, WithMaxTurns) {
-    auto mock = std::make_shared<foresthub::tests::MockLLMClient>();
+    auto mock = std::make_shared<foresthub::tests::MockChatClient>();
     auto runner = std::make_shared<Runner>(mock, "gpt-4o");
     Runner& ref = runner->WithMaxTurns(5);
     EXPECT_TRUE(runner->max_turns().HasValue());
@@ -112,7 +112,7 @@ TEST(RunnerTest, WithMaxTurns) {
 // ==========================================================================
 
 TEST(RunnerTest, NullAgent) {
-    auto mock = std::make_shared<foresthub::tests::MockLLMClient>();
+    auto mock = std::make_shared<foresthub::tests::MockChatClient>();
     auto runner = std::make_shared<Runner>(mock, "gpt-4o");
     auto input = std::make_shared<InputString>("hello");
 
@@ -122,7 +122,7 @@ TEST(RunnerTest, NullAgent) {
 }
 
 TEST(RunnerTest, NetworkError) {
-    auto mock = std::make_shared<foresthub::tests::MockLLMClient>();
+    auto mock = std::make_shared<foresthub::tests::MockChatClient>();
     // No responses queued — Chat() returns nullptr.
     auto runner = std::make_shared<Runner>(mock, "gpt-4o");
 
@@ -135,7 +135,7 @@ TEST(RunnerTest, NetworkError) {
 }
 
 TEST(RunnerTest, NoTextNoTools) {
-    auto mock = std::make_shared<foresthub::tests::MockLLMClient>();
+    auto mock = std::make_shared<foresthub::tests::MockChatClient>();
     // Response with empty text and empty tool_call_requests.
     mock->responses.push_back(std::make_shared<ChatResponse>());
 
@@ -153,7 +153,7 @@ TEST(RunnerTest, NoTextNoTools) {
 // ==========================================================================
 
 TEST(RunnerTest, SingleTurnTextResponse) {
-    auto mock = std::make_shared<foresthub::tests::MockLLMClient>();
+    auto mock = std::make_shared<foresthub::tests::MockChatClient>();
     mock->responses.push_back(TextResponse("Hello, world!"));
 
     auto runner = std::make_shared<Runner>(mock, "gpt-4o");
@@ -168,7 +168,7 @@ TEST(RunnerTest, SingleTurnTextResponse) {
 }
 
 TEST(RunnerTest, SingleTurnWithResponseFormat) {
-    auto mock = std::make_shared<foresthub::tests::MockLLMClient>();
+    auto mock = std::make_shared<foresthub::tests::MockChatClient>();
     // Response has text AND tool calls — but response_format is set, so text wins.
     auto resp = std::make_shared<ChatResponse>();
     resp->text = "formatted output";
@@ -197,7 +197,7 @@ TEST(RunnerTest, SingleTurnWithResponseFormat) {
 // ==========================================================================
 
 TEST(RunnerTest, MultiTurnToolCalling) {
-    auto mock = std::make_shared<foresthub::tests::MockLLMClient>();
+    auto mock = std::make_shared<foresthub::tests::MockChatClient>();
     // Turn 1: LLM requests tool call.
     mock->responses.push_back(ToolCallResponse("echo", "c1", R"({"text":"hello"})"));
     // Turn 2: LLM returns text (final output).
@@ -216,7 +216,7 @@ TEST(RunnerTest, MultiTurnToolCalling) {
 }
 
 TEST(RunnerTest, ToolNotFound) {
-    auto mock = std::make_shared<foresthub::tests::MockLLMClient>();
+    auto mock = std::make_shared<foresthub::tests::MockChatClient>();
     // LLM requests a tool that the agent doesn't have.
     mock->responses.push_back(ToolCallResponse("nonexistent", "c1", "{}"));
 
@@ -230,7 +230,7 @@ TEST(RunnerTest, ToolNotFound) {
 }
 
 TEST(RunnerTest, UnsupportedToolType) {
-    auto mock = std::make_shared<foresthub::tests::MockLLMClient>();
+    auto mock = std::make_shared<foresthub::tests::MockChatClient>();
     // WebSearch is not external (IsExternal()=false), so FindExternalTool returns nullptr
     // and the runner hits the "Tool not found" error path.
     mock->responses.push_back(ToolCallResponse("web_search", "c1", "{}"));
@@ -251,7 +251,7 @@ TEST(RunnerTest, UnsupportedToolType) {
 // ==========================================================================
 
 TEST(RunnerTest, MaxTurnsExceeded) {
-    auto mock = std::make_shared<foresthub::tests::MockLLMClient>();
+    auto mock = std::make_shared<foresthub::tests::MockChatClient>();
     // Always return tool calls — never a final text.
     mock->responses.push_back(ToolCallResponse("echo", "c1", R"({"text":"1"})"));
     mock->responses.push_back(ToolCallResponse("echo", "c2", R"({"text":"2"})"));
@@ -268,7 +268,7 @@ TEST(RunnerTest, MaxTurnsExceeded) {
 }
 
 TEST(RunnerTest, MaxTurnsUnlimited) {
-    auto mock = std::make_shared<foresthub::tests::MockLLMClient>();
+    auto mock = std::make_shared<foresthub::tests::MockChatClient>();
     // 3 turns of tool calls, then text.
     mock->responses.push_back(ToolCallResponse("echo", "c1", R"({"text":"1"})"));
     mock->responses.push_back(ToolCallResponse("echo", "c2", R"({"text":"2"})"));
@@ -292,7 +292,7 @@ TEST(RunnerTest, MaxTurnsUnlimited) {
 // ==========================================================================
 
 TEST(RunnerTest, HandoffSwitchesAgent) {
-    auto mock = std::make_shared<foresthub::tests::MockLLMClient>();
+    auto mock = std::make_shared<foresthub::tests::MockChatClient>();
 
     auto agent_b = std::make_shared<Agent>("agent-b");
     agent_b->WithInstructions("I am B");
@@ -318,7 +318,7 @@ TEST(RunnerTest, HandoffSwitchesAgent) {
 }
 
 TEST(RunnerTest, HandoffWithModelOverride) {
-    auto mock = std::make_shared<foresthub::tests::MockLLMClient>();
+    auto mock = std::make_shared<foresthub::tests::MockChatClient>();
 
     auto agent_b = std::make_shared<Agent>("agent-b");
     auto agent_a = std::make_shared<Agent>("agent-a");
@@ -342,7 +342,7 @@ TEST(RunnerTest, HandoffWithModelOverride) {
 }
 
 TEST(RunnerTest, ToolResultFeedback) {
-    auto mock = std::make_shared<foresthub::tests::MockLLMClient>();
+    auto mock = std::make_shared<foresthub::tests::MockChatClient>();
     // Turn 1: tool call.
     mock->responses.push_back(ToolCallResponse("echo", "c1", R"({"text":"hello"})"));
     // Turn 2: final text.
@@ -368,7 +368,7 @@ TEST(RunnerTest, ToolResultFeedback) {
 TEST(RunnerTest, TextAndToolCallsContinuesExecution) {
     // When response has BOTH text AND tool calls but NO response_format,
     // the runner should ignore the text and execute the tools.
-    auto mock = std::make_shared<foresthub::tests::MockLLMClient>();
+    auto mock = std::make_shared<foresthub::tests::MockChatClient>();
 
     // Turn 1: text + tool calls → text ignored, tools executed.
     auto resp = std::make_shared<ChatResponse>();
@@ -399,7 +399,7 @@ TEST(RunnerTest, TextAndToolCallsContinuesExecution) {
 // ==========================================================================
 
 TEST(RunnerTest, MultipleToolCallsInSingleResponse) {
-    auto mock = std::make_shared<foresthub::tests::MockLLMClient>();
+    auto mock = std::make_shared<foresthub::tests::MockChatClient>();
 
     // Turn 1: LLM requests 2 tool calls in one response.
     auto resp = std::make_shared<ChatResponse>();
@@ -443,7 +443,7 @@ TEST(RunnerTest, MultipleToolCallsInSingleResponse) {
 // ==========================================================================
 
 TEST(RunnerTest, HandoffWithNullTargetAgent) {
-    auto mock = std::make_shared<foresthub::tests::MockLLMClient>();
+    auto mock = std::make_shared<foresthub::tests::MockChatClient>();
 
     auto agent = std::make_shared<Agent>("a");
     // Create a handoff with nullptr target.
@@ -468,7 +468,7 @@ TEST(RunnerTest, HandoffWithNullTargetAgent) {
 // ==========================================================================
 
 TEST(RunnerTest, OptionsPassThrough) {
-    auto mock = std::make_shared<foresthub::tests::MockLLMClient>();
+    auto mock = std::make_shared<foresthub::tests::MockChatClient>();
     mock->responses.push_back(TextResponse("Done"));
 
     auto runner = std::make_shared<Runner>(mock, "gpt-4o");
@@ -488,7 +488,7 @@ TEST(RunnerTest, OptionsPassThrough) {
 }
 
 TEST(RunnerTest, DefaultOptionsPassThrough) {
-    auto mock = std::make_shared<foresthub::tests::MockLLMClient>();
+    auto mock = std::make_shared<foresthub::tests::MockChatClient>();
     mock->responses.push_back(TextResponse("Done"));
 
     auto runner = std::make_shared<Runner>(mock, "gpt-4o");
@@ -506,7 +506,7 @@ TEST(RunnerTest, DefaultOptionsPassThrough) {
 }
 
 TEST(RunnerTest, HandoffOptionsSwitch) {
-    auto mock = std::make_shared<foresthub::tests::MockLLMClient>();
+    auto mock = std::make_shared<foresthub::tests::MockChatClient>();
 
     auto agent_b = std::make_shared<Agent>("agent-b");
     agent_b->WithInstructions("I am B").WithOptions(Options().WithTemperature(0.9f));
@@ -541,7 +541,7 @@ TEST(RunnerTest, HandoffOptionsSwitch) {
 // ==========================================================================
 
 TEST(RunnerTest, UnsupportedToolExecutionType) {
-    auto mock = std::make_shared<foresthub::tests::MockLLMClient>();
+    auto mock = std::make_shared<foresthub::tests::MockChatClient>();
 
     auto agent = std::make_shared<Agent>("a");
     agent->AddTool(std::make_shared<UnsupportedTypeTool>());

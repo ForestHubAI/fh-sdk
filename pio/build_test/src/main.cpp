@@ -4,11 +4,11 @@
 
 #include <Arduino.h>
 
-#include "foresthub/platform/platform.hpp"
-#include "platform/arduino/platform.hpp"
+#include "foresthub/hal/platform.hpp"
+#include "hal/arduino/platform.hpp"
 
 void setup() {
-    using namespace foresthub::platform;
+    using namespace foresthub::hal;
 
     arduino::ArduinoConfig config;
     config.baud_rate = 115200;
@@ -32,13 +32,13 @@ void setup() {
 #endif
 
 #ifdef FORESTHUB_ENABLE_GPIO
-    platform->gpio->SetPinMode(2, foresthub::platform::PinMode::kOutput);
+    platform->gpio->SetPinMode(2, foresthub::hal::PinMode::kOutput);
     platform->gpio->DigitalWrite(2, 1);
     platform->console->Printf("GPIO: pin 2 HIGH\n");
 #endif
 
 #if defined(FORESTHUB_ENABLE_NETWORK) && defined(FORESTHUB_ENABLE_CRYPTO)
-    foresthub::core::HttpClientConfig http_cfg;
+    foresthub::hal::HttpClientConfig http_cfg;
     http_cfg.host = "example.com";
     auto http = platform->CreateHttpClient(http_cfg);
     platform->console->Printf("HTTP client: %s\n", http ? "ok" : "null");

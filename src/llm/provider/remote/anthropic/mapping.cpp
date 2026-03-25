@@ -7,7 +7,7 @@
 #include "foresthub/llm/input.hpp"
 #include "foresthub/llm/tools.hpp"
 #include "foresthub/util/schema.hpp"
-#include "provider/remote/schema_utils.hpp"
+#include "llm/provider/remote/schema_utils.hpp"
 
 namespace foresthub {
 namespace provider {

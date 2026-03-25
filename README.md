@@ -56,8 +56,8 @@ See [Embedded Guide](https://github.com/ForestHubAI/fh-sdk/blob/main/docs/embedd
 #include "foresthub/agent/runner.hpp"
 #include "foresthub/client.hpp"
 #include "foresthub/config/config.hpp"
-#include "foresthub/core/input.hpp"
-#include "foresthub/core/tools.hpp"
+#include "foresthub/llm/input.hpp"
+#include "foresthub/llm/tools.hpp"
 #include "foresthub/util/json.hpp"
 #include "platform_setup.hpp"
 
@@ -111,9 +111,9 @@ The same SDK, but with Arduino `setup()`/`loop()` and explicit WiFi + time sync:
 #include "env.hpp"  // WiFi credentials + API key
 #include "foresthub/client.hpp"
 #include "foresthub/config/config.hpp"
-#include "foresthub/core/input.hpp"
-#include "foresthub/core/types.hpp"
-#include "foresthub/platform/platform.hpp"
+#include "foresthub/llm/input.hpp"
+#include "foresthub/llm/types.hpp"
+#include "foresthub/hal/platform.hpp"
 
 static std::shared_ptr<foresthub::platform::Platform> platform;
 

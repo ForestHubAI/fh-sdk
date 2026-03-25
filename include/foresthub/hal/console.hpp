@@ -2,8 +2,8 @@
 // Copyright (c) 2026 ForestHub. All rights reserved.
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
-#ifndef FORESTHUB_PLATFORM_CONSOLE_HPP
-#define FORESTHUB_PLATFORM_CONSOLE_HPP
+#ifndef FORESTHUB_HAL_CONSOLE_HPP
+#define FORESTHUB_HAL_CONSOLE_HPP
 
 /// @file
 /// Abstract interface for console I/O.
@@ -49,7 +49,7 @@ public:
     /// Returns the complete line when Enter is pressed, or empty Optional if no complete line yet.
     /// @param max_length Maximum characters to accept (0 = implementation-defined limit).
     /// @param echo If true, echo characters back to output.
-    virtual Optional<std::string> TryReadLine(size_t max_length = 256, bool echo = true) = 0;
+    virtual util::Optional<std::string> TryReadLine(size_t max_length = 256, bool echo = true) = 0;
 
     /// Clear the internal line buffer, discarding any partially typed input.
     virtual void ClearLineBuffer() = 0;
@@ -75,4 +75,4 @@ public:
 }  // namespace hal
 }  // namespace foresthub
 
-#endif  // FORESTHUB_PLATFORM_CONSOLE_HPP
+#endif  // FORESTHUB_HAL_CONSOLE_HPP

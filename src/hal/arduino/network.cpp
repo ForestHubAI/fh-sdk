@@ -11,7 +11,7 @@
 #include "board_wifi.hpp"
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace arduino {
 
 ArduinoNetwork::ArduinoNetwork(const NetworkConfig& config)
@@ -89,7 +89,7 @@ int ArduinoNetwork::GetSignalStrength() const {
 }
 
 }  // namespace arduino
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub
 
 #endif  // FORESTHUB_PLATFORM_ARDUINO && FORESTHUB_ENABLE_NETWORK

@@ -9,7 +9,7 @@
 #include <memory>
 #include <string>
 
-#include "foresthub/core/types.hpp"
+#include "foresthub/llm/types.hpp"
 
 using namespace foresthub;
 

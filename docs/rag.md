@@ -118,8 +118,8 @@ The following example shows the complete retrieve-format-inject-chat pipeline:
 ```cpp
 #include "foresthub/client.hpp"
 #include "foresthub/config/config.hpp"
-#include "foresthub/core/input.hpp"
-#include "foresthub/core/types.hpp"
+#include "foresthub/llm/input.hpp"
+#include "foresthub/llm/types.hpp"
 #include "foresthub/rag/remote/retriever.hpp"
 #include "foresthub/rag/types.hpp"
 

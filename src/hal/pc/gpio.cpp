@@ -5,7 +5,7 @@
 #include "gpio.hpp"
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace pc {
 
 void PcGpio::SetPinMode(PinID pin, PinMode mode) {
@@ -42,5 +42,5 @@ void PcGpio::PwmWrite(PinID pin, int duty) {
 }
 
 }  // namespace pc
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub

@@ -9,8 +9,8 @@
 #include <cstdlib>
 #include <memory>
 
-#include "foresthub/platform/platform.hpp"
-#include "platform/pc/platform.hpp"
+#include "foresthub/hal/platform.hpp"
+#include "hal/pc/platform.hpp"
 
 namespace app {
 
@@ -24,9 +24,9 @@ constexpr int kExitTimeFailed = 13;
 // Initialize the platform and all subsystems.
 // Returns a fully initialized Platform, or exits on failure.
 // This function never returns an invalid platform -- it exits the process if initialization fails.
-inline std::shared_ptr<foresthub::platform::Platform> SetupPlatform() {
+inline std::shared_ptr<foresthub::hal::Platform> SetupPlatform() {
     // 1. Create platform context
-    auto platform = std::make_shared<foresthub::platform::pc::PcPlatform>();
+    auto platform = std::make_shared<foresthub::hal::pc::PcPlatform>();
     if (!platform) {
         // Must use fprintf(stderr) here because console is not yet initialized
         std::fprintf(stderr, "[FATAL] Failed to create platform context\n");

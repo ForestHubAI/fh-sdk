@@ -23,7 +23,7 @@
 #endif
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace arduino {
 
 ArduinoPlatform::ArduinoPlatform(const ArduinoConfig& config) {
@@ -43,7 +43,7 @@ ArduinoPlatform::ArduinoPlatform(const ArduinoConfig& config) {
 #endif
 }
 
-std::shared_ptr<core::HttpClient> ArduinoPlatform::CreateHttpClient(const core::HttpClientConfig& config) {
+std::shared_ptr<HttpClient> ArduinoPlatform::CreateHttpClient(const HttpClientConfig& config) {
 #ifdef FORESTHUB_ENABLE_NETWORK
     if (config.use_tls) {
 #ifdef FORESTHUB_ENABLE_CRYPTO
@@ -51,7 +51,7 @@ std::shared_ptr<core::HttpClient> ArduinoPlatform::CreateHttpClient(const core::
         auto* arduino_crypto = static_cast<ArduinoCrypto*>(crypto.get());
         std::shared_ptr<TLSClientWrapper> tls_wrapper = arduino_crypto->CreateTlsClient(nullptr, config.timeout_ms);
         return std::make_shared<ArduinoHttpClient>(std::move(tls_wrapper), config.host, config.port,
-                                                          config.timeout_ms);
+                              config.timeout_ms);
 #else
         // TLS requested but FORESTHUB_ENABLE_CRYPTO not defined
         return nullptr;
@@ -62,7 +62,7 @@ std::shared_ptr<core::HttpClient> ArduinoPlatform::CreateHttpClient(const core::
     auto plain_client = std::make_unique<WiFiClient>();
     plain_client->setTimeout(config.timeout_ms / 1000);
     return std::make_shared<ArduinoHttpClient>(std::move(plain_client), config.host, config.port,
-                                                      config.timeout_ms);
+                                              config.timeout_ms);
 #else
     (void)config;
     return nullptr;
@@ -70,7 +70,7 @@ std::shared_ptr<core::HttpClient> ArduinoPlatform::CreateHttpClient(const core::
 }
 
 }  // namespace arduino
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub
 
 #endif  // FORESTHUB_PLATFORM_ARDUINO

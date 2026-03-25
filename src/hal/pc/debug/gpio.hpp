@@ -7,10 +7,10 @@
 
 #include <map>
 
-#include "foresthub/platform/gpio.hpp"
+#include "foresthub/hal/gpio.hpp"
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace debug {
 
 /// Debug GPIO backed by an in-memory map.
@@ -32,7 +32,7 @@ private:
 };
 
 }  // namespace debug
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub
 
 #endif  // FORESTHUB_PLATFORM_DEBUG_GPIO_HPP

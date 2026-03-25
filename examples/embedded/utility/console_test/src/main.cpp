@@ -20,27 +20,27 @@
 
 #include <Arduino.h>
 
-#include "foresthub/platform/platform.hpp"
-#include "platform/arduino/platform.hpp"
+#include "foresthub/hal/platform.hpp"
+#include "hal/arduino/platform.hpp"
 
 // -- Board-specific LED configuration ----------------------------------------
 #if defined(ARDUINO_PORTENTA_H7_M7)
-static constexpr foresthub::platform::PinID kLedPin = LEDB;
+static constexpr foresthub::hal::PinID kLedPin = LEDB;
 static constexpr bool kLedActiveLow = true;
 #else
-static constexpr foresthub::platform::PinID kLedPin = 2;
+static constexpr foresthub::hal::PinID kLedPin = 2;
 static constexpr bool kLedActiveLow = false;
 #endif
 
-static std::shared_ptr<foresthub::platform::Platform> platform;
+static std::shared_ptr<foresthub::hal::Platform> platform;
 static bool running = true;
 static unsigned long last_blink_ms = 0;
 static unsigned long loops = 0;
 static bool led_on = false;
 
 void setup() {
-    foresthub::platform::arduino::ArduinoConfig config;
-    platform = std::make_shared<foresthub::platform::arduino::ArduinoPlatform>(config);
+    foresthub::hal::arduino::ArduinoConfig config;
+    platform = std::make_shared<foresthub::hal::arduino::ArduinoPlatform>(config);
     if (!platform) {
         while (true) {
         }
@@ -50,7 +50,7 @@ void setup() {
     platform->time->Delay(500);
 
     // Configure LED
-    platform->gpio->SetPinMode(kLedPin, foresthub::platform::PinMode::kOutput);
+    platform->gpio->SetPinMode(kLedPin, foresthub::hal::PinMode::kOutput);
     platform->gpio->DigitalWrite(kLedPin, kLedActiveLow ? 1 : 0);
 
     platform->console->Printf("\n=== ForestHub Console Test (Embedded) ===\n\n");
@@ -83,7 +83,7 @@ void loop() {
     }
 
     // --- Non-blocking input poll ---
-    foresthub::Optional<std::string> line = platform->console->TryReadLine();
+    foresthub::util::Optional<std::string> line = platform->console->TryReadLine();
 
     if (line.HasValue()) {
         const auto& input = *line;

@@ -2,8 +2,8 @@
 // Copyright (c) 2026 ForestHub. All rights reserved.
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
-#ifndef FORESTHUB_PLATFORM_GPIO_HPP
-#define FORESTHUB_PLATFORM_GPIO_HPP
+#ifndef FORESTHUB_HAL_GPIO_HPP
+#define FORESTHUB_HAL_GPIO_HPP
 
 /// @file
 /// Abstract interface for general-purpose pin I/O and PWM.
@@ -80,4 +80,4 @@ public:
 }  // namespace hal
 }  // namespace foresthub
 
-#endif  // FORESTHUB_PLATFORM_GPIO_HPP
+#endif  // FORESTHUB_HAL_GPIO_HPP

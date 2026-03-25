@@ -7,7 +7,7 @@
 #include "foresthub/llm/input.hpp"
 #include "foresthub/llm/tools.hpp"
 #include "foresthub/util/schema.hpp"
-#include "provider/remote/schema_utils.hpp"
+#include "llm/provider/remote/schema_utils.hpp"
 
 namespace foresthub {
 namespace provider {
@@ -79,7 +79,7 @@ static json ToGeminiContents(const llm::ChatRequest& req) {
 
 // Maps llm::Options to Gemini generationConfig with camelCase keys.
 static void IncludeGenerationConfig(json& j, const llm::Options& opts,
-                                    const foresthub::Optional<llm::ResponseFormat>& response_format) {
+                                    const util::Optional<llm::ResponseFormat>& response_format) {
     json config;
 
     if (opts.temperature) {

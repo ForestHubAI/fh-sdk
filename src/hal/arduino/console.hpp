@@ -6,10 +6,10 @@
 #define FORESTHUB_PLATFORM_ARDUINO_CONSOLE_HPP
 
 #include "board_core.hpp"
-#include "foresthub/platform/console.hpp"
+#include "foresthub/hal/console.hpp"
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace arduino {
 
 /// Console implementation for Arduino with line editing, output chunking, and configurable Stream.
@@ -56,7 +56,7 @@ private:
 };
 
 }  // namespace arduino
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub
 
 #endif  // FORESTHUB_PLATFORM_ARDUINO_CONSOLE_HPP

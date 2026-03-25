@@ -5,20 +5,20 @@
 # 1. Define Platform-Independent Sources
 # These files contain the logic that is identical on all platforms.
 set(FORESTHUB_SOURCES
-    client.cpp
-    agent/agent.cpp
-    agent/runner.cpp
-    core/serialization.cpp
-    provider/remote/foresthub/provider.cpp
-    provider/remote/gemini/provider.cpp
-    provider/remote/gemini/mapping.cpp
-    provider/remote/anthropic/provider.cpp
-    provider/remote/anthropic/mapping.cpp
-    provider/remote/openai/provider.cpp
-    provider/remote/openai/mapping.cpp
-    provider/remote/schema_utils.cpp
-    rag/serialization.cpp
-    rag/remote/retriever.cpp
+    llm/client.cpp
+    llm/agent/agent.cpp
+    llm/agent/runner.cpp
+    llm/serialization.cpp
+    llm/provider/remote/foresthub/provider.cpp
+    llm/provider/remote/gemini/provider.cpp
+    llm/provider/remote/gemini/mapping.cpp
+    llm/provider/remote/anthropic/provider.cpp
+    llm/provider/remote/anthropic/mapping.cpp
+    llm/provider/remote/openai/provider.cpp
+    llm/provider/remote/openai/mapping.cpp
+    llm/provider/remote/schema_utils.cpp
+    llm/rag/serialization.cpp
+    llm/rag/remote/retriever.cpp
     util/schema.cpp
 )
 
@@ -32,25 +32,25 @@ if(FORESTHUB_PLATFORM STREQUAL "pc_debug")
     message(STATUS "Configuring foresthub_core for: PC / DEBUG")
     list(APPEND FORESTHUB_SOURCES
         # Reuse PC implementations for network, time, crypto, http
-        platform/pc/network.cpp
-        platform/pc/time.cpp
-        platform/pc/crypto.cpp
-        platform/pc/http_client.cpp
+        hal/pc/network.cpp
+        hal/pc/time.cpp
+        hal/pc/crypto.cpp
+        hal/pc/http_client.cpp
         # Debug-specific implementations (override console, gpio, platform)
-        platform/pc/debug/platform.cpp
-        platform/pc/debug/console.cpp
-        platform/pc/debug/gpio.cpp
+        hal/pc/debug/platform.cpp
+        hal/pc/debug/console.cpp
+        hal/pc/debug/gpio.cpp
     )
 elseif(FORESTHUB_PLATFORM STREQUAL "pc")
     message(STATUS "Configuring foresthub_core for: PC / LINUX")
     list(APPEND FORESTHUB_SOURCES
-        platform/pc/platform.cpp
-        platform/pc/network.cpp
-        platform/pc/console.cpp
-        platform/pc/time.cpp
-        platform/pc/crypto.cpp
-        platform/pc/gpio.cpp
-        platform/pc/http_client.cpp
+        hal/pc/platform.cpp
+        hal/pc/network.cpp
+        hal/pc/console.cpp
+        hal/pc/time.cpp
+        hal/pc/crypto.cpp
+        hal/pc/gpio.cpp
+        hal/pc/http_client.cpp
     )
 else()
     message(FATAL_ERROR "Unknown FORESTHUB_PLATFORM: '${FORESTHUB_PLATFORM}'. Valid values: pc, pc_debug")
@@ -117,8 +117,8 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/third_party/nlohmann/
 # Install debug platform header so generated workflow code can #include it
 if(FORESTHUB_PLATFORM STREQUAL "pc_debug")
     install(FILES
-        ${CMAKE_CURRENT_SOURCE_DIR}/platform/pc/debug/platform.hpp
-        DESTINATION include/foresthub/platform/debug
+        ${CMAKE_CURRENT_SOURCE_DIR}/hal/pc/debug/platform.hpp
+        DESTINATION include/foresthub/hal/debug
     )
 endif()
 

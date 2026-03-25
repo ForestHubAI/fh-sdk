@@ -2,7 +2,7 @@
 // Copyright (c) 2026 ForestHub. All rights reserved.
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
-#include "platform/pc/debug/console.hpp"
+#include "hal/pc/debug/console.hpp"
 
 #include <gtest/gtest.h>
 
@@ -10,7 +10,7 @@
 #include <vector>
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace debug {
 namespace {
 
@@ -74,5 +74,5 @@ TEST(DebugConsoleTest, ClearLineBufferDoesNotCrash) {
 
 }  // namespace
 }  // namespace debug
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub

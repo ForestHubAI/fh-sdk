@@ -5,7 +5,7 @@
 #include "crypto.hpp"
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace pc {
 
 std::shared_ptr<TLSClientWrapper> PcCrypto::CreateTlsClient(const char* /*root_ca*/, unsigned long /*timeout_ms*/) {
@@ -24,5 +24,5 @@ bool PcCrypto::IsAvailable() const {
 }
 
 }  // namespace pc
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub

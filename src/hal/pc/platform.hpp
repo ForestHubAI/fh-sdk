@@ -5,10 +5,10 @@
 #ifndef FORESTHUB_PLATFORM_PC_PLATFORM_HPP
 #define FORESTHUB_PLATFORM_PC_PLATFORM_HPP
 
-#include "foresthub/platform/platform.hpp"
+#include "foresthub/hal/platform.hpp"
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace pc {
 
 /// Construction-time configuration for the PC platform.
@@ -21,11 +21,11 @@ public:
     explicit PcPlatform(const PcConfig& config = {});
 
     /// Ignores host/port/use_tls; CPR handles routing per request.
-    std::shared_ptr<core::HttpClient> CreateHttpClient(const core::HttpClientConfig& config) override;
+    std::shared_ptr<HttpClient> CreateHttpClient(const HttpClientConfig& config) override;
 };
 
 }  // namespace pc
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub
 
 #endif  // FORESTHUB_PLATFORM_PC_PLATFORM_HPP

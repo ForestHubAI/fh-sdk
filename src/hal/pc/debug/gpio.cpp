@@ -7,7 +7,7 @@
 #include <iostream>
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace debug {
 
 DebugGpio::DebugGpio(const std::map<PinID, int>& initial_values) : pin_values_(initial_values) {}
@@ -50,5 +50,5 @@ void DebugGpio::PwmWrite(PinID /*pin*/, int /*duty*/) {
 }
 
 }  // namespace debug
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub

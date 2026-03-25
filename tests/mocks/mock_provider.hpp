@@ -11,35 +11,35 @@
 #include <string>
 #include <vector>
 
-#include "foresthub/core/provider.hpp"
+#include "foresthub/llm/provider.hpp"
 
 namespace foresthub {
 namespace tests {
 
-class MockProvider : public core::Provider {
+class MockProvider : public llm::Provider {
 public:
     std::string provider_id = "mock-provider";
     std::vector<std::string> models;
     std::string health_result;
-    std::deque<std::shared_ptr<core::ChatResponse>> responses;
+    std::deque<std::shared_ptr<llm::ChatResponse>> responses;
     int call_count = 0;
-    core::ChatRequest last_request;
+    llm::ChatRequest last_request;
 
-    core::ProviderID ProviderId() const override { return provider_id; }
+    llm::ProviderID ProviderId() const override { return provider_id; }
 
     std::string Health() const override { return health_result; }
 
-    bool SupportsModel(const core::ModelID& model) const override {
+    bool SupportsModel(const llm::ModelID& model) const override {
         return std::find(models.begin(), models.end(), model) != models.end();
     }
 
-    std::shared_ptr<core::ChatResponse> Chat(const core::ChatRequest& req) override {
+    std::shared_ptr<llm::ChatResponse> Chat(const llm::ChatRequest& req) override {
         ++call_count;
         last_request = req;
         if (responses.empty()) {
             return nullptr;
         }
-        std::shared_ptr<core::ChatResponse> resp = responses.front();
+        std::shared_ptr<llm::ChatResponse> resp = responses.front();
         responses.pop_front();
         return resp;
     }

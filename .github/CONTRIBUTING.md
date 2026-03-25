@@ -43,7 +43,7 @@ pio run -d pio/build_test -e esp32dev
 
 ## Code Style
 
-- **C++14 only** — no C++17 features (`<optional>`, `<string_view>`, `<any>`, `if constexpr`, structured bindings, `std::variant`). Use `foresthub::Optional<T>` instead of `std::optional`.
+- **C++14 only** — no C++17 features (`<optional>`, `<string_view>`, `<any>`, `if constexpr`, structured bindings, `std::variant`). Use `foresthub::util::Optional<T>` instead of `std::optional`.
 - Follow the [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.html).
 - 4-space indent, 120-character line limit. See `.clang-format`.
 

@@ -7,11 +7,11 @@
 #include <memory>
 #include <string>
 
-#include "foresthub/platform/platform.hpp"
-#include "platform/pc/platform.hpp"
+#include "foresthub/hal/platform.hpp"
+#include "hal/pc/platform.hpp"
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace {
 
 // Helper to get a console instance for testing.
@@ -63,5 +63,5 @@ TEST(ConsoleTest, AvailableReturnsBool) {
 }
 
 }  // namespace
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub

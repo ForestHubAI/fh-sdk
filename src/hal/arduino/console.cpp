@@ -10,7 +10,7 @@
 #include <cstring>
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace arduino {
 
 // =============================================================================
@@ -305,7 +305,7 @@ void ArduinoConsole::Flush() noexcept {
 }
 
 }  // namespace arduino
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub
 
 #endif  // FORESTHUB_PLATFORM_ARDUINO

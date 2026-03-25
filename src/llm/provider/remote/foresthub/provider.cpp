@@ -6,7 +6,7 @@
 #include <utility>
 
 #include "foresthub/llm/serialization.hpp"
-#include "foresthub/llm/provider/remote/foresthub.hpp"
+#include "provider.hpp"
 
 namespace foresthub {
 namespace provider {
@@ -14,7 +14,7 @@ namespace remote {
 
 using json = nlohmann::json;
 
-ForestHubProvider::ForestHubProvider(const config::ProviderConfig& cfg, std::shared_ptr<llm::HttpClient> http_client)
+ForestHubProvider::ForestHubProvider(const llm::ProviderConfig& cfg, std::shared_ptr<hal::HttpClient> http_client)
     : http_(std::move(http_client)),
       api_key_(cfg.api_key),
       base_url_(cfg.base_url),
@@ -32,7 +32,7 @@ llm::ProviderID ForestHubProvider::ProviderId() const {
 
 std::string ForestHubProvider::Health() const {
     std::string url = base_url_ + "/llm/health";
-    llm::HttpResponse resp = http_->Get(url, cached_headers_);
+    hal::HttpResponse resp = http_->Get(url, cached_headers_);
     if (resp.status_code >= 200 && resp.status_code < 300) {
         return "";
     }
@@ -54,7 +54,7 @@ std::shared_ptr<llm::ChatResponse> ForestHubProvider::Chat(const llm::ChatReques
     std::string body = j_req.dump();
 
     // Retry with linear backoff (500ms * attempt)
-    llm::HttpResponse resp;
+    hal::HttpResponse resp;
     unsigned long attempts = 0;
     const unsigned long max_attempts = 2;
 

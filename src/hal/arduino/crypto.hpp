@@ -10,10 +10,10 @@
 #include <memory>
 
 #include "board_wifi.hpp"
-#include "foresthub/platform/crypto.hpp"
+#include "foresthub/hal/crypto.hpp"
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace arduino {
 
 /// TLSClientWrapper implementation wrapping the board-specific TLS client with root CA certificates.
@@ -48,7 +48,7 @@ public:
 };
 
 }  // namespace arduino
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub
 
 #endif  // FORESTHUB_ENABLE_CRYPTO

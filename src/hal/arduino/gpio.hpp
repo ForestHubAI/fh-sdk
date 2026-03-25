@@ -9,10 +9,10 @@
 
 #include <array>
 
-#include "foresthub/platform/gpio.hpp"
+#include "foresthub/hal/gpio.hpp"
 
 namespace foresthub {
-namespace platform {
+namespace hal {
 namespace arduino {
 
 /// Arduino GPIO using platform-specific digital, analog, and PWM peripherals.
@@ -42,7 +42,7 @@ private:
 };
 
 }  // namespace arduino
-}  // namespace platform
+}  // namespace hal
 }  // namespace foresthub
 
 #endif  // FORESTHUB_ENABLE_GPIO

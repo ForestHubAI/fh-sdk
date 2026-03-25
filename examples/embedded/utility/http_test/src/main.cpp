@@ -5,10 +5,10 @@
 #include <Arduino.h>
 
 #include "env.hpp"
-#include "foresthub/platform/platform.hpp"
-#include "platform/arduino/platform.hpp"
+#include "foresthub/hal/platform.hpp"
+#include "hal/arduino/platform.hpp"
 
-static std::shared_ptr<foresthub::platform::Platform> platform;
+static std::shared_ptr<foresthub::hal::Platform> platform;
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -29,7 +29,7 @@ static void PrintResult(const char* label, bool passed) {
 static bool TestPlainHttp() {
     platform->console->Printf("[TEST 1] Plain HTTP (httpbin.org:80)\n");
 
-    foresthub::core::HttpClientConfig cfg;
+    foresthub::hal::HttpClientConfig cfg;
     cfg.host = "httpbin.org";
     cfg.port = 80;
     cfg.use_tls = false;
@@ -68,7 +68,7 @@ static bool TestHttps() {
 #ifdef FORESTHUB_ENABLE_CRYPTO
     platform->console->Printf("[TEST 2] HTTPS (%s:443, TLS)\n", kForesthubHost);
 
-    foresthub::core::HttpClientConfig cfg;
+    foresthub::hal::HttpClientConfig cfg;
     cfg.host = kForesthubHost;
     cfg.port = 443;
     cfg.use_tls = true;
@@ -104,7 +104,7 @@ static bool TestHttps() {
     platform->console->Printf("[TEST 2] HTTPS — SKIPPED (FORESTHUB_ENABLE_CRYPTO not defined)\n");
 
     // Verify that CreateHttpClient returns nullptr for TLS when crypto is disabled
-    foresthub::core::HttpClientConfig cfg;
+    foresthub::hal::HttpClientConfig cfg;
     cfg.host = kForesthubHost;
     cfg.port = 443;
     cfg.use_tls = true;
@@ -125,10 +125,10 @@ static bool TestHttps() {
 
 void setup() {
     // 1. Create platform
-    foresthub::platform::arduino::ArduinoConfig config;
+    foresthub::hal::arduino::ArduinoConfig config;
     config.network.ssid = kWifiSsid;
     config.network.password = kWifiPassword;
-    platform = std::make_shared<foresthub::platform::arduino::ArduinoPlatform>(config);
+    platform = std::make_shared<foresthub::hal::arduino::ArduinoPlatform>(config);
 
     platform->console->Begin();
     platform->time->Delay(1000);
