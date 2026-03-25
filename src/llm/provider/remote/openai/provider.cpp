@@ -9,8 +9,8 @@
 #include "mapping.hpp"
 
 namespace foresthub {
-namespace provider {
-namespace remote {
+namespace llm {
+namespace openai {
 
 using json = nlohmann::json;
 
@@ -93,6 +93,6 @@ std::shared_ptr<llm::ChatResponse> OpenAIProvider::Chat(const llm::ChatRequest& 
     return FromOpenAIResponse(j_resp);
 }
 
-}  // namespace remote
-}  // namespace provider
+}  // namespace openai
+}  // namespace llm
 }  // namespace foresthub

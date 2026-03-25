@@ -7,8 +7,7 @@
 #include <gtest/gtest.h>
 
 namespace foresthub {
-namespace provider {
-namespace remote {
+namespace llm {
 namespace {
 
 // --- EnsureAllRequired ---
@@ -189,6 +188,5 @@ TEST(SchemaUtils, StripAdditionalPropertiesLiteralNonObject) {
 }
 
 }  // namespace
-}  // namespace remote
-}  // namespace provider
+}  // namespace llm
 }  // namespace foresthub

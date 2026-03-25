@@ -228,6 +228,7 @@ Everything below is for **contributors and maintainers** working on the SDK itse
 
 ```bash
 # PC
+# One-time setup (configure)
 cmake -S . -B build -DBUILD_TESTING=ON
 cmake --build build -j4
 
@@ -240,7 +241,7 @@ See [Embedded Guide](https://github.com/ForestHubAI/fh-sdk/blob/main/docs/embedd
 ### Testing
 
 ```bash
-cd build && ctest --output-on-failure
+cmake --build build -j4 && ctest --test-dir build --output-on-failure
 ```
 
 Run a specific test: `./build/bin/Debug/run_core_tests --gtest_filter="InputTest.*"`

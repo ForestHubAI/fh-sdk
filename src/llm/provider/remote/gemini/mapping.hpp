@@ -11,8 +11,8 @@
 #include "foresthub/util/json.hpp"
 
 namespace foresthub {
-namespace provider {
-namespace remote {
+namespace llm {
+namespace gemini {
 
 using json = nlohmann::json;
 
@@ -22,8 +22,8 @@ json ToGeminiRequest(const llm::ChatRequest& req);
 /// Parse a Gemini generateContent API JSON response into a ChatResponse.
 std::shared_ptr<llm::ChatResponse> FromGeminiResponse(const json& j);
 
-}  // namespace remote
-}  // namespace provider
+}  // namespace gemini
+}  // namespace llm
 }  // namespace foresthub
 
 #endif  // FORESTHUB_PROVIDER_REMOTE_GEMINI_MAPPING_HPP

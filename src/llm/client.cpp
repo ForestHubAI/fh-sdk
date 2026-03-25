@@ -18,22 +18,22 @@ std::unique_ptr<Client> Client::Create(const ClientConfig& cfg,
     auto client = std::make_unique<Client>();
 
     if (cfg.remote.anthropic.HasValue()) {
-        auto provider = std::make_shared<foresthub::provider::remote::AnthropicProvider>(*cfg.remote.anthropic, http_client);
+        auto provider = std::make_shared<anthropic::AnthropicProvider>(*cfg.remote.anthropic, http_client);
         client->RegisterProvider(provider);
     }
 
     if (cfg.remote.foresthub.HasValue()) {
-        auto provider = std::make_shared<foresthub::provider::remote::ForestHubProvider>(*cfg.remote.foresthub, http_client);
+        auto provider = std::make_shared<fh::ForestHubProvider>(*cfg.remote.foresthub, http_client);
         client->RegisterProvider(provider);
     }
 
     if (cfg.remote.gemini.HasValue()) {
-        auto provider = std::make_shared<foresthub::provider::remote::GeminiProvider>(*cfg.remote.gemini, http_client);
+        auto provider = std::make_shared<gemini::GeminiProvider>(*cfg.remote.gemini, http_client);
         client->RegisterProvider(provider);
     }
 
     if (cfg.remote.openai.HasValue()) {
-        auto provider = std::make_shared<foresthub::provider::remote::OpenAIProvider>(*cfg.remote.openai, http_client);
+        auto provider = std::make_shared<openai::OpenAIProvider>(*cfg.remote.openai, http_client);
         client->RegisterProvider(provider);
     }
 

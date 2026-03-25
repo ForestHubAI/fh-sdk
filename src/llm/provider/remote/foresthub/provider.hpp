@@ -17,8 +17,8 @@
 #include "foresthub/llm/provider.hpp"
 
 namespace foresthub {
-namespace provider {
-namespace remote {
+namespace llm {
+namespace fh {
 
 /// Provider implementation that communicates with the ForestHub backend via HTTP.
 class ForestHubProvider : public llm::Provider {
@@ -41,8 +41,8 @@ private:
     hal::HttpClient::Headers cached_headers_;
 };
 
-}  // namespace remote
-}  // namespace provider
+}  // namespace fh
+}  // namespace llm
 }  // namespace foresthub
 
 #endif  // FORESTHUB_PROVIDER_REMOTE_FORESTHUB_HPP

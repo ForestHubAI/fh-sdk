@@ -10,8 +10,8 @@
 #include "llm/provider/remote/schema_utils.hpp"
 
 namespace foresthub {
-namespace provider {
-namespace remote {
+namespace llm {
+namespace gemini {
 
 // Normalizes and applies Gemini schema requirements (required all, no additionalProperties).
 static json PrepareSchemaForGemini(const json& schema) {
@@ -233,6 +233,6 @@ std::shared_ptr<llm::ChatResponse> FromGeminiResponse(const json& j) {
     return resp;
 }
 
-}  // namespace remote
-}  // namespace provider
+}  // namespace gemini
+}  // namespace llm
 }  // namespace foresthub

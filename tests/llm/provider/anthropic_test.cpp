@@ -13,8 +13,8 @@
 #include "mocks/mock_http_client.hpp"
 
 namespace foresthub {
-namespace provider {
-namespace remote {
+namespace llm {
+namespace anthropic {
 namespace {
 
 using hal::HttpResponse;
@@ -837,6 +837,6 @@ TEST(AnthropicProvider, ChatResponseMultipleTextBlocks) {
 }
 
 }  // namespace
-}  // namespace remote
-}  // namespace provider
+}  // namespace anthropic
+}  // namespace llm
 }  // namespace foresthub

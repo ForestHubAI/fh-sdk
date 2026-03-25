@@ -17,8 +17,8 @@
 #include "foresthub/llm/provider.hpp"
 
 namespace foresthub {
-namespace provider {
-namespace remote {
+namespace llm {
+namespace gemini {
 
 /// Direct Google Gemini provider using the native generateContent API (v1beta).
 ///
@@ -45,8 +45,8 @@ private:
     hal::HttpClient::Headers cached_headers_;
 };
 
-}  // namespace remote
-}  // namespace provider
+}  // namespace gemini
+}  // namespace llm
 }  // namespace foresthub
 
 #endif  // FORESTHUB_PROVIDER_REMOTE_GEMINI_HPP

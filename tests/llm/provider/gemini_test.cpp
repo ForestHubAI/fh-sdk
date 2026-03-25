@@ -13,8 +13,8 @@
 #include "mocks/mock_http_client.hpp"
 
 namespace foresthub {
-namespace provider {
-namespace remote {
+namespace llm {
+namespace gemini {
 namespace {
 
 using hal::HttpResponse;
@@ -752,6 +752,6 @@ TEST(GeminiProvider, ChatToolCallWithoutArgs) {
 }
 
 }  // namespace
-}  // namespace remote
-}  // namespace provider
+}  // namespace gemini
+}  // namespace llm
 }  // namespace foresthub

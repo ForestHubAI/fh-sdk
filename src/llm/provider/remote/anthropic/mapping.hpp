@@ -11,8 +11,8 @@
 #include "foresthub/util/json.hpp"
 
 namespace foresthub {
-namespace provider {
-namespace remote {
+namespace llm {
+namespace anthropic {
 
 using json = nlohmann::json;
 
@@ -22,8 +22,8 @@ json ToAnthropicRequest(const llm::ChatRequest& req, int default_max_tokens);
 /// Parse an Anthropic Messages API JSON response into a ChatResponse.
 std::shared_ptr<llm::ChatResponse> FromAnthropicResponse(const json& j);
 
-}  // namespace remote
-}  // namespace provider
+}  // namespace anthropic
+}  // namespace llm
 }  // namespace foresthub
 
 #endif  // FORESTHUB_PROVIDER_REMOTE_ANTHROPIC_MAPPING_HPP

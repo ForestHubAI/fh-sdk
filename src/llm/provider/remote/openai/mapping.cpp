@@ -10,8 +10,8 @@
 #include "llm/provider/remote/schema_utils.hpp"
 
 namespace foresthub {
-namespace provider {
-namespace remote {
+namespace llm {
+namespace openai {
 
 // Normalizes and applies OpenAI strict-mode requirements to a JSON Schema.
 static json PrepareSchemaForOpenAI(const json& schema) {
@@ -207,6 +207,6 @@ std::shared_ptr<llm::ChatResponse> FromOpenAIResponse(const json& j) {
     return resp;
 }
 
-}  // namespace remote
-}  // namespace provider
+}  // namespace openai
+}  // namespace llm
 }  // namespace foresthub

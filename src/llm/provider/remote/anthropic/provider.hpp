@@ -17,8 +17,8 @@
 #include "foresthub/llm/provider.hpp"
 
 namespace foresthub {
-namespace provider {
-namespace remote {
+namespace llm {
+namespace anthropic {
 
 /// Direct Anthropic Claude provider using the native Messages API (`POST /v1/messages`).
 ///
@@ -48,8 +48,8 @@ private:
     hal::HttpClient::Headers cached_headers_;
 };
 
-}  // namespace remote
-}  // namespace provider
+}  // namespace anthropic
+}  // namespace llm
 }  // namespace foresthub
 
 #endif  // FORESTHUB_PROVIDER_REMOTE_ANTHROPIC_HPP

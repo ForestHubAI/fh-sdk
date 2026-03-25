@@ -9,8 +9,8 @@
 #include "mapping.hpp"
 
 namespace foresthub {
-namespace provider {
-namespace remote {
+namespace llm {
+namespace gemini {
 
 using json = nlohmann::json;
 
@@ -94,6 +94,6 @@ std::shared_ptr<llm::ChatResponse> GeminiProvider::Chat(const llm::ChatRequest& 
     return FromGeminiResponse(j_resp);
 }
 
-}  // namespace remote
-}  // namespace provider
+}  // namespace gemini
+}  // namespace llm
 }  // namespace foresthub

@@ -5,8 +5,7 @@
 #include "schema_utils.hpp"
 
 namespace foresthub {
-namespace provider {
-namespace remote {
+namespace llm {
 
 json EnsureAllRequired(json schema) {
     if (!schema.is_object()) {
@@ -73,6 +72,5 @@ json StripAdditionalProperties(json schema) {
     return schema;
 }
 
-}  // namespace remote
-}  // namespace provider
+}  // namespace llm
 }  // namespace foresthub

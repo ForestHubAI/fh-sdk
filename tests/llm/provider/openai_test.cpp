@@ -13,8 +13,8 @@
 #include "mocks/mock_http_client.hpp"
 
 namespace foresthub {
-namespace provider {
-namespace remote {
+namespace llm {
+namespace openai {
 namespace {
 
 using hal::HttpResponse;
@@ -547,6 +547,6 @@ TEST(OpenAIProvider, ChatResponseMultipleTextParts) {
 }
 
 }  // namespace
-}  // namespace remote
-}  // namespace provider
+}  // namespace openai
+}  // namespace llm
 }  // namespace foresthub

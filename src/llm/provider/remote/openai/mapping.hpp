@@ -11,8 +11,8 @@
 #include "foresthub/util/json.hpp"
 
 namespace foresthub {
-namespace provider {
-namespace remote {
+namespace llm {
+namespace openai {
 
 using json = nlohmann::json;
 
@@ -22,8 +22,8 @@ json ToOpenAIRequest(const llm::ChatRequest& req);
 /// Parse an OpenAI Responses API JSON response into a ChatResponse.
 std::shared_ptr<llm::ChatResponse> FromOpenAIResponse(const json& j);
 
-}  // namespace remote
-}  // namespace provider
+}  // namespace openai
+}  // namespace llm
 }  // namespace foresthub
 
 #endif  // FORESTHUB_PROVIDER_REMOTE_OPENAI_MAPPING_HPP

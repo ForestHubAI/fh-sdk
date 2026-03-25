@@ -8,8 +8,7 @@
 #include "foresthub/util/json.hpp"
 
 namespace foresthub {
-namespace provider {
-namespace remote {
+namespace llm {
 
 using json = nlohmann::json;
 
@@ -24,8 +23,7 @@ json SetNoAdditionalProperties(json schema);
 /// Removes the "additionalProperties" key from all objects, recursively.
 json StripAdditionalProperties(json schema);
 
-}  // namespace remote
-}  // namespace provider
+}  // namespace llm
 }  // namespace foresthub
 
 #endif  // FORESTHUB_PROVIDER_REMOTE_SCHEMA_UTILS_HPP

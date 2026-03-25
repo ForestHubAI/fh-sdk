@@ -9,8 +9,8 @@
 #include "provider.hpp"
 
 namespace foresthub {
-namespace provider {
-namespace remote {
+namespace llm {
+namespace fh {
 
 using json = nlohmann::json;
 
@@ -94,6 +94,6 @@ std::shared_ptr<llm::ChatResponse> ForestHubProvider::Chat(const llm::ChatReques
     return chat_resp;
 }
 
-}  // namespace remote
-}  // namespace provider
+}  // namespace fh
+}  // namespace llm
 }  // namespace foresthub

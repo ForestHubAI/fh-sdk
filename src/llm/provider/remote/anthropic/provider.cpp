@@ -9,8 +9,8 @@
 #include "mapping.hpp"
 
 namespace foresthub {
-namespace provider {
-namespace remote {
+namespace llm {
+namespace anthropic {
 
 using json = nlohmann::json;
 
@@ -95,6 +95,6 @@ std::shared_ptr<llm::ChatResponse> AnthropicProvider::Chat(const llm::ChatReques
     return FromAnthropicResponse(j_resp);
 }
 
-}  // namespace remote
-}  // namespace provider
+}  // namespace anthropic
+}  // namespace llm
 }  // namespace foresthub

@@ -13,8 +13,8 @@
 #include "mocks/mock_http_client.hpp"
 
 namespace foresthub {
-namespace provider {
-namespace remote {
+namespace llm {
+namespace fh {
 namespace {
 
 using hal::HttpResponse;
@@ -336,6 +336,6 @@ TEST(ForestHubProvider, ChatDelayCalledOnRetry) {
 }
 
 }  // namespace
-}  // namespace remote
-}  // namespace provider
+}  // namespace fh
+}  // namespace llm
 }  // namespace foresthub

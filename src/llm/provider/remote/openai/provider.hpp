@@ -17,8 +17,8 @@
 #include "foresthub/llm/provider.hpp"
 
 namespace foresthub {
-namespace provider {
-namespace remote {
+namespace llm {
+namespace openai {
 
 /// Direct OpenAI provider using the Responses API (`POST /v1/responses`).
 class OpenAIProvider : public llm::Provider {
@@ -41,8 +41,8 @@ private:
     hal::HttpClient::Headers cached_headers_;
 };
 
-}  // namespace remote
-}  // namespace provider
+}  // namespace openai
+}  // namespace llm
 }  // namespace foresthub
 
 #endif  // FORESTHUB_PROVIDER_REMOTE_OPENAI_HPP

@@ -10,8 +10,8 @@
 #include "llm/provider/remote/schema_utils.hpp"
 
 namespace foresthub {
-namespace provider {
-namespace remote {
+namespace llm {
+namespace anthropic {
 
 // Normalizes and applies Anthropic strict-mode requirements to a JSON Schema.
 static json PrepareSchemaForAnthropic(const json& schema) {
@@ -216,6 +216,6 @@ std::shared_ptr<llm::ChatResponse> FromAnthropicResponse(const json& j) {
     return resp;
 }
 
-}  // namespace remote
-}  // namespace provider
+}  // namespace anthropic
+}  // namespace llm
 }  // namespace foresthub
