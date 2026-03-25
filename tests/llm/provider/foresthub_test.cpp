@@ -23,7 +23,7 @@ using json = nlohmann::json;
 // Helper: create a ForestHubProvider with the given MockHttpClient and config.
 struct TestFixture {
     std::shared_ptr<tests::MockHttpClient> mock_http = std::make_shared<tests::MockHttpClient>();
-    config::ProviderConfig cfg;
+    llm::ProviderConfig cfg;
 
     TestFixture() {
         cfg.base_url = "https://api.example.com";
@@ -321,7 +321,7 @@ TEST(ForestHubProvider, ChatDelayCalledOnRetry) {
     mock->post_responses.push_back({500, "error", {}});
     mock->post_responses.push_back({200, TestFixture::ValidResponseBody(), {}});
 
-    config::ProviderConfig cfg;
+    llm::ProviderConfig cfg;
     cfg.base_url = "https://api.example.com";
     cfg.api_key = "key";
     cfg.supported_models = {"gpt-4"};

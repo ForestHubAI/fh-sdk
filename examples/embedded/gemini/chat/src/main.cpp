@@ -83,7 +83,7 @@ void setup() {
     gemini_cfg.supported_models = {"gemini-2.5-pro", "gemini-2.5-flash", "gemini-2.5-flash-lite"};
     cfg.remote.gemini = gemini_cfg;
 
-    std::unique_ptr<foresthub::Client> client = foresthub::Client::Create(cfg, http_client);
+    std::unique_ptr<foresthub::llm::Client> client = foresthub::llm::Client::Create(cfg, http_client);
 
     // 7. Health check
     platform->console->Printf("[INFO] Checking provider health...\n");

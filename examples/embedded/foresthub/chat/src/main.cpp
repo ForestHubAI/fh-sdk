@@ -84,7 +84,7 @@ void setup() {
     fh_cfg.supported_models = {"gpt-4.1", "gpt-4.1-mini", "gpt-4o", "gpt-4o-mini"};
     cfg.remote.foresthub = fh_cfg;
 
-    std::unique_ptr<foresthub::Client> client = foresthub::Client::Create(cfg, http_client);
+    std::unique_ptr<foresthub::llm::Client> client = foresthub::llm::Client::Create(cfg, http_client);
 
     // 7. Health check
     platform->console->Printf("[INFO] Checking provider health...\n");

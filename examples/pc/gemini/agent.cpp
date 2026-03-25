@@ -90,7 +90,7 @@ int main() {  // NOLINT(bugprone-exception-escape)
     gemini_cfg.supported_models = {"gemini-2.5-pro", "gemini-2.5-flash", "gemini-2.5-flash-lite"};
     cfg.remote.gemini = gemini_cfg;
 
-    std::shared_ptr<foresthub::Client> client = foresthub::Client::Create(cfg, http_client);
+    std::shared_ptr<foresthub::llm::Client> client = foresthub::llm::Client::Create(cfg, http_client);
 
     // --- Setup Tool ---
 
@@ -109,7 +109,7 @@ int main() {  // NOLINT(bugprone-exception-escape)
 
     // --- Setup Agent ---
 
-    auto agent = std::make_shared<foresthub::llm::agent::Agent>("WeatherBot");
+    auto agent = std::make_shared<foresthub::agent::Agent>("WeatherBot");
     agent->WithInstructions("You are a helpful assistant. If asked about weather, use the provided tool.")
         .WithOptions(foresthub::llm::Options().WithTemperature(0.7f).WithMaxTokens(1024))
         .AddTool(weather_tool);
@@ -126,7 +126,7 @@ int main() {  // NOLINT(bugprone-exception-escape)
         return 1;
     }
 
-    auto runner = std::make_shared<foresthub::llm::agent::Runner>(client, model_name);
+    auto runner = std::make_shared<foresthub::agent::Runner>(client, model_name);
     runner->WithMaxTurns(5);  // Limit turns to avoid infinite loops
 
     // --- Interaction 1: Question about weather (Tool usage expected) ---
@@ -137,7 +137,7 @@ int main() {  // NOLINT(bugprone-exception-escape)
     auto input = std::make_shared<foresthub::llm::InputString>(prompt);
 
     platform->console->Printf("[INFO] Running agent... (calling tools if necessary)\n");
-    foresthub::llm::agent::RunResultOrError result = runner->Run(agent, input);
+    foresthub::agent::RunResultOrError result = runner->Run(agent, input);
 
     if (result.HasError()) {
         platform->console->Printf("[ERROR] Agent execution failed: %s\n", result.error.c_str());

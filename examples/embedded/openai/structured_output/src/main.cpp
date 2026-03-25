@@ -93,7 +93,7 @@ void setup() {
     oai_cfg.supported_models = {"gpt-4.1", "gpt-4.1-mini", "gpt-4o", "gpt-4o-mini"};
     cfg.remote.openai = oai_cfg;
 
-    std::shared_ptr<foresthub::Client> client = foresthub::Client::Create(cfg, http_client);
+    std::shared_ptr<foresthub::llm::Client> client = foresthub::llm::Client::Create(cfg, http_client);
 
     // 7. Health check
     platform->console->Printf("[INFO] Checking provider health...\n");
@@ -126,7 +126,7 @@ void setup() {
     format.description = "Structured information about a city.";
 
     // 9. Setup agent with ResponseFormat
-    auto agent = std::make_shared<foresthub::llm::agent::Agent>("GeoBot");
+    auto agent = std::make_shared<foresthub::agent::Agent>("GeoBot");
     agent->WithInstructions("You are a geography expert. Answer with accurate data about the requested city.")
         .WithResponseFormat(format);
 
@@ -140,7 +140,7 @@ void setup() {
         }
     }
 
-    auto runner = std::make_shared<foresthub::llm::agent::Runner>(client, model_name);
+    auto runner = std::make_shared<foresthub::agent::Runner>(client, model_name);
 
     // 11. Execute
     std::string prompt = "Tell me about Paris.";
@@ -148,7 +148,7 @@ void setup() {
     platform->console->Printf("[INFO] Running agent with structured output...\n");
 
     auto input = std::make_shared<foresthub::llm::InputString>(prompt);
-    foresthub::llm::agent::RunResultOrError result = runner->Run(agent, input);
+    foresthub::agent::RunResultOrError result = runner->Run(agent, input);
 
     if (result.HasError()) {
         platform->console->Printf("[ERROR] Agent failed: %s\n", result.error.c_str());

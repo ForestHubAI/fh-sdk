@@ -25,13 +25,13 @@ std::shared_ptr<Console> MakeConsole() {
 TEST(ConsoleTest, TryReadLineNoInputReturnsEmpty) {
     auto console = MakeConsole();
     // With no pending stdin data, TryReadLine should return an empty Optional.
-    Optional<std::string> result = console->TryReadLine();
+    util::Optional<std::string> result = console->TryReadLine();
     EXPECT_FALSE(result.HasValue());
 }
 
 TEST(ConsoleTest, TryReadLineReturnsOptionalType) {
     auto console = MakeConsole();
-    Optional<std::string> result = console->TryReadLine(128, false);
+    util::Optional<std::string> result = console->TryReadLine(128, false);
     // Verify the return type is Optional<string> and has correct default state.
     EXPECT_FALSE(result.has_value);
 }

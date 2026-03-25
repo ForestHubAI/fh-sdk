@@ -87,11 +87,11 @@ void setup() {
     fh_cfg.supported_models = {"gpt-4.1", "gpt-4.1-mini", "gpt-4o", "gpt-4o-mini"};
 
     // 7. Create Retriever and Client (share HTTP client)
-    foresthub::llm::rag::remote::RemoteRetriever retriever(fh_cfg, http_client);
+    foresthub::rag::RemoteRetriever retriever(fh_cfg, http_client);
 
     foresthub::llm::ClientConfig client_cfg;
     client_cfg.remote.foresthub = fh_cfg;
-    std::unique_ptr<foresthub::Client> client = foresthub::Client::Create(client_cfg, http_client);
+    std::unique_ptr<foresthub::llm::Client> client = foresthub::llm::Client::Create(client_cfg, http_client);
 
     // 8. RAG Query
     std::string question = "Was ist ForestHub?";
@@ -99,12 +99,12 @@ void setup() {
     platform->console->Printf("[INFO] Querying collection '%s'...\n", kRagCollectionId);
     platform->console->Printf("       Query: %s\n", question.c_str());
 
-    foresthub::llm::rag::QueryRequest rag_req;
+    foresthub::rag::QueryRequest rag_req;
     rag_req.collection_id = kRagCollectionId;
     rag_req.query = question;
     rag_req.top_k = 3;
 
-    std::shared_ptr<foresthub::llm::rag::QueryResponse> rag_resp = retriever.Query(rag_req);
+    std::shared_ptr<foresthub::rag::QueryResponse> rag_resp = retriever.Query(rag_req);
     if (!rag_resp) {
         platform->console->Printf("[ERROR] RAG query failed.\n");
         platform->console->Flush();
@@ -116,7 +116,7 @@ void setup() {
     platform->console->Printf("[OK] Retrieved %d chunks\n\n", static_cast<int>(rag_resp->results.size()));
 
     // 9. Format context and send chat request
-    std::string context = foresthub::llm::rag::FormatContext(rag_resp->results);
+    std::string context = foresthub::rag::FormatContext(rag_resp->results);
 
     std::string system_prompt =
         "Beantworte die Frage basierend auf dem bereitgestellten Kontext.\n"

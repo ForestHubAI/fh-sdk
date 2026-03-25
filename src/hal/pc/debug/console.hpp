@@ -26,7 +26,7 @@ public:
     bool Available() const noexcept override;
     char Read() override;
     std::string ReadLine(size_t max_length = 256, unsigned long timeout_ms = 0, bool echo = true) override;
-    Optional<std::string> TryReadLine(size_t max_length = 256, bool echo = true) override;
+    util::Optional<std::string> TryReadLine(size_t max_length = 256, bool echo = true) override;
     void ClearLineBuffer() override;
     void Write(const std::string& data) override;
     void Printf(const char* format, ...) override;

@@ -29,13 +29,13 @@ using json = nlohmann::json;
 
 // Helper to run an agent and print the result.
 static void RunAndPrint(std::shared_ptr<foresthub::hal::Platform>& platform,
-                        std::shared_ptr<foresthub::llm::agent::Runner>& runner,
-                        std::shared_ptr<foresthub::llm::agent::Agent>& agent, const std::string& prompt) {
+                        std::shared_ptr<foresthub::agent::Runner>& runner,
+                        std::shared_ptr<foresthub::agent::Agent>& agent, const std::string& prompt) {
     platform->console->Printf("\n[USER] %s\n", prompt.c_str());
 
     auto input = std::make_shared<foresthub::llm::InputString>(prompt);
     platform->console->Printf("[INFO] Running agent...\n");
-    foresthub::llm::agent::RunResultOrError result = runner->Run(agent, input);
+    foresthub::agent::RunResultOrError result = runner->Run(agent, input);
 
     if (result.HasError()) {
         platform->console->Printf("[ERROR] Agent failed: %s\n", result.error.c_str());
@@ -116,7 +116,7 @@ void setup() {
     gemini_cfg.supported_models = {"gemini-2.5-pro", "gemini-2.5-flash", "gemini-2.5-flash-lite"};
     cfg.remote.gemini = gemini_cfg;
 
-    std::shared_ptr<foresthub::Client> client = foresthub::Client::Create(cfg, http_client);
+    std::shared_ptr<foresthub::llm::Client> client = foresthub::llm::Client::Create(cfg, http_client);
 
     // 7. Health check
     platform->console->Printf("[INFO] Checking provider health...\n");
@@ -145,9 +145,9 @@ void setup() {
     // 9. Run 1: Without WebSearch
     platform->console->Printf("--- Run 1: WITHOUT WebSearch ---\n");
 
-    auto agent_no_search = std::make_shared<foresthub::llm::agent::Agent>("NewsBot");
+    auto agent_no_search = std::make_shared<foresthub::agent::Agent>("NewsBot");
 
-    auto runner = std::make_shared<foresthub::llm::agent::Runner>(client, model_name);
+    auto runner = std::make_shared<foresthub::agent::Runner>(client, model_name);
 
     RunAndPrint(platform, runner, agent_no_search, prompt);
 
@@ -156,10 +156,10 @@ void setup() {
 
     auto web_search = std::make_shared<foresthub::llm::WebSearch>();
 
-    auto agent_with_search = std::make_shared<foresthub::llm::agent::Agent>("NewsBot");
+    auto agent_with_search = std::make_shared<foresthub::agent::Agent>("NewsBot");
     agent_with_search->AddTool(web_search);
 
-    auto runner2 = std::make_shared<foresthub::llm::agent::Runner>(client, model_name);
+    auto runner2 = std::make_shared<foresthub::agent::Runner>(client, model_name);
     runner2->WithMaxTurns(3);
 
     RunAndPrint(platform, runner2, agent_with_search, prompt);

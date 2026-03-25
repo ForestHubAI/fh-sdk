@@ -18,6 +18,7 @@
 #include "mocks/mock_provider.hpp"
 
 namespace foresthub {
+using llm::Client;
 namespace {
 
 using json = nlohmann::json;

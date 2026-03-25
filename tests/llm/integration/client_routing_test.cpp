@@ -13,6 +13,7 @@
 #include "mocks/mock_provider.hpp"
 
 namespace foresthub {
+using llm::Client;
 namespace {
 
 // --- Client multi-provider routing ---

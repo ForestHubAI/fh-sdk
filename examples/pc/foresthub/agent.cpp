@@ -91,7 +91,7 @@ int main() {  // NOLINT(bugprone-exception-escape)
     fh_cfg.supported_models = {"gpt-4.1", "gpt-4.1-mini", "gpt-4o", "gpt-4o-mini"};
     cfg.remote.foresthub = fh_cfg;
 
-    std::shared_ptr<foresthub::Client> client = foresthub::Client::Create(cfg, http_client);
+    std::shared_ptr<foresthub::llm::Client> client = foresthub::llm::Client::Create(cfg, http_client);
 
     // --- Setup Tool ---
 
@@ -110,7 +110,7 @@ int main() {  // NOLINT(bugprone-exception-escape)
 
     // --- Setup Agent ---
 
-    auto agent = std::make_shared<foresthub::llm::agent::Agent>("WeatherBot");
+    auto agent = std::make_shared<foresthub::agent::Agent>("WeatherBot");
     agent->WithInstructions("You are a helpful assistant. If asked about weather, use the provided tool.")
         .WithOptions(foresthub::llm::Options().WithTemperature(0.7f).WithMaxTokens(1024))
         .AddTool(weather_tool);
@@ -127,7 +127,7 @@ int main() {  // NOLINT(bugprone-exception-escape)
         return 1;
     }
 
-    auto runner = std::make_shared<foresthub::llm::agent::Runner>(client, model_name);
+    auto runner = std::make_shared<foresthub::agent::Runner>(client, model_name);
     runner->WithMaxTurns(5);  // Limit turns to avoid infinite loops
 
     // --- Interaction 1: Question about weather (Tool usage expected) ---
@@ -138,7 +138,7 @@ int main() {  // NOLINT(bugprone-exception-escape)
     auto input = std::make_shared<foresthub::llm::InputString>(prompt);
 
     platform->console->Printf("[INFO] Running agent... (calling tools if necessary)\n");
-    foresthub::llm::agent::RunResultOrError result = runner->Run(agent, input);
+    foresthub::agent::RunResultOrError result = runner->Run(agent, input);
 
     if (result.HasError()) {
         platform->console->Printf("[ERROR] Agent execution failed: %s\n", result.error.c_str());

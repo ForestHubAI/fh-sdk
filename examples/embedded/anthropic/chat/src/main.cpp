@@ -83,7 +83,7 @@ void setup() {
     anthropic_cfg.supported_models = {"claude-sonnet-4-6", "claude-haiku-4-5", "claude-opus-4-6"};
     cfg.remote.anthropic = anthropic_cfg;
 
-    std::unique_ptr<foresthub::Client> client = foresthub::Client::Create(cfg, http_client);
+    std::unique_ptr<foresthub::llm::Client> client = foresthub::llm::Client::Create(cfg, http_client);
 
     // 7. Health check
     platform->console->Printf("[INFO] Checking provider health...\n");

@@ -107,6 +107,6 @@ TEST(OptionsTest, DirectMemberAccess) {
     ASSERT_TRUE(opts.max_tokens.HasValue());
     EXPECT_EQ(*opts.max_tokens, 123);
 
-    opts.max_tokens = util::Optional<int>{};
+    opts.max_tokens = foresthub::util::Optional<int>{};
     EXPECT_FALSE(opts.max_tokens.HasValue());
 }

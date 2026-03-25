@@ -2,15 +2,15 @@
 // Copyright (c) 2026 ForestHub. All rights reserved.
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
-#include "foresthub/rag/remote/retriever.hpp"
+#include "llm/rag/remote/retriever.hpp"
 
 #include <gtest/gtest.h>
 
 #include <memory>
 #include <string>
 
-#include "foresthub/config/config.hpp"
-#include "foresthub/rag/types.hpp"
+#include "foresthub/llm/config.hpp"
+#include "foresthub/llm/rag/types.hpp"
 #include "foresthub/util/json.hpp"
 #include "mocks/mock_http_client.hpp"
 
@@ -19,12 +19,12 @@ namespace rag {
 namespace remote {
 namespace {
 
-using core::HttpResponse;
+using hal::HttpResponse;
 using json = nlohmann::json;
 
 struct TestFixture {
     std::shared_ptr<tests::MockHttpClient> mock_http = std::make_shared<tests::MockHttpClient>();
-    config::ProviderConfig cfg;
+    llm::ProviderConfig cfg;
 
     TestFixture() {
         cfg.base_url = "https://api.example.com";
@@ -211,8 +211,8 @@ TEST(RemoteRetriever, QueryRequestSerialization) {
 
     json sent = json::parse(fixture.mock_http->last_body, nullptr, false);
     ASSERT_FALSE(sent.is_discarded());
-    EXPECT_EQ(sent.value("collectionId", ""), "my-collection");
-    EXPECT_EQ(sent.value("query", ""), "search text");
+    EXPECT_EQ(sent.value("collectionId", std::string()), "my-collection");
+    EXPECT_EQ(sent.value("query", std::string()), "search text");
     EXPECT_EQ(sent.value("topK", 0), 7);
 }
 

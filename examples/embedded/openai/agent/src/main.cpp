@@ -118,7 +118,7 @@ void setup() {
     oai_cfg.supported_models = {"gpt-4.1", "gpt-4.1-mini", "gpt-4o", "gpt-4o-mini"};
     cfg.remote.openai = oai_cfg;
 
-    std::shared_ptr<foresthub::Client> client = foresthub::Client::Create(cfg, http_client);
+    std::shared_ptr<foresthub::llm::Client> client = foresthub::llm::Client::Create(cfg, http_client);
 
     // 7. Health check
     platform->console->Printf("[INFO] Checking provider health...\n");
@@ -141,7 +141,7 @@ void setup() {
         "get_weather", "Returns the current weather for a city.", weather_tool_schema, GetWeather);
 
     // 9. Create agent
-    auto agent = std::make_shared<foresthub::llm::agent::Agent>("WeatherBot");
+    auto agent = std::make_shared<foresthub::agent::Agent>("WeatherBot");
     agent->WithInstructions("You are a helpful assistant. If asked about weather, use the provided tool.")
         .WithOptions(foresthub::llm::Options().WithTemperature(0.7f).WithMaxTokens(1024))
         .AddTool(weather_tool);
@@ -157,7 +157,7 @@ void setup() {
         }
     }
 
-    auto runner = std::make_shared<foresthub::llm::agent::Runner>(client, model_name);
+    auto runner = std::make_shared<foresthub::agent::Runner>(client, model_name);
     runner->WithMaxTurns(5);
 
     std::string prompt = "How is the weather in Madrid and how does it look in Berlin?";
@@ -165,7 +165,7 @@ void setup() {
     platform->console->Printf("[INFO] Running agent...\n");
 
     auto input = std::make_shared<foresthub::llm::InputString>(prompt);
-    foresthub::llm::agent::RunResultOrError result = runner->Run(agent, input);
+    foresthub::agent::RunResultOrError result = runner->Run(agent, input);
 
     // 11. Print result
     if (result.HasError()) {

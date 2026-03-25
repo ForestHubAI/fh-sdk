@@ -2,7 +2,7 @@
 // Copyright (c) 2026 ForestHub. All rights reserved.
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
-#include "rag/serialization.hpp"
+#include "llm/rag/serialization.hpp"
 
 namespace foresthub {
 namespace rag {

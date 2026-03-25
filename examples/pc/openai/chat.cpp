@@ -60,7 +60,7 @@ int main() {  // NOLINT(bugprone-exception-escape)
 
     // 5. Create the Client Instance
     // This factory method wires everything together (Providers + HttpClient).
-    std::unique_ptr<foresthub::Client> client = foresthub::Client::Create(cfg, http_client);
+    std::unique_ptr<foresthub::llm::Client> client = foresthub::llm::Client::Create(cfg, http_client);
 
     // 6. Health Check (Optional)
     // Verifies if the provider is reachable before we start chatting.

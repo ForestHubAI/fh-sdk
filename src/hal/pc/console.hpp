@@ -26,7 +26,7 @@ public:
     /// Uses std::getline; timeout_ms and echo parameters are ignored.
     std::string ReadLine(size_t max_length = 256, unsigned long timeout_ms = 0, bool echo = true) override;
     /// Accumulates characters in line_buffer_; returns complete line on Enter.
-    Optional<std::string> TryReadLine(size_t max_length = 256, bool echo = true) override;
+    util::Optional<std::string> TryReadLine(size_t max_length = 256, bool echo = true) override;
     /// Discards partially typed input.
     void ClearLineBuffer() override;
 

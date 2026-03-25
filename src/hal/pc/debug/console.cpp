@@ -55,9 +55,9 @@ std::string DebugConsole::ReadLine(size_t max_length, unsigned long /*timeout_ms
     return line;
 }
 
-Optional<std::string> DebugConsole::TryReadLine(size_t max_length, bool /*echo*/) {
+util::Optional<std::string> DebugConsole::TryReadLine(size_t max_length, bool /*echo*/) {
     if (input_queue_.empty()) {
-        return Optional<std::string>();
+        return util::Optional<std::string>();
     }
     std::string line = input_queue_.front();
     input_queue_.pop();
@@ -65,7 +65,7 @@ Optional<std::string> DebugConsole::TryReadLine(size_t max_length, bool /*echo*/
         line.resize(max_length);
     }
     std::cout << "console: Serial: read \"" << line << "\"" << std::endl;
-    return Optional<std::string>(std::move(line));
+    return util::Optional<std::string>(std::move(line));
 }
 
 void DebugConsole::ClearLineBuffer() {

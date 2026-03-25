@@ -23,7 +23,7 @@ using json = nlohmann::json;
 // Helper: create an OpenAIProvider with the given MockHttpClient and config.
 struct TestFixture {
     std::shared_ptr<tests::MockHttpClient> mock_http = std::make_shared<tests::MockHttpClient>();
-    config::ProviderConfig cfg;
+    llm::ProviderConfig cfg;
 
     TestFixture() {
         cfg.api_key = "sk-test-key-123";
@@ -89,7 +89,7 @@ TEST(OpenAIProvider, ConstructionStripsTrailingSlash) {
 }
 
 TEST(OpenAIProvider, DefaultBaseUrl) {
-    config::ProviderConfig cfg;
+    llm::ProviderConfig cfg;
     cfg.api_key = "sk-test";
     // base_url left empty — provider applies its default
     auto mock = std::make_shared<tests::MockHttpClient>();

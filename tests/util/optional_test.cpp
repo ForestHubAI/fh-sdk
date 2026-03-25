@@ -12,6 +12,7 @@
 #include "foresthub/llm/types.hpp"
 
 using namespace foresthub;
+using util::Optional;
 
 // ==========================================================================
 // 1. Construction
@@ -138,12 +139,12 @@ TEST(OptionalTest, CopyAssignFromEmpty) {
 // ==========================================================================
 
 TEST(OptionalTest, WithStruct) {
-    core::ResponseFormat fmt;
+    llm::ResponseFormat fmt;
     fmt.name = "json_output";
     fmt.schema = nlohmann::json{{"type", "object"}};
     fmt.description = "JSON output format";
 
-    Optional<core::ResponseFormat> opt(fmt);
+    Optional<llm::ResponseFormat> opt(fmt);
     EXPECT_TRUE(opt.HasValue());
     EXPECT_EQ(opt->name, "json_output");
     EXPECT_EQ(opt->description, "JSON output format");

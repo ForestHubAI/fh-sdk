@@ -48,7 +48,7 @@ char PcConsole::Read() {
     return c;
 }
 
-Optional<std::string> PcConsole::TryReadLine(size_t max_length, bool /*echo*/) {
+util::Optional<std::string> PcConsole::TryReadLine(size_t max_length, bool /*echo*/) {
     // Echo parameter ignored — terminal handles echo in canonical mode.
     while (Available()) {
         char c = 0;
@@ -60,7 +60,7 @@ Optional<std::string> PcConsole::TryReadLine(size_t max_length, bool /*echo*/) {
         ssize_t n = ::read(0, &c, 1);
         if (n <= 0) {
 #endif
-            return Optional<std::string>();
+            return util::Optional<std::string>();
         }
         if (c == '\n') {
             std::string result = line_buffer_;
@@ -68,13 +68,13 @@ Optional<std::string> PcConsole::TryReadLine(size_t max_length, bool /*echo*/) {
             if (max_length > 0 && result.length() > max_length) {
                 result.resize(max_length);
             }
-            return Optional<std::string>(std::move(result));
+            return util::Optional<std::string>(std::move(result));
         }
         if (max_length == 0 || line_buffer_.length() < max_length) {
             line_buffer_ += c;
         }
     }
-    return Optional<std::string>();
+    return util::Optional<std::string>();
 }
 
 void PcConsole::ClearLineBuffer() {

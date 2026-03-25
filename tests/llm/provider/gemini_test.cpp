@@ -23,7 +23,7 @@ using json = nlohmann::json;
 // Helper: create a GeminiProvider with the given MockHttpClient and config.
 struct TestFixture {
     std::shared_ptr<tests::MockHttpClient> mock_http = std::make_shared<tests::MockHttpClient>();
-    config::ProviderConfig cfg;
+    llm::ProviderConfig cfg;
 
     TestFixture() {
         cfg.api_key = "test-gemini-key";
@@ -94,7 +94,7 @@ TEST(GeminiProvider, ConstructionStripsTrailingSlash) {
 }
 
 TEST(GeminiProvider, DefaultBaseUrl) {
-    config::ProviderConfig cfg;
+    llm::ProviderConfig cfg;
     cfg.api_key = "test-key";
     auto mock = std::make_shared<tests::MockHttpClient>();
     mock->get_responses.push_back({200, "{}", {}});

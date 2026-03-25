@@ -159,8 +159,8 @@ TEST(ClientTest, Health_MultipleProviders) {
 // ==========================================================================
 
 TEST(ClientTest, CreateFactory_WithRemoteConfig) {
-    config::ClientConfig cfg;
-    config::ProviderConfig fh;
+    llm::ClientConfig cfg;
+    llm::ProviderConfig fh;
     fh.base_url = "https://example.com";
     fh.api_key = "test-key";
     fh.supported_models = {"gpt-4o"};
@@ -174,15 +174,15 @@ TEST(ClientTest, CreateFactory_WithRemoteConfig) {
 }
 
 TEST(ClientTest, CreateFactory_EmptyConfig) {
-    config::ClientConfig cfg;
+    llm::ClientConfig cfg;
     std::unique_ptr<Client> client = Client::Create(cfg);
     ASSERT_NE(client, nullptr);
     EXPECT_TRUE(client->providers().empty());
 }
 
 TEST(ClientTest, CreateFactory_WithAnthropicConfig) {
-    config::ClientConfig cfg;
-    config::ProviderConfig anthropic;
+    llm::ClientConfig cfg;
+    llm::ProviderConfig anthropic;
     anthropic.api_key = "test-key";
     anthropic.supported_models = {"claude-sonnet-4-6"};
     cfg.remote.anthropic = anthropic;
@@ -195,8 +195,8 @@ TEST(ClientTest, CreateFactory_WithAnthropicConfig) {
 }
 
 TEST(ClientTest, CreateFactory_WithGeminiConfig) {
-    config::ClientConfig cfg;
-    config::ProviderConfig gemini;
+    llm::ClientConfig cfg;
+    llm::ProviderConfig gemini;
     gemini.api_key = "test-key";
     gemini.supported_models = {"gemini-2.5-flash"};
     cfg.remote.gemini = gemini;
@@ -209,8 +209,8 @@ TEST(ClientTest, CreateFactory_WithGeminiConfig) {
 }
 
 TEST(ClientTest, CreateFactory_WithOpenAIConfig) {
-    config::ClientConfig cfg;
-    config::ProviderConfig openai;
+    llm::ClientConfig cfg;
+    llm::ProviderConfig openai;
     openai.api_key = "test-key";
     openai.supported_models = {"gpt-4o"};
     cfg.remote.openai = openai;
@@ -223,24 +223,24 @@ TEST(ClientTest, CreateFactory_WithOpenAIConfig) {
 }
 
 TEST(ClientTest, CreateFactory_WithAllProviders) {
-    config::ClientConfig cfg;
+    llm::ClientConfig cfg;
 
-    config::ProviderConfig fh;
+    llm::ProviderConfig fh;
     fh.api_key = "fh-key";
     fh.supported_models = {"fh-model"};
     cfg.remote.foresthub = fh;
 
-    config::ProviderConfig anthropic;
+    llm::ProviderConfig anthropic;
     anthropic.api_key = "a-key";
     anthropic.supported_models = {"claude-sonnet-4-6"};
     cfg.remote.anthropic = anthropic;
 
-    config::ProviderConfig gemini;
+    llm::ProviderConfig gemini;
     gemini.api_key = "g-key";
     gemini.supported_models = {"gemini-2.5-flash"};
     cfg.remote.gemini = gemini;
 
-    config::ProviderConfig openai;
+    llm::ProviderConfig openai;
     openai.api_key = "o-key";
     openai.supported_models = {"gpt-4o"};
     cfg.remote.openai = openai;

@@ -23,7 +23,7 @@ using json = nlohmann::json;
 // Helper: create an AnthropicProvider with the given MockHttpClient and config.
 struct TestFixture {
     std::shared_ptr<tests::MockHttpClient> mock_http = std::make_shared<tests::MockHttpClient>();
-    config::ProviderConfig cfg;
+    llm::ProviderConfig cfg;
 
     TestFixture() {
         cfg.api_key = "test-anthropic-key";
@@ -110,7 +110,7 @@ TEST(AnthropicProvider, ConstructionStripsTrailingSlash) {
 }
 
 TEST(AnthropicProvider, DefaultBaseUrl) {
-    config::ProviderConfig cfg;
+    llm::ProviderConfig cfg;
     cfg.api_key = "test-key";
     auto mock = std::make_shared<tests::MockHttpClient>();
     mock->get_responses.push_back({200, "{}", {}});
@@ -194,9 +194,9 @@ TEST(AnthropicProvider, ChatTextResponse) {
     f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto input = std::make_shared<core::InputString>("Hello");
-    core::ChatRequest req("claude-sonnet-4-6", input);
-    std::shared_ptr<core::ChatResponse> resp = provider.Chat(req);
+    auto input = std::make_shared<llm::InputString>("Hello");
+    llm::ChatRequest req("claude-sonnet-4-6", input);
+    std::shared_ptr<llm::ChatResponse> resp = provider.Chat(req);
 
     ASSERT_NE(resp, nullptr);
     EXPECT_EQ(resp->text, "Hello world");
@@ -209,8 +209,8 @@ TEST(AnthropicProvider, ChatUrlCorrect) {
     f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto input = std::make_shared<core::InputString>("Hello");
-    core::ChatRequest req("claude-sonnet-4-6", input);
+    auto input = std::make_shared<llm::InputString>("Hello");
+    llm::ChatRequest req("claude-sonnet-4-6", input);
     provider.Chat(req);
 
     EXPECT_EQ(f.mock_http->last_url, "https://api.anthropic.com/v1/messages");
@@ -221,8 +221,8 @@ TEST(AnthropicProvider, ChatHeadersCorrect) {
     f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto input = std::make_shared<core::InputString>("Hello");
-    core::ChatRequest req("claude-sonnet-4-6", input);
+    auto input = std::make_shared<llm::InputString>("Hello");
+    llm::ChatRequest req("claude-sonnet-4-6", input);
     provider.Chat(req);
 
     EXPECT_EQ(f.mock_http->last_headers["Content-Type"], "application/json");
@@ -237,8 +237,8 @@ TEST(AnthropicProvider, ChatWithSystemPrompt) {
     f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto input = std::make_shared<core::InputString>("Hello");
-    core::ChatRequest req("claude-sonnet-4-6", input);
+    auto input = std::make_shared<llm::InputString>("Hello");
+    llm::ChatRequest req("claude-sonnet-4-6", input);
     req.WithSystemPrompt("You are helpful");
     provider.Chat(req);
 
@@ -252,8 +252,8 @@ TEST(AnthropicProvider, ChatWithOptions) {
     f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto input = std::make_shared<core::InputString>("Hello");
-    core::ChatRequest req("claude-sonnet-4-6", input);
+    auto input = std::make_shared<llm::InputString>("Hello");
+    llm::ChatRequest req("claude-sonnet-4-6", input);
     req.WithTemperature(0.7f).WithMaxTokens(1000).WithTopP(0.9f).WithTopK(40);
     provider.Chat(req);
 
@@ -270,10 +270,10 @@ TEST(AnthropicProvider, ChatWithTools) {
     f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto input = std::make_shared<core::InputString>("Get weather");
-    core::ChatRequest req("claude-sonnet-4-6", input);
+    auto input = std::make_shared<llm::InputString>("Get weather");
+    llm::ChatRequest req("claude-sonnet-4-6", input);
 
-    auto fn_tool = std::make_shared<core::FunctionTool>();
+    auto fn_tool = std::make_shared<llm::FunctionTool>();
     fn_tool->name = "get_weather";
     fn_tool->description = "Get the weather";
     fn_tool->parameters = json{{"type", "object"}, {"properties", {{"city", {{"type", "string"}}}}}};
@@ -298,9 +298,9 @@ TEST(AnthropicProvider, ChatWithResponseFormat) {
     f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto input = std::make_shared<core::InputString>("Give me JSON");
-    core::ChatRequest req("claude-sonnet-4-6", input);
-    core::ResponseFormat fmt;
+    auto input = std::make_shared<llm::InputString>("Give me JSON");
+    llm::ChatRequest req("claude-sonnet-4-6", input);
+    llm::ResponseFormat fmt;
     fmt.name = "my_schema";
     fmt.schema = json{{"type", "object"}, {"properties", {{"answer", {{"type", "string"}}}}}};
     req.WithResponseFormat(fmt);
@@ -325,11 +325,11 @@ TEST(AnthropicProvider, ChatToolSchemaStrictified) {
     f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto input = std::make_shared<core::InputString>("Get weather");
-    core::ChatRequest req("claude-sonnet-4-6", input);
+    auto input = std::make_shared<llm::InputString>("Get weather");
+    llm::ChatRequest req("claude-sonnet-4-6", input);
 
     // Minimal schema (no type, no required, no additionalProperties)
-    auto fn_tool = std::make_shared<core::FunctionTool>();
+    auto fn_tool = std::make_shared<llm::FunctionTool>();
     fn_tool->name = "get_weather";
     fn_tool->description = "Get the weather";
     fn_tool->parameters = json{{"city", {{"type", "string"}}}, {"units", {{"type", "string"}}}};
@@ -356,9 +356,9 @@ TEST(AnthropicProvider, ChatResponseFormatSchemaStrictified) {
     f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto input = std::make_shared<core::InputString>("Give me JSON");
-    core::ChatRequest req("claude-sonnet-4-6", input);
-    core::ResponseFormat fmt;
+    auto input = std::make_shared<llm::InputString>("Give me JSON");
+    llm::ChatRequest req("claude-sonnet-4-6", input);
+    llm::ResponseFormat fmt;
     fmt.name = "test";
     fmt.schema = json{{"type", "object"}, {"properties", {{"answer", {{"type", "string"}}}}}};
     req.WithResponseFormat(fmt);
@@ -378,21 +378,21 @@ TEST(AnthropicProvider, ChatToolResultInput) {
     f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto items = std::make_shared<core::InputItems>();
+    auto items = std::make_shared<llm::InputItems>();
 
-    auto tcr = std::make_shared<core::ToolCallRequest>();
+    auto tcr = std::make_shared<llm::ToolCallRequest>();
     tcr->call_id = "toolu_1";
     tcr->name = "get_weather";
     tcr->arguments = "{\"city\":\"Berlin\"}";
     items->PushBack(tcr);
 
-    auto tr = std::make_shared<core::ToolResult>();
+    auto tr = std::make_shared<llm::ToolResult>();
     tr->call_id = "toolu_1";
     tr->name = "get_weather";
     tr->output = json("sunny, 22C");
     items->PushBack(tr);
 
-    core::ChatRequest req("claude-sonnet-4-6", items);
+    llm::ChatRequest req("claude-sonnet-4-6", items);
     provider.Chat(req);
 
     json body = json::parse(f.mock_http->last_body, nullptr, false);
@@ -418,8 +418,8 @@ TEST(AnthropicProvider, ChatMaxTokensDefault) {
     f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto input = std::make_shared<core::InputString>("Hello");
-    core::ChatRequest req("claude-sonnet-4-6", input);
+    auto input = std::make_shared<llm::InputString>("Hello");
+    llm::ChatRequest req("claude-sonnet-4-6", input);
     // No WithMaxTokens — should default to 4096
     provider.Chat(req);
 
@@ -433,8 +433,8 @@ TEST(AnthropicProvider, ChatMaxTokensFromOptions) {
     f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto input = std::make_shared<core::InputString>("Hello");
-    core::ChatRequest req("claude-sonnet-4-6", input);
+    auto input = std::make_shared<llm::InputString>("Hello");
+    llm::ChatRequest req("claude-sonnet-4-6", input);
     req.WithMaxTokens(2048);
     provider.Chat(req);
 
@@ -450,9 +450,9 @@ TEST(AnthropicProvider, ChatToolCallResponse) {
     f.mock_http->post_responses.push_back({200, TestFixture::ToolCallResponseBody(), {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto input = std::make_shared<core::InputString>("What is the weather?");
-    core::ChatRequest req("claude-sonnet-4-6", input);
-    std::shared_ptr<core::ChatResponse> resp = provider.Chat(req);
+    auto input = std::make_shared<llm::InputString>("What is the weather?");
+    llm::ChatRequest req("claude-sonnet-4-6", input);
+    std::shared_ptr<llm::ChatResponse> resp = provider.Chat(req);
 
     ASSERT_NE(resp, nullptr);
     ASSERT_EQ(resp->tool_call_requests.size(), 1u);
@@ -467,9 +467,9 @@ TEST(AnthropicProvider, ChatTokenUsage) {
     f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto input = std::make_shared<core::InputString>("Hello");
-    core::ChatRequest req("claude-sonnet-4-6", input);
-    std::shared_ptr<core::ChatResponse> resp = provider.Chat(req);
+    auto input = std::make_shared<llm::InputString>("Hello");
+    llm::ChatRequest req("claude-sonnet-4-6", input);
+    std::shared_ptr<llm::ChatResponse> resp = provider.Chat(req);
 
     ASSERT_NE(resp, nullptr);
     // 10 input + 32 output = 42
@@ -481,9 +481,9 @@ TEST(AnthropicProvider, ChatResponseId) {
     f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto input = std::make_shared<core::InputString>("Hello");
-    core::ChatRequest req("claude-sonnet-4-6", input);
-    std::shared_ptr<core::ChatResponse> resp = provider.Chat(req);
+    auto input = std::make_shared<llm::InputString>("Hello");
+    llm::ChatRequest req("claude-sonnet-4-6", input);
+    std::shared_ptr<llm::ChatResponse> resp = provider.Chat(req);
 
     ASSERT_NE(resp, nullptr);
     EXPECT_EQ(resp->response_id, "msg_abc123");
@@ -494,9 +494,9 @@ TEST(AnthropicProvider, ChatMixedContentBlocks) {
     f.mock_http->post_responses.push_back({200, TestFixture::MixedContentResponseBody(), {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto input = std::make_shared<core::InputString>("Weather?");
-    core::ChatRequest req("claude-sonnet-4-6", input);
-    std::shared_ptr<core::ChatResponse> resp = provider.Chat(req);
+    auto input = std::make_shared<llm::InputString>("Weather?");
+    llm::ChatRequest req("claude-sonnet-4-6", input);
+    std::shared_ptr<llm::ChatResponse> resp = provider.Chat(req);
 
     ASSERT_NE(resp, nullptr);
     EXPECT_EQ(resp->text, "Let me check the weather.");
@@ -511,9 +511,9 @@ TEST(AnthropicProvider, ChatRefusalReturnsNullptr) {
     f.mock_http->post_responses.push_back({200, TestFixture::RefusalResponseBody(), {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto input = std::make_shared<core::InputString>("Something bad");
-    core::ChatRequest req("claude-sonnet-4-6", input);
-    std::shared_ptr<core::ChatResponse> resp = provider.Chat(req);
+    auto input = std::make_shared<llm::InputString>("Something bad");
+    llm::ChatRequest req("claude-sonnet-4-6", input);
+    std::shared_ptr<llm::ChatResponse> resp = provider.Chat(req);
 
     EXPECT_EQ(resp, nullptr);
 }
@@ -523,9 +523,9 @@ TEST(AnthropicProvider, ChatMaxTokensStillReturnsText) {
     f.mock_http->post_responses.push_back({200, TestFixture::MaxTokensResponseBody(), {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto input = std::make_shared<core::InputString>("Tell me a story");
-    core::ChatRequest req("claude-sonnet-4-6", input);
-    std::shared_ptr<core::ChatResponse> resp = provider.Chat(req);
+    auto input = std::make_shared<llm::InputString>("Tell me a story");
+    llm::ChatRequest req("claude-sonnet-4-6", input);
+    std::shared_ptr<llm::ChatResponse> resp = provider.Chat(req);
 
     ASSERT_NE(resp, nullptr);
     EXPECT_EQ(resp->text, "This is partial");
@@ -538,16 +538,16 @@ TEST(AnthropicProvider, ChatWebSearchToolFiltered) {
     f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto input = std::make_shared<core::InputString>("Search the web");
-    core::ChatRequest req("claude-sonnet-4-6", input);
+    auto input = std::make_shared<llm::InputString>("Search the web");
+    llm::ChatRequest req("claude-sonnet-4-6", input);
 
     // Add both a function tool and WebSearch
-    auto fn_tool = std::make_shared<core::FunctionTool>();
+    auto fn_tool = std::make_shared<llm::FunctionTool>();
     fn_tool->name = "get_weather";
     fn_tool->description = "Get the weather";
     fn_tool->parameters = json{{"type", "object"}, {"properties", {{"city", {{"type", "string"}}}}}};
     req.AddTool(fn_tool);
-    req.AddTool(std::make_shared<core::WebSearch>());
+    req.AddTool(std::make_shared<llm::WebSearch>());
 
     provider.Chat(req);
 
@@ -566,9 +566,9 @@ TEST(AnthropicProvider, ChatHttpError) {
     f.mock_http->post_responses.push_back({400, "bad request", {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto input = std::make_shared<core::InputString>("Hello");
-    core::ChatRequest req("claude-sonnet-4-6", input);
-    std::shared_ptr<core::ChatResponse> resp = provider.Chat(req);
+    auto input = std::make_shared<llm::InputString>("Hello");
+    llm::ChatRequest req("claude-sonnet-4-6", input);
+    std::shared_ptr<llm::ChatResponse> resp = provider.Chat(req);
 
     EXPECT_EQ(resp, nullptr);
 }
@@ -578,9 +578,9 @@ TEST(AnthropicProvider, ChatMalformedJson) {
     f.mock_http->post_responses.push_back({200, "not valid json {{{", {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto input = std::make_shared<core::InputString>("Hello");
-    core::ChatRequest req("claude-sonnet-4-6", input);
-    std::shared_ptr<core::ChatResponse> resp = provider.Chat(req);
+    auto input = std::make_shared<llm::InputString>("Hello");
+    llm::ChatRequest req("claude-sonnet-4-6", input);
+    std::shared_ptr<llm::ChatResponse> resp = provider.Chat(req);
 
     EXPECT_EQ(resp, nullptr);
 }
@@ -593,9 +593,9 @@ TEST(AnthropicProvider, ChatRetryOn429) {
     f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto input = std::make_shared<core::InputString>("Hello");
-    core::ChatRequest req("claude-sonnet-4-6", input);
-    std::shared_ptr<core::ChatResponse> resp = provider.Chat(req);
+    auto input = std::make_shared<llm::InputString>("Hello");
+    llm::ChatRequest req("claude-sonnet-4-6", input);
+    std::shared_ptr<llm::ChatResponse> resp = provider.Chat(req);
 
     ASSERT_NE(resp, nullptr);
     EXPECT_EQ(resp->text, "Hello world");
@@ -607,8 +607,8 @@ TEST(AnthropicProvider, ChatNoRetryOn4xx) {
     f.mock_http->post_responses.push_back({403, "forbidden", {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto input = std::make_shared<core::InputString>("Hello");
-    core::ChatRequest req("claude-sonnet-4-6", input);
+    auto input = std::make_shared<llm::InputString>("Hello");
+    llm::ChatRequest req("claude-sonnet-4-6", input);
     provider.Chat(req);
 
     EXPECT_EQ(f.mock_http->post_call_count, 1);
@@ -620,9 +620,9 @@ TEST(AnthropicProvider, ChatRetryOn408) {
     f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto input = std::make_shared<core::InputString>("Hello");
-    core::ChatRequest req("claude-sonnet-4-6", input);
-    std::shared_ptr<core::ChatResponse> resp = provider.Chat(req);
+    auto input = std::make_shared<llm::InputString>("Hello");
+    llm::ChatRequest req("claude-sonnet-4-6", input);
+    std::shared_ptr<llm::ChatResponse> resp = provider.Chat(req);
 
     ASSERT_NE(resp, nullptr);
     EXPECT_EQ(resp->text, "Hello world");
@@ -635,9 +635,9 @@ TEST(AnthropicProvider, ChatRetryOn5xx) {
     f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto input = std::make_shared<core::InputString>("Hello");
-    core::ChatRequest req("claude-sonnet-4-6", input);
-    std::shared_ptr<core::ChatResponse> resp = provider.Chat(req);
+    auto input = std::make_shared<llm::InputString>("Hello");
+    llm::ChatRequest req("claude-sonnet-4-6", input);
+    std::shared_ptr<llm::ChatResponse> resp = provider.Chat(req);
 
     ASSERT_NE(resp, nullptr);
     EXPECT_EQ(resp->text, "Hello world");
@@ -651,7 +651,7 @@ TEST(AnthropicProvider, ChatNullInputReturnsEmptyMessages) {
     f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    core::ChatRequest req("claude-sonnet-4-6", nullptr);
+    llm::ChatRequest req("claude-sonnet-4-6", nullptr);
     provider.Chat(req);
 
     json body = json::parse(f.mock_http->last_body, nullptr, false);
@@ -665,22 +665,22 @@ TEST(AnthropicProvider, ChatConsecutiveToolCallsMerged) {
     f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto items = std::make_shared<core::InputItems>();
+    auto items = std::make_shared<llm::InputItems>();
 
     // Two consecutive tool calls → should merge into one assistant message
-    auto tc1 = std::make_shared<core::ToolCallRequest>();
+    auto tc1 = std::make_shared<llm::ToolCallRequest>();
     tc1->call_id = "toolu_1";
     tc1->name = "get_weather";
     tc1->arguments = "{\"city\":\"Berlin\"}";
     items->PushBack(tc1);
 
-    auto tc2 = std::make_shared<core::ToolCallRequest>();
+    auto tc2 = std::make_shared<llm::ToolCallRequest>();
     tc2->call_id = "toolu_2";
     tc2->name = "get_time";
     tc2->arguments = "{\"tz\":\"CET\"}";
     items->PushBack(tc2);
 
-    core::ChatRequest req("claude-sonnet-4-6", items);
+    llm::ChatRequest req("claude-sonnet-4-6", items);
     provider.Chat(req);
 
     json body = json::parse(f.mock_http->last_body, nullptr, false);
@@ -700,33 +700,33 @@ TEST(AnthropicProvider, ChatConsecutiveToolResultsMerged) {
     f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto items = std::make_shared<core::InputItems>();
+    auto items = std::make_shared<llm::InputItems>();
 
     // Assistant message with two tool calls
-    auto tc1 = std::make_shared<core::ToolCallRequest>();
+    auto tc1 = std::make_shared<llm::ToolCallRequest>();
     tc1->call_id = "toolu_1";
     tc1->name = "get_weather";
     tc1->arguments = "{}";
     items->PushBack(tc1);
 
-    auto tc2 = std::make_shared<core::ToolCallRequest>();
+    auto tc2 = std::make_shared<llm::ToolCallRequest>();
     tc2->call_id = "toolu_2";
     tc2->name = "get_time";
     tc2->arguments = "{}";
     items->PushBack(tc2);
 
     // Two consecutive tool results → should merge into one user message
-    auto tr1 = std::make_shared<core::ToolResult>();
+    auto tr1 = std::make_shared<llm::ToolResult>();
     tr1->call_id = "toolu_1";
     tr1->output = json("sunny");
     items->PushBack(tr1);
 
-    auto tr2 = std::make_shared<core::ToolResult>();
+    auto tr2 = std::make_shared<llm::ToolResult>();
     tr2->call_id = "toolu_2";
     tr2->output = json("14:00");
     items->PushBack(tr2);
 
-    core::ChatRequest req("claude-sonnet-4-6", items);
+    llm::ChatRequest req("claude-sonnet-4-6", items);
     provider.Chat(req);
 
     json body = json::parse(f.mock_http->last_body, nullptr, false);
@@ -747,14 +747,14 @@ TEST(AnthropicProvider, ChatWithDiscardedToolCallArgs) {
     f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto items = std::make_shared<core::InputItems>();
-    auto tcr = std::make_shared<core::ToolCallRequest>();
+    auto items = std::make_shared<llm::InputItems>();
+    auto tcr = std::make_shared<llm::ToolCallRequest>();
     tcr->call_id = "toolu_1";
     tcr->name = "my_tool";
     tcr->arguments = "not valid json {{{";
     items->PushBack(tcr);
 
-    core::ChatRequest req("claude-sonnet-4-6", items);
+    llm::ChatRequest req("claude-sonnet-4-6", items);
     provider.Chat(req);
 
     json body = json::parse(f.mock_http->last_body, nullptr, false);
@@ -768,10 +768,10 @@ TEST(AnthropicProvider, ChatWithStringItemInInputItems) {
     f.mock_http->post_responses.push_back({200, TestFixture::TextResponseBody(), {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto items = std::make_shared<core::InputItems>();
-    items->PushBack(std::make_shared<core::InputString>("hello from user"));
+    auto items = std::make_shared<llm::InputItems>();
+    items->PushBack(std::make_shared<llm::InputString>("hello from user"));
 
-    core::ChatRequest req("claude-sonnet-4-6", items);
+    llm::ChatRequest req("claude-sonnet-4-6", items);
     provider.Chat(req);
 
     json body = json::parse(f.mock_http->last_body, nullptr, false);
@@ -793,9 +793,9 @@ TEST(AnthropicProvider, ChatResponseMissingContent) {
     f.mock_http->post_responses.push_back({200, j.dump(), {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto input = std::make_shared<core::InputString>("Hi");
-    core::ChatRequest req("claude-sonnet-4-6", input);
-    std::shared_ptr<core::ChatResponse> resp = provider.Chat(req);
+    auto input = std::make_shared<llm::InputString>("Hi");
+    llm::ChatRequest req("claude-sonnet-4-6", input);
+    std::shared_ptr<llm::ChatResponse> resp = provider.Chat(req);
 
     EXPECT_EQ(resp, nullptr);
 }
@@ -809,9 +809,9 @@ TEST(AnthropicProvider, ChatResponseEmptyContent) {
     f.mock_http->post_responses.push_back({200, j.dump(), {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto input = std::make_shared<core::InputString>("Hi");
-    core::ChatRequest req("claude-sonnet-4-6", input);
-    std::shared_ptr<core::ChatResponse> resp = provider.Chat(req);
+    auto input = std::make_shared<llm::InputString>("Hi");
+    llm::ChatRequest req("claude-sonnet-4-6", input);
+    std::shared_ptr<llm::ChatResponse> resp = provider.Chat(req);
 
     EXPECT_EQ(resp, nullptr);
 }
@@ -828,9 +828,9 @@ TEST(AnthropicProvider, ChatResponseMultipleTextBlocks) {
     f.mock_http->post_responses.push_back({200, j.dump(), {}});
     AnthropicProvider provider = f.MakeProvider();
 
-    auto input = std::make_shared<core::InputString>("Hi");
-    core::ChatRequest req("claude-sonnet-4-6", input);
-    std::shared_ptr<core::ChatResponse> resp = provider.Chat(req);
+    auto input = std::make_shared<llm::InputString>("Hi");
+    llm::ChatRequest req("claude-sonnet-4-6", input);
+    std::shared_ptr<llm::ChatResponse> resp = provider.Chat(req);
 
     ASSERT_NE(resp, nullptr);
     EXPECT_EQ(resp->text, "Hello world");
