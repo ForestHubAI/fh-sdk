@@ -18,9 +18,9 @@
 #include "foresthub/llm/client.hpp"
 #include "foresthub/llm/config.hpp"
 #include "foresthub/llm/input.hpp"
+#include "foresthub/llm/rag/types.hpp"
 #include "foresthub/llm/types.hpp"
 #include "llm/rag/remote/retriever.hpp"
-#include "foresthub/llm/rag/types.hpp"
 
 // Application Shared Helper
 #include "../platform_setup.hpp"

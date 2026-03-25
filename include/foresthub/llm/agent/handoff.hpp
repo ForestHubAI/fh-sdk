@@ -26,15 +26,14 @@ using json = nlohmann::json;
 class Handoff : public foresthub::llm::ExternalToolBase {
 public:
     std::shared_ptr<Agent> target_agent;  ///< Agent to switch to when invoked.
-    llm::ModelID model;                  ///< Optional model override (empty = use runner default).
+    llm::ModelID model;                   ///< Optional model override (empty = use runner default).
 
     /// Construct a handoff tool that transfers control to the given target agent.
     /// @param name Tool name visible to the LLM.
     /// @param description Human-readable description sent to the LLM.
     /// @param agent Target agent to transfer control to.
     /// @param model Optional model override for the target agent.
-    Handoff(std::string name, std::string description, std::shared_ptr<Agent> agent,
-            foresthub::llm::ModelID model = "")
+    Handoff(std::string name, std::string description, std::shared_ptr<Agent> agent, foresthub::llm::ModelID model = "")
         : target_agent(std::move(agent)), model(std::move(model)) {
         this->name = std::move(name);
         this->description = std::move(description);

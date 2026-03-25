@@ -102,9 +102,9 @@ int main() {  // NOLINT(bugprone-exception-escape)
     // Create FunctionTool via Factory
     auto weather_tool =
         foresthub::llm::NewFunctionTool<WeatherArgs, json>("get_weather",                              // Tool Name
-                                                            "Returns the current weather for a city.",  // Description
-                                                            weather_tool_schema,  // Schema as json
-                                                            GetWeather            // C++ Function
+                                                           "Returns the current weather for a city.",  // Description
+                                                           weather_tool_schema,                        // Schema as json
+                                                           GetWeather                                  // C++ Function
         );
 
     // --- Setup Agent ---

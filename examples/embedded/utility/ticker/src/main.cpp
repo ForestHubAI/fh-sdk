@@ -39,8 +39,8 @@
 
 #include "env.hpp"
 #include "foresthub/hal/platform.hpp"
-#include "hal/arduino/platform.hpp"
 #include "foresthub/util/ticker.hpp"
+#include "hal/arduino/platform.hpp"
 
 using foresthub::util::Ticker;
 

@@ -25,7 +25,6 @@ class Runner;
 
 /// LLM agent with instructions, tools, and optional response format.
 class Agent {
-
 public:
     /// Construct an agent with the given display name.
     explicit Agent(std::string name);
@@ -57,7 +56,7 @@ public:
     /// @param runner Runner instance used to execute this agent.
     /// @return A Tool wrapping this agent as a callable handoff.
     std::shared_ptr<llm::Tool> AsTool(std::string tool_name, std::string description,
-                                       const std::shared_ptr<Runner>& runner);
+                                      const std::shared_ptr<Runner>& runner);
 
     /// @return Display name for identification.
     const std::string& name() const { return name_; }
@@ -71,11 +70,11 @@ public:
     const std::vector<std::shared_ptr<llm::Tool>>& tools() const { return tools_; }
 
 private:
-    std::string name_;                                           ///< Display name for identification.
-    std::string instructions_;                                   ///< System prompt sent to the model.
+    std::string name_;                                     ///< Display name for identification.
+    std::string instructions_;                             ///< System prompt sent to the model.
     util::Optional<llm::ResponseFormat> response_format_;  ///< Optional structured output format.
-    llm::Options options_;                                      ///< Generation parameters.
-    std::vector<std::shared_ptr<llm::Tool>> tools_;             ///< Tools available to this agent.
+    llm::Options options_;                                 ///< Generation parameters.
+    std::vector<std::shared_ptr<llm::Tool>> tools_;        ///< Tools available to this agent.
 };
 
 }  // namespace agent

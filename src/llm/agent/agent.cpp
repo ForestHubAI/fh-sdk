@@ -63,7 +63,7 @@ void from_json(const json& j, InputPrompt& args) {
 }
 
 std::shared_ptr<llm::Tool> Agent::AsTool(std::string tool_name, std::string description,
-                                          const std::shared_ptr<Runner>& runner) {
+                                         const std::shared_ptr<Runner>& runner) {
     // Snapshot agent state so the lambda does not capture raw `this`.
     auto snapshot = std::make_shared<Agent>(*this);
 

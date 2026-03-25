@@ -13,8 +13,7 @@ namespace foresthub {
 namespace llm {
 using std::shared_ptr;
 
-std::unique_ptr<Client> Client::Create(const ClientConfig& cfg,
-                                       const std::shared_ptr<hal::HttpClient>& http_client) {
+std::unique_ptr<Client> Client::Create(const ClientConfig& cfg, const std::shared_ptr<hal::HttpClient>& http_client) {
     auto client = std::make_unique<Client>();
 
     if (cfg.remote.anthropic.HasValue()) {

@@ -44,7 +44,7 @@ std::shared_ptr<llm::ChatResponse> MakeTextResponse(const std::string& text) {
 
 // Helper: build a ChatResponse with tool call requests.
 std::shared_ptr<llm::ChatResponse> MakeToolCallResponse(const std::string& call_id, const std::string& tool_name,
-                                                         const std::string& args_json) {
+                                                        const std::string& args_json) {
     auto resp = std::make_shared<llm::ChatResponse>();
     llm::ToolCallRequest tcr;
     tcr.call_id = call_id;

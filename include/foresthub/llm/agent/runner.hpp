@@ -33,7 +33,7 @@ struct RunResult {
 /// Result wrapper that holds either a RunResult or an error message.
 struct RunResultOrError {
     util::Optional<RunResult> result;  ///< Present on success.
-    std::string error;                      ///< Non-empty on failure.
+    std::string error;                 ///< Non-empty on failure.
 
     /// Check if an error occurred.
     bool HasError() const { return !error.empty(); }
@@ -77,15 +77,15 @@ public:
 
 private:
     std::shared_ptr<foresthub::llm::ChatClient> client_;  ///< LLM client for chat requests.
-    llm::ModelID default_model_;                         ///< Model used when agents don't specify one.
-    util::Optional<int> max_turns_;                  ///< Turn limit (empty = unlimited).
+    llm::ModelID default_model_;                          ///< Model used when agents don't specify one.
+    util::Optional<int> max_turns_;                       ///< Turn limit (empty = unlimited).
 
     /// Internal result from a single tool execution phase.
     struct ExecResult {
         std::shared_ptr<foresthub::llm::Tool> handoff_tool;  ///< Set if a handoff occurred.
         foresthub::llm::InputItems new_items;                ///< New history items from tool calls/results.
-        bool is_handoff = false;                              ///< Whether a handoff was triggered.
-        std::string error;                                    ///< Non-empty on internal error.
+        bool is_handoff = false;                             ///< Whether a handoff was triggered.
+        std::string error;                                   ///< Non-empty on internal error.
     };
 
     /// Execute a batch of tool call requests, returning new history items or handoff info.

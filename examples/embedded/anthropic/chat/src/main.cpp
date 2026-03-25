@@ -14,11 +14,11 @@
 #include <Arduino.h>
 
 #include "env.hpp"
+#include "foresthub/hal/platform.hpp"
 #include "foresthub/llm/client.hpp"
 #include "foresthub/llm/config.hpp"
 #include "foresthub/llm/input.hpp"
 #include "foresthub/llm/types.hpp"
-#include "foresthub/hal/platform.hpp"
 #include "hal/arduino/platform.hpp"
 
 static std::shared_ptr<foresthub::hal::Platform> platform;

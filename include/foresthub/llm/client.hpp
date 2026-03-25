@@ -12,8 +12,8 @@
 #include <memory>
 #include <string>
 
-#include "foresthub/llm/config.hpp"
 #include "foresthub/hal/http_client.hpp"
+#include "foresthub/llm/config.hpp"
 #include "foresthub/llm/model.hpp"
 #include "foresthub/llm/provider.hpp"
 #include "foresthub/llm/types.hpp"

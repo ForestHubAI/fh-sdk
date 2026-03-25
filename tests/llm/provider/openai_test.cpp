@@ -2,14 +2,13 @@
 // Copyright (c) 2026 ForestHub. All rights reserved.
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
-#include "llm/provider/remote/openai/provider.hpp"
-
 #include <gtest/gtest.h>
 
 #include <memory>
 #include <string>
 
 #include "foresthub/llm/config.hpp"
+#include "llm/provider/remote/openai/provider.hpp"
 #include "mocks/mock_http_client.hpp"
 
 namespace foresthub {

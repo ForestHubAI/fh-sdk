@@ -37,16 +37,16 @@ struct ResponseFormat {
 
 /// Chat completion request sent to an LLM provider.
 struct ChatRequest {
-    ModelID model;                                        ///< Target model identifier.
-    std::shared_ptr<Input> input;                         ///< Polymorphic input (InputString or InputItems).
-    std::string system_prompt;                            ///< System-level instructions.
-    std::string previous_response_id;                     ///< Previous response ID for multi-turn context.
-    util::Optional<ResponseFormat> response_format;       ///< Optional structured output format.
-    std::vector<std::shared_ptr<Tool>> tools;             ///< Tools available to the model.
-    std::vector<FileID> file_ids;                         ///< Attached file identifiers.
-    std::vector<FileID> image_ids;                        ///< Attached image identifiers.
-    std::vector<std::string> image_urls;                  ///< Attached image URLs.
-    Options options;                                      ///< Generation parameters.
+    ModelID model;                                   ///< Target model identifier.
+    std::shared_ptr<Input> input;                    ///< Polymorphic input (InputString or InputItems).
+    std::string system_prompt;                       ///< System-level instructions.
+    std::string previous_response_id;                ///< Previous response ID for multi-turn context.
+    util::Optional<ResponseFormat> response_format;  ///< Optional structured output format.
+    std::vector<std::shared_ptr<Tool>> tools;        ///< Tools available to the model.
+    std::vector<FileID> file_ids;                    ///< Attached file identifiers.
+    std::vector<FileID> image_ids;                   ///< Attached image identifiers.
+    std::vector<std::string> image_urls;             ///< Attached image URLs.
+    Options options;                                 ///< Generation parameters.
 
     /// Default constructor. Use the two-argument constructor or builder methods for configuration.
     ChatRequest() = default;

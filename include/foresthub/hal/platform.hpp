@@ -9,10 +9,11 @@
 /// Platform base class and subsystem aggregation.
 
 #include <memory>
-#include "foresthub/hal/http_client.hpp"
+
 #include "foresthub/hal/console.hpp"
 #include "foresthub/hal/crypto.hpp"
 #include "foresthub/hal/gpio.hpp"
+#include "foresthub/hal/http_client.hpp"
 #include "foresthub/hal/network.hpp"
 #include "foresthub/hal/time.hpp"
 

@@ -3,13 +3,14 @@
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
 #include "foresthub/hal/platform.hpp"
-#include "hal/pc/platform.hpp"
 
 #include <gtest/gtest.h>
 
 #include <ctime>
 #include <memory>
 #include <string>
+
+#include "hal/pc/platform.hpp"
 
 namespace foresthub {
 namespace hal {

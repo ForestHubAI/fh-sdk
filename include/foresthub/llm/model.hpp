@@ -40,7 +40,7 @@ static constexpr const char* kCode = "code";                      ///< Code gene
 struct ModelInfo {
     ModelID id;                                 ///< Unique model identifier (e.g., "gpt-4o").
     ProviderID provider;                        ///< Provider that hosts this model.
-    util::Optional<int> max_tokens;        ///< Maximum context length, if known.
+    util::Optional<int> max_tokens;             ///< Maximum context length, if known.
     std::vector<ModelCapability> capabilities;  ///< Supported capabilities (chat, vision, etc.).
 };
 

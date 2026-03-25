@@ -2,11 +2,11 @@
 // Copyright (c) 2026 ForestHub. All rights reserved.
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
-#include "hal/pc/debug/gpio.hpp"
-
 #include <gtest/gtest.h>
 
 #include <map>
+
+#include "hal/pc/debug/gpio.hpp"
 
 namespace foresthub {
 namespace hal {

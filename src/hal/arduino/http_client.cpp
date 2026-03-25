@@ -18,8 +18,8 @@ static constexpr int kMaxStallIterations = 200;  // ~1s at 5ms delay per stall c
 // Constructors
 // ----------------------------------------------------------------------------
 
-ArduinoHttpClient::ArduinoHttpClient(std::shared_ptr<TLSClientWrapper> tls_wrapper, const char* host,
-                                                   uint16_t port, unsigned long timeout_ms)
+ArduinoHttpClient::ArduinoHttpClient(std::shared_ptr<TLSClientWrapper> tls_wrapper, const char* host, uint16_t port,
+                                     unsigned long timeout_ms)
     : client_(static_cast<Client*>(tls_wrapper->GetNativeClient())),
       tls_wrapper_(std::move(tls_wrapper)),
       owned_client_(nullptr),
@@ -27,8 +27,8 @@ ArduinoHttpClient::ArduinoHttpClient(std::shared_ptr<TLSClientWrapper> tls_wrapp
       port_(port),
       timeout_ms_(timeout_ms) {}
 
-ArduinoHttpClient::ArduinoHttpClient(std::unique_ptr<Client> plain_client, const char* host,
-                                                   uint16_t port, unsigned long timeout_ms)
+ArduinoHttpClient::ArduinoHttpClient(std::unique_ptr<Client> plain_client, const char* host, uint16_t port,
+                                     unsigned long timeout_ms)
     : client_(plain_client.get()),
       tls_wrapper_(nullptr),
       owned_client_(std::move(plain_client)),
@@ -46,8 +46,7 @@ HttpResponse ArduinoHttpClient::Get(const std::string& url, const Headers& heade
     return SendRequest("GET", url, headers);
 }
 
-HttpResponse ArduinoHttpClient::Post(const std::string& url, const Headers& headers,
-                                          const std::string& body) {
+HttpResponse ArduinoHttpClient::Post(const std::string& url, const Headers& headers, const std::string& body) {
     return SendRequest("POST", url, headers, &body);
 }
 
@@ -60,8 +59,8 @@ void ArduinoHttpClient::Delay(unsigned long ms) {
 // Request Implementation
 // ----------------------------------------------------------------------------
 
-HttpResponse ArduinoHttpClient::SendRequest(const char* method, const std::string& url,
-                                                 const Headers& headers, const std::string* body) {
+HttpResponse ArduinoHttpClient::SendRequest(const char* method, const std::string& url, const Headers& headers,
+                                            const std::string* body) {
     // Extract path from URL (ArduinoHttpClient expects path only, not full URL)
     String path = String(url.c_str());
     if (path.startsWith("http")) {

@@ -11,8 +11,8 @@
 #include <string>
 
 #include "board_wifi.hpp"
-#include "foresthub/hal/http_client.hpp"
 #include "foresthub/hal/crypto.hpp"
+#include "foresthub/hal/http_client.hpp"
 
 namespace foresthub {
 namespace hal {
@@ -23,11 +23,11 @@ class ArduinoHttpClient : public HttpClient {
 public:
     /// Construct HTTP client for TLS connections.
     ArduinoHttpClient(std::shared_ptr<TLSClientWrapper> tls_wrapper, const char* host, uint16_t port,
-                             unsigned long timeout_ms = 60000);
+                      unsigned long timeout_ms = 60000);
 
     /// Construct HTTP client for non-TLS connections.
     ArduinoHttpClient(std::unique_ptr<Client> plain_client, const char* host, uint16_t port,
-                             unsigned long timeout_ms = 60000);
+                      unsigned long timeout_ms = 60000);
 
     ~ArduinoHttpClient() override;
 
@@ -49,7 +49,7 @@ private:
 
     /// Sends request with yield() calls to prevent WDT resets.
     HttpResponse SendRequest(const char* method, const std::string& url, const Headers& headers,
-                                  const std::string* body = nullptr);
+                             const std::string* body = nullptr);
 };
 
 }  // namespace arduino

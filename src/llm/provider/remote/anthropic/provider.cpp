@@ -2,10 +2,11 @@
 // Copyright (c) 2026 ForestHub. All rights reserved.
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
+#include "provider.hpp"
+
 #include <algorithm>
 #include <utility>
 
-#include "provider.hpp"
 #include "mapping.hpp"
 
 namespace foresthub {

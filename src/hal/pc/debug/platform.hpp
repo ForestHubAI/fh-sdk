@@ -20,8 +20,8 @@ namespace debug {
 /// Contains pre-populated GPIO pin values and serial input lines
 /// that the Go backend passes via stdin JSON.
 struct DebugConfig {
-    std::map<uint32_t, int> gpio_values;      ///< Pin → value to pre-load.
-    std::vector<std::string> serial_lines;    ///< Lines to pre-load into console input queue.
+    std::map<uint32_t, int> gpio_values;    ///< Pin → value to pre-load.
+    std::vector<std::string> serial_lines;  ///< Lines to pre-load into console input queue.
 };
 
 /// Debug platform context for server-side workflow debugging.

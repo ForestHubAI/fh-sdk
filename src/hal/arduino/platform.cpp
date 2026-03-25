@@ -50,8 +50,7 @@ std::shared_ptr<HttpClient> ArduinoPlatform::CreateHttpClient(const HttpClientCo
         // TLS requires crypto subsystem for certificate management
         auto* arduino_crypto = static_cast<ArduinoCrypto*>(crypto.get());
         std::shared_ptr<TLSClientWrapper> tls_wrapper = arduino_crypto->CreateTlsClient(nullptr, config.timeout_ms);
-        return std::make_shared<ArduinoHttpClient>(std::move(tls_wrapper), config.host, config.port,
-                              config.timeout_ms);
+        return std::make_shared<ArduinoHttpClient>(std::move(tls_wrapper), config.host, config.port, config.timeout_ms);
 #else
         // TLS requested but FORESTHUB_ENABLE_CRYPTO not defined
         return nullptr;
@@ -61,8 +60,7 @@ std::shared_ptr<HttpClient> ArduinoPlatform::CreateHttpClient(const HttpClientCo
     // Plain HTTP — WiFiClient needs only NETWORK, not CRYPTO
     auto plain_client = std::make_unique<WiFiClient>();
     plain_client->setTimeout(config.timeout_ms / 1000);
-    return std::make_shared<ArduinoHttpClient>(std::move(plain_client), config.host, config.port,
-                                              config.timeout_ms);
+    return std::make_shared<ArduinoHttpClient>(std::move(plain_client), config.host, config.port, config.timeout_ms);
 #else
     (void)config;
     return nullptr;

@@ -15,6 +15,7 @@
 #include <Arduino.h>
 
 #include "env.hpp"
+#include "foresthub/hal/platform.hpp"
 #include "foresthub/llm/agent/agent.hpp"
 #include "foresthub/llm/agent/runner.hpp"
 #include "foresthub/llm/client.hpp"
@@ -22,9 +23,8 @@
 #include "foresthub/llm/input.hpp"
 #include "foresthub/llm/options.hpp"
 #include "foresthub/llm/tools.hpp"
-#include "foresthub/hal/platform.hpp"
-#include "hal/arduino/platform.hpp"
 #include "foresthub/util/json.hpp"
+#include "hal/arduino/platform.hpp"
 
 using json = nlohmann::json;
 

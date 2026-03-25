@@ -100,7 +100,7 @@ TEST(ModelInfoTest, AggregateInitializationNullTokens) {
         "text-embedding-3",
         "OpenAI",
         foresthub::util::Optional<int>{},  // No max tokens info
-        {}                           // Empty capabilities
+        {}                                 // Empty capabilities
     };
 
     EXPECT_EQ(info.id, "text-embedding-3");

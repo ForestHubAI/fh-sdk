@@ -2,12 +2,12 @@
 // Copyright (c) 2026 ForestHub. All rights reserved.
 // For commercial licensing, visit https://github.com/ForestHubAI/fh-sdk
 
-#include "hal/pc/debug/console.hpp"
-
 #include <gtest/gtest.h>
 
 #include <string>
 #include <vector>
+
+#include "hal/pc/debug/console.hpp"
 
 namespace foresthub {
 namespace hal {
