@@ -8,11 +8,11 @@
 #include "hal/arduino/platform.hpp"
 
 void setup() {
-    using namespace foresthub::hal;
+    using namespace foresthub;
 
-    arduino::ArduinoConfig config;
+    hal::arduino::ArduinoConfig config;
     config.baud_rate = 115200;
-    auto platform = std::make_shared<arduino::ArduinoPlatform>(config);
+    auto platform = std::make_shared<hal::arduino::ArduinoPlatform>(config);
 
     // Console + Time (always available)
     platform->console->Begin();
