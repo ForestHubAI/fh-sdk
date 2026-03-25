@@ -32,8 +32,8 @@
         "srcFilter": [
             "+<*>",
             "+<rag/>",
-            "-<platform/pc/>",
-            "-<platform/pc/*>"
+            "-<hal/pc/>",
+            "-<hal/pc/*>"
         ]
     },
     "dependencies": [

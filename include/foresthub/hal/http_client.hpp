@@ -17,7 +17,7 @@ namespace hal {
 
 /// Call-time configuration for HTTP client creation.
 ///
-/// Passed to Platform::CreateHttpClient() to specify connection parameters.
+/// Passed to hal::CreateHttpClient() to specify connection parameters.
 /// Host is required; all other fields have sensible defaults.
 struct HttpClientConfig {
     const char* host = nullptr;        ///< Target hostname (required).

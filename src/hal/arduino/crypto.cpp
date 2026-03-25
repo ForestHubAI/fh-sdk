@@ -46,13 +46,13 @@ void* ArduinoTLSClient::GetNativeClient() {
 
 std::shared_ptr<TLSClientWrapper> ArduinoCrypto::CreateTlsClient(const char* root_ca, unsigned long timeout_ms) {
     // Use provided CA or default to GTS roots
-    const char* effective_ca = (root_ca && *root_ca) ? root_ca : foresthub::platform::common::kGtsRootCertificatesPem;
+    const char* effective_ca = (root_ca && *root_ca) ? root_ca : common::kGtsRootCertificatesPem;
 
     return std::make_shared<ArduinoTLSClient>(effective_ca, timeout_ms);
 }
 
 const char* ArduinoCrypto::GetGtsRootCerts() const {
-    return foresthub::platform::common::kGtsRootCertificatesPem;
+    return common::kGtsRootCertificatesPem;
 }
 
 bool ArduinoCrypto::IsAvailable() const {

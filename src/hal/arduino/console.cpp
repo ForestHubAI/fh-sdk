@@ -151,7 +151,7 @@ std::string ArduinoConsole::ReadLine(size_t max_length, unsigned long timeout_ms
     }
 }
 
-Optional<std::string> ArduinoConsole::TryReadLine(size_t max_length, bool echo) {
+util::Optional<std::string> ArduinoConsole::TryReadLine(size_t max_length, bool echo) {
     while (io_->available()) {
         const char c = static_cast<char>(io_->read());
 
@@ -168,7 +168,7 @@ Optional<std::string> ArduinoConsole::TryReadLine(size_t max_length, bool echo) 
             }
             std::string result = line_buffer_;
             line_buffer_.clear();
-            return Optional<std::string>(std::move(result));
+            return util::Optional<std::string>(std::move(result));
         }
 
         // Backspace/Delete handling
@@ -194,7 +194,7 @@ Optional<std::string> ArduinoConsole::TryReadLine(size_t max_length, bool echo) 
             }
         }
     }
-    return Optional<std::string>();
+    return util::Optional<std::string>();
 }
 
 void ArduinoConsole::ClearLineBuffer() {
