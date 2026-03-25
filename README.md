@@ -29,7 +29,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(fh-sdk)
 
-target_link_libraries(your_app PRIVATE foresthub_core)
+target_link_libraries(your_app PRIVATE foresthub)
 ```
 
 **Requirements:** CMake 3.14+, C++14 compiler (GCC 7+, Clang 5+, MSVC 2017+). Dependencies (CPR, nlohmann/json) are fetched automatically.

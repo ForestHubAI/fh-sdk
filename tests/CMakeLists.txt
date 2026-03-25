@@ -18,7 +18,7 @@ add_executable(run_core_tests
 
 target_link_libraries(run_core_tests
     PRIVATE
-    foresthub_core
+    foresthub
     GTest::gtest_main
 )
 
@@ -35,7 +35,7 @@ add_executable(run_agent_tests
 
 target_link_libraries(run_agent_tests
     PRIVATE
-    foresthub_core
+    foresthub
     GTest::gtest_main
 )
 
@@ -54,7 +54,7 @@ add_executable(run_util_tests
 
 target_link_libraries(run_util_tests
     PRIVATE
-    foresthub_core
+    foresthub
     GTest::gtest_main
 )
 
@@ -72,7 +72,7 @@ add_executable(run_provider_tests
 
 target_link_libraries(run_provider_tests
     PRIVATE
-    foresthub_core
+    foresthub
     GTest::gtest_main
 )
 
@@ -90,7 +90,7 @@ add_executable(run_platform_tests
 
 target_link_libraries(run_platform_tests
     PRIVATE
-    foresthub_core
+    foresthub
     GTest::gtest_main
 )
 
@@ -108,7 +108,7 @@ if(FORESTHUB_PLATFORM STREQUAL "pc_debug")
 
     target_link_libraries(run_debug_platform_tests
         PRIVATE
-        foresthub_core
+        foresthub
         GTest::gtest_main
     )
 
@@ -124,7 +124,7 @@ add_executable(run_integration_tests
 
 target_link_libraries(run_integration_tests
     PRIVATE
-    foresthub_core
+    foresthub
     GTest::gtest_main
 )
 
@@ -140,7 +140,7 @@ add_executable(run_rag_tests
 
 target_link_libraries(run_rag_tests
     PRIVATE
-    foresthub_core
+    foresthub
     GTest::gtest_main
 )
 
@@ -156,7 +156,7 @@ add_executable(run_contract_tests
 
 target_link_libraries(run_contract_tests
     PRIVATE
-    foresthub_core
+    foresthub
     GTest::gtest_main
 )
 

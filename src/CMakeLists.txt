@@ -29,7 +29,7 @@ set(FORESTHUB_PLATFORM "pc" CACHE STRING "Target platform (pc, pc_debug)")
 set_property(CACHE FORESTHUB_PLATFORM PROPERTY STRINGS pc pc_debug)
 
 if(FORESTHUB_PLATFORM STREQUAL "pc_debug")
-    message(STATUS "Configuring foresthub_core for: PC / DEBUG")
+    message(STATUS "Configuring foresthub for: PC / DEBUG")
     list(APPEND FORESTHUB_SOURCES
         # Reuse PC implementations for network, time, crypto, http
         hal/pc/network.cpp
@@ -42,7 +42,7 @@ if(FORESTHUB_PLATFORM STREQUAL "pc_debug")
         hal/pc/debug/gpio.cpp
     )
 elseif(FORESTHUB_PLATFORM STREQUAL "pc")
-    message(STATUS "Configuring foresthub_core for: PC / LINUX")
+    message(STATUS "Configuring foresthub for: PC / LINUX")
     list(APPEND FORESTHUB_SOURCES
         hal/pc/platform.cpp
         hal/pc/network.cpp
@@ -57,12 +57,12 @@ else()
 endif()
 
 # 3. Create the Static Library
-# This compiles all .cpp files into a single library file (libforesthub_core.a).
-add_library(foresthub_core STATIC ${FORESTHUB_SOURCES})
+# This compiles all .cpp files into a single library file (libforesthub.a).
+add_library(foresthub STATIC ${FORESTHUB_SOURCES})
 
 # 4. Define Include Directories
 # "PUBLIC": The library uses these paths AND anyone linking against this library.
-target_include_directories(foresthub_core PUBLIC
+target_include_directories(foresthub PUBLIC
     # The public API headers (root/include)
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
 
@@ -81,7 +81,7 @@ target_include_directories(foresthub_core PUBLIC
 # JSON_HAS_CPP_14 prevents nlohmann/json from auto-detecting C++17 and including
 # headers like <string_view> or <optional> that may be missing on embedded toolchains.
 string(TOUPPER "${FORESTHUB_PLATFORM}" _PLAT_UPPER)
-target_compile_definitions(foresthub_core PUBLIC
+target_compile_definitions(foresthub PUBLIC
     FORESTHUB_PLATFORM_${_PLAT_UPPER} JSON_HAS_CPP_14
     FORESTHUB_ENABLE_NETWORK FORESTHUB_ENABLE_CRYPTO FORESTHUB_ENABLE_GPIO
 )
@@ -93,15 +93,15 @@ find_package(Threads REQUIRED)
 # Link CPR and Threads to the library.
 # "PRIVATE": These are implementation details. The 'app' using the library
 # does not need to know that CPR is used internally.
-target_link_libraries(foresthub_core PRIVATE cpr::cpr Threads::Threads)
+target_link_libraries(foresthub PRIVATE cpr::cpr Threads::Threads)
 
 # ==============================================================================
 # Install Targets (for find_package(foresthub) support)
 # ==============================================================================
 # Export name: installed as foresthub::platform
-set_target_properties(foresthub_core PROPERTIES EXPORT_NAME platform)
+set_target_properties(foresthub PROPERTIES EXPORT_NAME platform)
 
-install(TARGETS foresthub_core
+install(TARGETS foresthub
     EXPORT foresthubTargets
     ARCHIVE DESTINATION lib
 )
