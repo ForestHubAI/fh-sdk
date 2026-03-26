@@ -96,15 +96,79 @@ find_package(Threads REQUIRED)
 target_link_libraries(foresthub PRIVATE cpr::cpr Threads::Threads)
 
 # ==============================================================================
-# Install Targets (for find_package(foresthub) support)
+# Fat Static Archive
 # ==============================================================================
-# Export name: installed as foresthub::platform
-set_target_properties(foresthub PROPERTIES EXPORT_NAME platform)
+# Merges foresthub + cpr + curl + zlib into a single self-contained archive.
+# Consumers link one file — no transitive dependency resolution needed.
+#
+# The merge command is platform-specific:
+#   Linux  — ar MRI script
+#   macOS  — libtool -static
+#   Windows — lib.exe
 
-install(TARGETS foresthub
-    EXPORT foresthubTargets
-    ARCHIVE DESTINATION lib
+# Collect archive paths via generator expressions.
+set(_FAT_INPUTS
+    $<TARGET_FILE:foresthub>
+    $<TARGET_FILE:cpr>
+    $<TARGET_FILE:libcurl_static>
+    $<TARGET_FILE:zlibstatic>
 )
+
+set(_FAT_OUTPUT_DIR "${CMAKE_BINARY_DIR}/lib")
+if(WIN32)
+    set(_FAT_OUTPUT "${_FAT_OUTPUT_DIR}/foresthub_fat.lib")
+else()
+    set(_FAT_OUTPUT "${_FAT_OUTPUT_DIR}/libforesthub_fat.a")
+endif()
+
+if(WIN32)
+    # Windows: use lib.exe to merge .lib files
+    add_custom_command(
+        OUTPUT "${_FAT_OUTPUT}"
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${_FAT_OUTPUT_DIR}"
+        COMMAND lib.exe /NOLOGO /OUT:"${_FAT_OUTPUT}" ${_FAT_INPUTS}
+        DEPENDS foresthub cpr libcurl_static zlibstatic
+        COMMENT "Merging static libraries into foresthub_fat.lib"
+    )
+elseif(APPLE)
+    # macOS: use libtool -static (ar doesn't support MRI scripts)
+    add_custom_command(
+        OUTPUT "${_FAT_OUTPUT}"
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${_FAT_OUTPUT_DIR}"
+        COMMAND libtool -static -o "${_FAT_OUTPUT}" ${_FAT_INPUTS}
+        DEPENDS foresthub cpr libcurl_static zlibstatic
+        COMMENT "Merging static libraries into libforesthub_fat.a"
+    )
+else()
+    # Linux: use ar MRI script
+    set(_MRI_SCRIPT "${CMAKE_BINARY_DIR}/merge_fat.mri")
+    file(GENERATE OUTPUT "${_MRI_SCRIPT}" CONTENT
+"CREATE ${_FAT_OUTPUT}
+ADDLIB $<TARGET_FILE:foresthub>
+ADDLIB $<TARGET_FILE:cpr>
+ADDLIB $<TARGET_FILE:libcurl_static>
+ADDLIB $<TARGET_FILE:zlibstatic>
+SAVE
+END
+")
+    add_custom_command(
+        OUTPUT "${_FAT_OUTPUT}"
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${_FAT_OUTPUT_DIR}"
+        COMMAND ${CMAKE_AR} -M < "${_MRI_SCRIPT}"
+        DEPENDS foresthub cpr libcurl_static zlibstatic "${_MRI_SCRIPT}"
+        COMMENT "Merging static libraries into libforesthub_fat.a"
+    )
+endif()
+
+add_custom_target(foresthub_fat ALL DEPENDS "${_FAT_OUTPUT}")
+
+# ==============================================================================
+# Install
+# ==============================================================================
+# Installs the fat archive + headers. No cmake config files — the consumer's
+# CMakeLists links directly against the archive and sets compile definitions.
+
+install(FILES "${_FAT_OUTPUT}" DESTINATION lib)
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/
     DESTINATION include
@@ -121,8 +185,3 @@ if(FORESTHUB_PLATFORM STREQUAL "pc_debug")
         DESTINATION include/foresthub/hal/debug
     )
 endif()
-
-install(EXPORT foresthubTargets
-    NAMESPACE foresthub::
-    DESTINATION lib/cmake/foresthub
-)

@@ -1,0 +1,62 @@
+{
+    "version": 3,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 14,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "dev",
+            "displayName": "Development",
+            "description": "Full build: library + tests + examples",
+            "binaryDir": "${sourceDir}/build",
+            "cacheVariables": {
+                "BUILD_TESTING": "ON",
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "dev-coverage",
+            "displayName": "Development (Coverage)",
+            "description": "Dev build with code coverage instrumentation",
+            "inherits": "dev",
+            "cacheVariables": {
+                "ENABLE_COVERAGE": "ON"
+            }
+        },
+        {
+            "name": "dev-sanitizers",
+            "displayName": "Development (Sanitizers)",
+            "description": "Dev build with ASan + UBSan",
+            "inherits": "dev",
+            "cacheVariables": {
+                "ENABLE_SANITIZERS": "ON"
+            }
+        },
+        {
+            "name": "fat-pc",
+            "displayName": "Fat Archive (PC)",
+            "description": "Self-contained static archive, PC platform",
+            "binaryDir": "${sourceDir}/build/fat-pc",
+            "cacheVariables": {
+                "BUILD_TESTING": "OFF",
+                "BUILD_SHARED_LIBS": "OFF",
+                "FORESTHUB_PLATFORM": "pc",
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "fat-debug",
+            "displayName": "Fat Archive (PC Debug)",
+            "description": "Self-contained static archive, PC Debug platform",
+            "binaryDir": "${sourceDir}/build/fat-debug",
+            "cacheVariables": {
+                "BUILD_TESTING": "OFF",
+                "BUILD_SHARED_LIBS": "OFF",
+                "FORESTHUB_PLATFORM": "pc_debug",
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        }
+    ]
+}

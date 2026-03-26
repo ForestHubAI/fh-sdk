@@ -224,27 +224,46 @@ Console and Time are always available. Omitting macros saves significant Flash:
 
 Everything below is for **contributors and maintainers** working on the SDK itself.
 
-### Building from Source
+### Building from Source (PC)
+
+The project uses [CMake Presets](https://cmake.org/cmake/help/latest/manual/cmake-presets.7.html). Run `cmake --list-presets` to see all options.
 
 ```bash
-# PC
-# One-time setup (configure)
-cmake -S . -B build -DBUILD_TESTING=ON
+# Development (tests + examples)
+cmake --preset dev
 cmake --build build -j4
 
-# Embedded (pattern: pio run -d examples/embedded/<provider>/<example> -e esp32dev)
+# Run tests
+ctest --test-dir build --output-on-failure
+
+# Run a specific test
+./build/bin/Debug/run_core_tests --gtest_filter="InputTest.*"
+
+# Development with sanitizers (ASan + UBSan)
+cmake --preset dev-sanitizers
+cmake --build build -j4
+
+# Development with code coverage
+cmake --preset dev-coverage
+cmake --build build -j4
+scripts/run_coverage.sh
+
+# Fat archive (self-contained static lib, bundles all deps)
+cmake --preset fat-debug
+cmake --build build/fat-debug -j4
+cmake --install build/fat-debug --prefix "$LOCALAPPDATA/foresthub"
+```
+
+### Building from Source (Embedded)
+
+```bashw
+# Pattern: pio run -d examples/embedded/<provider>/<example> -e esp32dev
 pio run -d pio/build_test -e esp32dev
 ```
 
 See [Embedded Guide](https://github.com/ForestHubAI/fh-sdk/blob/main/docs/embedded.md) for detailed setup.
 
 ### Testing
-
-```bash
-cmake --build build -j4 && ctest --test-dir build --output-on-failure
-```
-
-Run a specific test: `./build/bin/Debug/run_core_tests --gtest_filter="InputTest.*"`
 
 Hand-rolled mocks in `tests/mocks/` (no GMock -- incompatible with `-fno-rtti`). See [THIRD_PARTY_NOTICES](https://github.com/ForestHubAI/fh-sdk/blob/main/THIRD_PARTY_NOTICES) for dependency license details.
 

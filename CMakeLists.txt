@@ -46,6 +46,9 @@ set(_USER_BUILD_TESTING ${BUILD_TESTING})
 # This makes the project portable (Cloud/GitHub Actions) without manual installation.
 include(FetchContent)
 
+# Force static libraries for all dependencies (required for fat archive builds).
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+
 # 1. GoogleTest
 # Only download GTest if tests are enabled.
 if(BUILD_TESTING)
@@ -58,7 +61,12 @@ if(BUILD_TESTING)
     )
     # Fix for Windows builds to prevent C Runtime conflicts (harmless on Mac/Linux)
     set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-    FetchContent_MakeAvailable(googletest)
+    # EXCLUDE_FROM_ALL: don't install GTest when running `cmake --install`
+    FetchContent_GetProperties(googletest)
+    if(NOT googletest_POPULATED)
+        FetchContent_Populate(googletest)
+        add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR} EXCLUDE_FROM_ALL)
+    endif()
 endif()
 
 # 2. CPR (C++ Requests)
@@ -81,7 +89,12 @@ FetchContent_Declare(
 set(CPR_USE_SYSTEM_CURL OFF CACHE BOOL "" FORCE)
 set(CPR_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(CPR_CURL_USE_LIBPSL OFF CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(cpr)
+# EXCLUDE_FROM_ALL: don't install CPR/curl/zlib when running `cmake --install`
+FetchContent_GetProperties(cpr)
+if(NOT cpr_POPULATED)
+    FetchContent_Populate(cpr)
+    add_subdirectory(${cpr_SOURCE_DIR} ${cpr_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
 # Restore BUILD_TESTING after CPR (CPR sets it to OFF with FORCE)
 set(BUILD_TESTING ${_USER_BUILD_TESTING} CACHE BOOL "Build unit tests" FORCE)
 
@@ -91,8 +104,12 @@ set(BUILD_TESTING ${_USER_BUILD_TESTING} CACHE BOOL "Build unit tests" FORCE)
 # All warnings in our build come from dependencies (curl deprecated macOS APIs,
 # zlib macro redefinitions, unused clang flags). Our own code compiles clean.
 # Suppress with -w so the build output stays readable.
-foreach(_dep_target libcurl_shared cpr zlib zlibstatic)
+foreach(_dep_target libcurl_shared libcurl_static cpr zlib)
     if(TARGET ${_dep_target})
+        get_target_property(_aliased ${_dep_target} ALIASED_TARGET)
+        if(_aliased)
+            set(_dep_target ${_aliased})
+        endif()
         target_compile_options(${_dep_target} PRIVATE -w)
     endif()
 endforeach()
@@ -104,8 +121,8 @@ endforeach()
 # 1. Build the Core Library
 add_subdirectory(src)
 
-# 2. Build the PC Examples (only when building as top-level project, not when used as a dependency)
-if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+# 2. Build the PC Examples (only in dev mode, when building as top-level project)
+if(BUILD_TESTING AND CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     add_subdirectory(examples/pc)
 endif()
 
@@ -115,15 +132,4 @@ if(BUILD_TESTING)
     add_subdirectory(tests)
 endif()
 
-# ==============================================================================
-# Install (for find_package(foresthub) support)
-# ==============================================================================
-include(CMakePackageConfigHelpers)
-configure_package_config_file(
-    cmake/foresthubConfig.cmake.in
-    "${CMAKE_CURRENT_BINARY_DIR}/foresthubConfig.cmake"
-    INSTALL_DESTINATION lib/cmake/foresthub
-)
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/foresthubConfig.cmake"
-    DESTINATION lib/cmake/foresthub
-)
+# Install rules are in src/CMakeLists.txt (fat archive + headers).
