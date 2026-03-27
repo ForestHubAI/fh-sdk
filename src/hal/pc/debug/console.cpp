@@ -51,7 +51,6 @@ std::string DebugConsole::ReadLine(size_t max_length, unsigned long /*timeout_ms
     if (max_length > 0 && line.length() > max_length) {
         line.resize(max_length);
     }
-    std::cout << "console: Serial: read \"" << line << "\"" << std::endl;
     return line;
 }
 
@@ -64,7 +63,6 @@ util::Optional<std::string> DebugConsole::TryReadLine(size_t max_length, bool /*
     if (max_length > 0 && line.length() > max_length) {
         line.resize(max_length);
     }
-    std::cout << "console: Serial: read \"" << line << "\"" << std::endl;
     return util::Optional<std::string>(std::move(line));
 }
 

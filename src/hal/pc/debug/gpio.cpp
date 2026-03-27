@@ -27,7 +27,6 @@ int DebugGpio::DigitalRead(PinID pin) const {
     if (it != pin_values_.end()) {
         value = it->second;
     }
-    std::cout << "console: GPIO: read pin " << pin << " = " << value << std::endl;
     return value;
 }
 
@@ -37,7 +36,6 @@ int DebugGpio::AnalogRead(PinID pin) const {
     if (it != pin_values_.end()) {
         value = it->second;
     }
-    std::cout << "console: GPIO: analog read pin " << pin << " = " << value << std::endl;
     return value;
 }
 
@@ -45,8 +43,9 @@ std::string DebugGpio::ConfigurePwm(PinID /*pin*/, const PwmConfig& /*config*/) 
     return "";
 }
 
-void DebugGpio::PwmWrite(PinID /*pin*/, int /*duty*/) {
-    // No-op for debug platform.
+void DebugGpio::PwmWrite(PinID pin, int duty) {
+    pin_values_[pin] = duty;
+    std::cout << "console: GPIO: pwm wrote " << duty << " to pin " << pin << std::endl;
 }
 
 }  // namespace debug
